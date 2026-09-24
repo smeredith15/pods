@@ -20,18 +20,20 @@ public final class Shufflepod {
     private Shufflepod() {
     }
 
-    public static synchronized void init(Context context) {
-        if (database != null) {
-            return;
+    public static void init(Context context) {
+        ShufflepodDatabase created;
+        synchronized (Shufflepod.class) {
+            if (database != null) {
+                return;
+            }
+            created = new ShufflepodDatabase(context);
         }
-        database = new ShufflepodDatabase(context);
-        SQLiteDatabase db = database.getReadableDatabase();
+        SQLiteDatabase db = created.getReadableDatabase();
         ShowSettings.load(db);
         ArchiveStore.load(db);
-    }
-
-    static synchronized boolean isInitialized() {
-        return database != null;
+        synchronized (Shufflepod.class) {
+            database = created;
+        }
     }
 
     interface DbWrite {
