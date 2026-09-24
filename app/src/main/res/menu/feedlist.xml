@@ -36,6 +36,15 @@
         android:visible="true">
     </item>
 
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_show_archived_item"
+        android:checkable="true"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_show_archived_label"
+        custom:showAsAction="never" />
+    <!-- /SHUFFLEPOD -->
+
     <item
         android:id="@+id/share_feed"
         android:menuCategory="container"

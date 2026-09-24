@@ -58,6 +58,7 @@ import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.TransitionEffect;
 import de.danoeh.antennapod.ui.appstartintent.MainActivityStarter;
 import de.danoeh.antennapod.ui.appstartintent.MediaButtonStarter;
+import de.danoeh.antennapod.ui.common.Keyboard; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.common.NavigationToolbarActivity;
 import de.danoeh.antennapod.ui.common.ThemeSwitcher;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
@@ -306,10 +307,13 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
             if (state == BottomSheetBehavior.STATE_COLLAPSED) {
                 onSlide(view, 0.0f);
                 bottomSheetBackPressedCallback.setEnabled(false);
+                setMainContentFocusable(true); // SHUFFLEPOD
             } else if (state == BottomSheetBehavior.STATE_EXPANDED) {
                 onSlide(view, 1.0f);
                 bottomSheetBackPressedCallback.setEnabled(true);
+                setMainContentFocusable(false); // SHUFFLEPOD
             } else if (state == BottomSheetBehavior.STATE_HIDDEN) {
+                setMainContentFocusable(true); // SHUFFLEPOD
                 PlaybackController.bindToMedia3Service(MainActivity.this, controller -> {
                     controller.clearMediaItems();
                     controller.stop();
@@ -334,6 +338,20 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
 
             audioPlayer.fadePlayerToToolbar(slideOffset);
         }
+    }
+
+    // SHUFFLEPOD: while the full player is open, stop screens underneath it (e.g. a search field)
+    // from taking focus and popping up the keyboard over the Now Playing screen.
+    private void setMainContentFocusable(boolean focusable) {
+        ViewGroup mainContent = findViewById(R.id.main_content_view);
+        if (mainContent == null) {
+            return;
+        }
+        if (!focusable) {
+            Keyboard.hide(this);
+        }
+        mainContent.setDescendantFocusability(focusable
+                ? ViewGroup.FOCUS_BEFORE_DESCENDANTS : ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
     @Override

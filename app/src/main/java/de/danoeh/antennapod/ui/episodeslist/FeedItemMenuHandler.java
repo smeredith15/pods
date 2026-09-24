@@ -32,6 +32,7 @@ import de.danoeh.antennapod.model.feed.FeedMedia;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.appstartintent.MediaButtonStarter;
 import de.danoeh.antennapod.ui.view.LocalDeleteModal;
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodEpisodeActions; // SHUFFLEPOD
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -135,6 +136,8 @@ public class FeedItemMenuHandler {
             setItemVisibility(menu, R.id.mark_read_item, false);
         }
 
+        ShufflepodEpisodeActions.onPrepareMenu(menu, selectedItems); // SHUFFLEPOD
+
         if (excludeIds != null) {
             for (int id : excludeIds) {
                 setItemVisibility(menu, id, false);
@@ -183,6 +186,9 @@ public class FeedItemMenuHandler {
                                             @NonNull FeedItem selectedItem) {
 
         @NonNull Context context = fragment.requireContext();
+        if (ShufflepodEpisodeActions.onMenuItemClicked(fragment, menuItemId, selectedItem)) { // SHUFFLEPOD
+            return true; // SHUFFLEPOD
+        } // SHUFFLEPOD
         if (menuItemId == R.id.skip_episode_item) {
             context.sendBroadcast(MediaButtonStarter.createIntent(context, KeyEvent.KEYCODE_MEDIA_NEXT));
         } else if (menuItemId == R.id.remove_item) {

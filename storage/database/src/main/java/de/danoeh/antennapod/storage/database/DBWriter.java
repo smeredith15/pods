@@ -992,7 +992,7 @@ public class DBWriter {
      * Submit to the DB thread only if caller is not already on the DB thread. Otherwise,
      * just execute synchronously
      */
-    private static Future<?> runOnDbThread(Runnable runnable) {
+    static Future<?> runOnDbThread(Runnable runnable) { // SHUFFLEPOD: package-private for ShufflepodQueueWriter
         if ("DatabaseExecutor".equals(Thread.currentThread().getName())) {
             runnable.run();
             return Futures.immediateFuture(null);

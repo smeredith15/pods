@@ -24,6 +24,7 @@ import de.danoeh.antennapod.storage.preferences.PlaybackPreferences;
 import de.danoeh.antennapod.storage.preferences.SynchronizationSettings;
 import de.danoeh.antennapod.ui.share.ShareDialog;
 import de.danoeh.antennapod.ui.view.LocalDeleteModal;
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodEpisodeActions; // SHUFFLEPOD
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,6 +40,9 @@ public class EpisodeMultiSelectActionHandler {
     }
 
     public void handleAction(List<FeedItem> items) {
+        if (ShufflepodEpisodeActions.handleMultiSelect(activity, actionId, items)) { // SHUFFLEPOD
+            return; // SHUFFLEPOD
+        } // SHUFFLEPOD
         if (actionId == R.id.add_to_queue_item) {
             queueChecked(items);
         } else if (actionId == R.id.remove_from_queue_item) {
