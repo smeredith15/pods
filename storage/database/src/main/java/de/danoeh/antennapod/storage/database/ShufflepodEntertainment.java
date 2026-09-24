@@ -17,6 +17,7 @@ import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.shufflepod.ArchiveStore;
 import de.danoeh.antennapod.shufflepod.EntertainmentPicker;
 import de.danoeh.antennapod.shufflepod.EntertainmentPool;
+import de.danoeh.antennapod.shufflepod.ForcedEpisodes;
 
 /**
  * SHUFFLEPOD: the Entertainment pipeline. When the News queue runs out, the next episode is the
@@ -31,8 +32,9 @@ public final class ShufflepodEntertainment {
 
     /**
      * What should play after {@code current} ends: the next queued episode, otherwise any other queued
-     * episode (News always comes first), otherwise a newly chosen Entertainment episode, which is added
-     * to the end of the queue. Must be called off the main thread.
+     * episode (News always comes first), otherwise the first forced Entertainment episode, otherwise a
+     * newly shuffled Entertainment episode. Entertainment episodes are added to the end of the queue.
+     * Must be called off the main thread.
      */
     @Nullable
     public static FeedItem nextAfter(Context context, @Nullable FeedItem current) {
@@ -48,7 +50,10 @@ public final class ShufflepodEntertainment {
                 return queued;
             }
         }
-        FeedItem picked = pick(currentId);
+        FeedItem picked = takeNextForced(currentId);
+        if (picked == null) {
+            picked = pick(currentId);
+        }
         if (picked == null) {
             return null;
         }
@@ -104,5 +109,65 @@ public final class ShufflepodEntertainment {
     private static FeedItemFilter eligibleFilter() {
         return new FeedItemFilter(FeedItemFilter.UNPLAYED, FeedItemFilter.HAS_MEDIA,
                 FeedItemFilter.NOT_QUEUED, ArchiveStore.FILTER_HIDE_ARCHIVED);
+    }
+
+    /**
+     * The forced episodes still waiting to play, in order. Ones that were played, archived, deleted or
+     * queued in the meantime are dropped from the list.
+     */
+    public static List<FeedItem> forcedEpisodes() {
+        List<FeedItem> result = new ArrayList<>();
+        for (long itemId : ForcedEpisodes.getItemIds()) {
+            FeedItem item = DBReader.getFeedItem(itemId);
+            if (isForcedStillValid(item)) {
+                result.add(item);
+            } else {
+                ForcedEpisodes.remove(itemId);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Forces the next {@code count} oldest eligible episodes of a show to play after the queue, ahead
+     * of the shuffle. Episodes already forced, and {@code excludeItemId} (e.g. the one playing now),
+     * are skipped, so repeating this continues further into the show.
+     *
+     * @return the episodes that were added
+     */
+    public static List<FeedItem> forceNext(long feedId, int count, long excludeItemId) {
+        List<FeedItem> added = new ArrayList<>();
+        Feed feed = DBReader.getFeed(feedId, false, 0, 0);
+        if (feed == null || count <= 0) {
+            return added;
+        }
+        int limit = count + ForcedEpisodes.getItemIds().size() + 1;
+        for (FeedItem item : DBReader.getFeedItemList(feed, eligibleFilter(), SortOrder.DATE_OLD_NEW, 0, limit)) {
+            if (added.size() >= count) {
+                break;
+            }
+            if (item.getId() != excludeItemId && !ForcedEpisodes.contains(item.getId())) {
+                added.add(item);
+            }
+        }
+        ForcedEpisodes.add(added);
+        return added;
+    }
+
+    @Nullable
+    private static FeedItem takeNextForced(long currentId) {
+        for (long itemId : ForcedEpisodes.getItemIds()) {
+            ForcedEpisodes.remove(itemId);
+            FeedItem item = DBReader.getFeedItem(itemId);
+            if (itemId != currentId && isForcedStillValid(item)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isForcedStillValid(@Nullable FeedItem item) {
+        return item != null && item.hasMedia() && !item.isPlayed() && !ArchiveStore.isArchived(item)
+                && !item.isTagged(FeedItem.TAG_QUEUE);
     }
 }

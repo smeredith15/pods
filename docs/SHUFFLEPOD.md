@@ -292,7 +292,7 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 
 1. ✅ Archive, the bulk actions, and per-show Top/Bottom.
 2. ✅ The Entertainment pool, the Entertainment tab, and the Up Next section.
-3. Force next, from Now Playing and from the Entertainment section.
+3. ✅ Force next, from Now Playing and from the Entertainment section.
 
 ### How stage 2 works (as built)
 
@@ -304,6 +304,21 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 - **Entertainment tab:** in the navigation drawer, and in the bottom bar's "More" menu until you move it. It lists subscriptions with how many eligible episodes each has left; tap a row to add or remove it from the pool.
 - **Up Next panel:** a strip under the queue saying what comes after it. With one show it names that show's next episode; with several it lists the shows only. Tap it to open the Entertainment tab.
 - Pool membership is stored in `shufflepod.db` (table `entertainment_pool`, schema version 2).
+
+### How stage 3 works (as built)
+
+- **Force next:** "Play next from this show…" in the Now Playing menu, and a play-next button on every show in the Entertainment tab. Pick 1, 2, 3, 5 or 10. That many of the show's next oldest eligible episodes are appended to the forced list (skipping ones already forced and the one playing), so repeating it continues further into the show.
+- **Order after an episode ends:** queue, then the forced list in order, then the shuffle. News that arrives in the meantime still plays first; forced episodes wait.
+- **Deleting:** the Entertainment tab shows a "Playing next" section with every forced episode and a remove button. Forced episodes that get played, archived or queued some other way drop off the list by themselves.
+- **Up Next panel:** lists forced episodes first ("Next: …"), then the pool.
+- Stored in `shufflepod.db` (table `forced_episode`, schema version 3).
+
+### Now Playing tab
+
+- **Now Playing** replaces Queue in the bottom bar (Queue moves to "More" and stays in the drawer). It isn't a screen of its own: it opens the full player, or the Queue screen when nothing is loaded.
+- In the full player, the vertical pager is now **cover → queue → show notes**: swipe up from the cover to see the queue (with its Entertainment strip), swipe up again for show notes. The embedded queue has no pull-to-refresh, so pulling down pages back to the cover.
+- Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
+- If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
 
 ### TODO / later
 

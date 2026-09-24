@@ -4,24 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:minHeight="64dp"
+    android:minHeight="56dp"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
-
-    <ImageView
-        android:id="@+id/cover"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:importantForAccessibility="no"
-        android:scaleType="fitCenter" />
+    android:paddingStart="16dp"
+    android:paddingEnd="4dp"
+    android:paddingVertical="4dp">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -43,18 +35,11 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/playNextButton"
+        android:id="@+id/removeButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/shufflepod_play_next_from_show_label"
-        app:srcCompat="@drawable/ic_playlist_play" />
-
-    <CheckBox
-        android:id="@+id/checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:focusable="false" />
+        android:contentDescription="@string/shufflepod_forced_remove"
+        app:srcCompat="@drawable/ic_close" />
 
 </LinearLayout>

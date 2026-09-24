@@ -26,7 +26,9 @@ import java.util.List;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.Feed;
+import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.shufflepod.EntertainmentPool;
+import de.danoeh.antennapod.shufflepod.ForcedEpisodes;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -39,6 +41,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 public class EntertainmentFragment extends Fragment {
     public static final String TAG = "EntertainmentFragment";
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_FORCED = 1;
+    private static final int TYPE_SHOW = 2;
 
     private final PoolAdapter adapter = new PoolAdapter();
     private TextView summary;
@@ -74,9 +79,14 @@ public class EntertainmentFragment extends Fragment {
     }
 
     private void load() {
+        if (!isAdded()) {
+            return;
+        }
         if (disposable != null) {
             disposable.dispose();
         }
+        final String forcedHeader = getString(R.string.shufflepod_forced_section);
+        final String showsHeader = getString(R.string.shufflepod_shows_section);
         disposable = Observable.fromCallable(() -> {
             List<Row> rows = new ArrayList<>();
             for (Feed feed : DBReader.getFeedList()) {
@@ -87,12 +97,20 @@ public class EntertainmentFragment extends Fragment {
             Collections.sort(rows, (a, b) -> String.CASE_INSENSITIVE_ORDER.compare(
                     a.feed.getTitle() != null ? a.feed.getTitle() : "",
                     b.feed.getTitle() != null ? b.feed.getTitle() : ""));
-            return rows;
+            List<Object> entries = new ArrayList<>();
+            List<FeedItem> forced = ShufflepodEntertainment.forcedEpisodes();
+            if (!forced.isEmpty()) {
+                entries.add(forcedHeader);
+                entries.addAll(forced);
+            }
+            entries.add(showsHeader);
+            entries.addAll(rows);
+            return entries;
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(rows -> {
-                    adapter.setRows(rows);
+                .subscribe(entries -> {
+                    adapter.setEntries(entries);
                     updateSummary();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
@@ -117,41 +135,99 @@ public class EntertainmentFragment extends Fragment {
         }
     }
 
-    private static class Holder extends RecyclerView.ViewHolder {
+    private static class HeaderHolder extends RecyclerView.ViewHolder {
+        final TextView header;
+
+        HeaderHolder(View itemView) {
+            super(itemView);
+            header = itemView.findViewById(R.id.header);
+        }
+    }
+
+    private static class ForcedHolder extends RecyclerView.ViewHolder {
+        final TextView title;
+        final TextView subtitle;
+        final View removeButton;
+
+        ForcedHolder(View itemView) {
+            super(itemView);
+            title = itemView.findViewById(R.id.title);
+            subtitle = itemView.findViewById(R.id.subtitle);
+            removeButton = itemView.findViewById(R.id.removeButton);
+        }
+    }
+
+    private static class ShowHolder extends RecyclerView.ViewHolder {
         final ImageView cover;
         final TextView title;
         final TextView subtitle;
+        final View playNextButton;
         final CheckBox checkBox;
 
-        Holder(View itemView) {
+        ShowHolder(View itemView) {
             super(itemView);
             cover = itemView.findViewById(R.id.cover);
             title = itemView.findViewById(R.id.title);
             subtitle = itemView.findViewById(R.id.subtitle);
+            playNextButton = itemView.findViewById(R.id.playNextButton);
             checkBox = itemView.findViewById(R.id.checkbox);
         }
     }
 
-    private class PoolAdapter extends RecyclerView.Adapter<Holder> {
-        private final List<Row> rows = new ArrayList<>();
+    private class PoolAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private final List<Object> entries = new ArrayList<>();
 
-        void setRows(List<Row> newRows) {
-            rows.clear();
-            rows.addAll(newRows);
+        void setEntries(List<Object> newEntries) {
+            entries.clear();
+            entries.addAll(newEntries);
             notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Object entry = entries.get(position);
+            if (entry instanceof String) {
+                return TYPE_HEADER;
+            } else if (entry instanceof FeedItem) {
+                return TYPE_FORCED;
+            }
+            return TYPE_SHOW;
         }
 
         @NonNull
         @Override
-        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.shufflepod_entertainment_item, parent, false);
-            return new Holder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            if (viewType == TYPE_HEADER) {
+                return new HeaderHolder(inflater.inflate(R.layout.shufflepod_entertainment_header, parent, false));
+            } else if (viewType == TYPE_FORCED) {
+                return new ForcedHolder(inflater.inflate(R.layout.shufflepod_forced_item, parent, false));
+            }
+            return new ShowHolder(inflater.inflate(R.layout.shufflepod_entertainment_item, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull Holder holder, int position) {
-            Row row = rows.get(position);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Object entry = entries.get(position);
+            if (holder instanceof HeaderHolder && entry instanceof String) {
+                ((HeaderHolder) holder).header.setText((String) entry);
+            } else if (holder instanceof ForcedHolder && entry instanceof FeedItem) {
+                bindForced((ForcedHolder) holder, (FeedItem) entry);
+            } else if (holder instanceof ShowHolder && entry instanceof Row) {
+                bindShow((ShowHolder) holder, (Row) entry);
+            }
+        }
+
+        private void bindForced(ForcedHolder holder, FeedItem item) {
+            holder.title.setText(item.getTitle());
+            holder.subtitle.setText(item.getFeed() != null ? item.getFeed().getTitle() : "");
+            holder.removeButton.setOnClickListener(v -> {
+                ForcedEpisodes.remove(item.getId());
+                load();
+            });
+        }
+
+        private void bindShow(ShowHolder holder, Row row) {
             holder.title.setText(row.feed.getTitle());
             holder.subtitle.setText(row.episodesLeft > 0
                     ? holder.itemView.getResources().getQuantityString(
@@ -167,6 +243,8 @@ public class EntertainmentFragment extends Fragment {
                 holder.checkBox.setChecked(EntertainmentPool.contains(row.feed));
                 updateSummary();
             });
+            holder.playNextButton.setOnClickListener(v -> ForceNextDialog.show(requireContext(),
+                    row.feed.getId(), row.feed.getTitle(), -1, EntertainmentFragment.this::load));
             Glide.with(holder.itemView)
                     .load(row.feed.getImageUrl())
                     .apply(new RequestOptions()
@@ -178,7 +256,7 @@ public class EntertainmentFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return rows.size();
+            return entries.size();
         }
     }
 }

@@ -38,6 +38,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
+import de.danoeh.antennapod.ui.shufflepod.NowPlayingTab; // SHUFFLEPOD
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.event.EpisodeDownloadEvent;
 import de.danoeh.antennapod.event.FeedUpdateRunningEvent;
@@ -496,6 +497,14 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
     }
 
     public void loadFragment(String tag, Bundle args) {
+        if (NowPlayingTab.TAG.equals(tag)) { // SHUFFLEPOD: opens the player instead of a screen
+            NowPlayingTab.open(this); // SHUFFLEPOD
+            if (bottomNavigation != null) { // SHUFFLEPOD: keep the tab of the screen underneath selected
+                String lastTag = NavDrawerFragment.getLastNavFragment(this); // SHUFFLEPOD
+                getWindow().getDecorView().post(() -> bottomNavigation.updateSelectedItem(lastTag)); // SHUFFLEPOD
+            } // SHUFFLEPOD
+            return; // SHUFFLEPOD
+        } // SHUFFLEPOD
         NavDrawerFragment.saveLastNavFragment(this, tag);
         if (bottomNavigation != null) {
             bottomNavigation.updateSelectedItem(tag);
@@ -534,6 +543,9 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
 
     public void loadChildFragment(Fragment fragment, TransitionEffect transition, String navigationTag) {
         Objects.requireNonNull(fragment);
+        if (sheetBehavior != null && sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) { // SHUFFLEPOD
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); // SHUFFLEPOD: e.g. opened from player queue
+        } // SHUFFLEPOD
         if (navigationTag != null && bottomNavigation != null) {
             bottomNavigation.updateSelectedItem(navigationTag);
         }

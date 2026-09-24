@@ -60,6 +60,8 @@ public final class ShufflepodEpisodeActions {
         setVisible(menu, R.id.shufflepod_unarchive_item, canUnarchive);
         setVisible(menu, R.id.shufflepod_archive_older_item, canChangeOlder);
         setVisible(menu, R.id.shufflepod_mark_older_played_item, canChangeOlder);
+        setVisible(menu, R.id.shufflepod_play_next_from_show_item,
+                items.size() == 1 && isSubscribed(items.get(0)));
     }
 
     public static boolean onMenuItemClicked(@NonNull Fragment fragment, int menuItemId, @NonNull FeedItem item) {
@@ -72,6 +74,10 @@ public final class ShufflepodEpisodeActions {
             return true;
         } else if (menuItemId == R.id.shufflepod_mark_older_played_item) {
             changeOlderEpisodes(activity, item, false);
+            return true;
+        } else if (menuItemId == R.id.shufflepod_play_next_from_show_item) {
+            ForceNextDialog.show(activity, item.getFeedId(),
+                    item.getFeed() != null ? item.getFeed().getTitle() : "", item.getId(), null);
             return true;
         }
         return handleMultiSelect(activity, menuItemId, Collections.singletonList(item));

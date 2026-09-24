@@ -29,6 +29,7 @@ public final class Shufflepod {
         ShowSettings.load(db);
         ArchiveStore.load(db);
         EntertainmentPool.load(db);
+        ForcedEpisodes.load(db);
         database = created;
     }
 

@@ -59,6 +59,23 @@ public class EntertainmentPanel {
     }
 
     private String describe() {
+        List<FeedItem> forced = ShufflepodEntertainment.forcedEpisodes();
+        if (forced.isEmpty()) {
+            return describePool();
+        }
+        List<String> titles = new ArrayList<>();
+        for (FeedItem item : forced) {
+            titles.add(item.getTitle());
+        }
+        String forcedLine = text.getContext().getString(R.string.shufflepod_panel_forced,
+                TextUtils.join(", ", titles));
+        if (EntertainmentPool.isEmpty()) {
+            return forcedLine;
+        }
+        return forcedLine + "\n" + describePool();
+    }
+
+    private String describePool() {
         List<Long> feedIds = EntertainmentPool.getFeedIds();
         if (feedIds.isEmpty()) {
             return text.getContext().getString(R.string.shufflepod_panel_empty);

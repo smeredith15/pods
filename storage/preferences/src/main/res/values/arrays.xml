@@ -2,9 +2,10 @@
 <resources>
     <string-array name="nav_drawer_section_tags">
         <item>HomeFragment</item>
-        <item>QueueFragment</item>
+        <item>NowPlayingFragment</item> <!-- SHUFFLEPOD: replaces Queue in the bottom bar -->
         <item>NewEpisodesFragment</item>
         <item>SubscriptionFragment</item>
+        <item>QueueFragment</item> <!-- SHUFFLEPOD: moved; also one swipe up in Now Playing -->
         <item>EntertainmentFragment</item> <!-- SHUFFLEPOD: first under "More" -->
         <item>EpisodesFragment</item>
         <item>DownloadsFragment</item>
