@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -50,8 +49,7 @@ public final class ShufflepodQueueWriter {
                 adapter.close();
                 return;
             }
-            Collections.sort(toAdd, Comparator.comparing(FeedItem::getPubDate,
-                    Comparator.nullsLast(Comparator.<Date>naturalOrder())));
+            Collections.sort(toAdd, (a, b) -> comparePubDates(a.getPubDate(), b.getPubDate()));
 
             int position;
             if (feed != null && ShowSettings.getQueuePosition(feed) == ShowSettings.QueuePosition.TOP) {
@@ -92,6 +90,16 @@ public final class ShufflepodQueueWriter {
             adapter.close();
             AutoDownloadManager.getInstance().autodownloadUndownloadedItems(context);
         });
+    }
+
+    private static int comparePubDates(@Nullable Date a, @Nullable Date b) {
+        if (a == null) {
+            return b == null ? 0 : 1;
+        }
+        if (b == null) {
+            return -1;
+        }
+        return a.compareTo(b);
     }
 
     private static boolean containsItem(List<FeedItem> items, long itemId) {
