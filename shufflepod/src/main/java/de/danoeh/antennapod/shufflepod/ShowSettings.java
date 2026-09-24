@@ -14,7 +14,9 @@ import de.danoeh.antennapod.model.feed.Feed;
  */
 public final class ShowSettings {
 
-    /** Where new episodes of a show go when they are added to the queue automatically. */
+    /**
+     * Where new episodes of a show go when they are added to the queue automatically.
+     */
     public enum QueuePosition {
         BOTTOM, TOP
     }
@@ -36,9 +38,12 @@ public final class ShowSettings {
     }
 
     private static QueuePosition parse(String value) {
+        if (value == null) {
+            return QueuePosition.BOTTOM;
+        }
         try {
             return QueuePosition.valueOf(value);
-        } catch (IllegalArgumentException | NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             return QueuePosition.BOTTOM;
         }
     }

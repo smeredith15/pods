@@ -108,10 +108,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
+      fail-fast: false # SHUFFLEPOD: one emulator failing shouldn't cancel the others
       matrix:
         version:
-          - api-level: 23
-            target: default
+          # SHUFFLEPOD: API 23 dropped; the fork only targets a current phone
           - api-level: 30
             target: aosp_atd
           - api-level: 36

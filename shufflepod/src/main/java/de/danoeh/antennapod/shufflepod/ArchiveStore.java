@@ -17,7 +17,9 @@ import de.danoeh.antennapod.model.feed.FeedItemFilter;
  * Episodes marked "archived": done without being heard. Separate from AntennaPod's played state.
  */
 public final class ArchiveStore {
-    /** Extra {@link FeedItemFilter} property that makes episode queries skip archived episodes. */
+    /**
+     * Extra {@link FeedItemFilter} property that makes episode queries skip archived episodes.
+     */
     public static final String FILTER_HIDE_ARCHIVED = "shufflepod_hide_archived";
     private static final String SETTING_SHOW_ARCHIVED = "show_archived";
 

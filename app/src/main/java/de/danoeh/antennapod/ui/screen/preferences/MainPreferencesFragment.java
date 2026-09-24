@@ -41,27 +41,17 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
         // and afterwards remove the following lines. Please keep in mind that AntennaPod is licensed under the GPL.
         // This means that your application needs to be open-source under the GPL, too.
         // It must also include a prominent copyright notice.
-        int packageHash = getContext().getPackageName().hashCode();
-        if (packageHash != 1790437538 && packageHash != -1190467065) {
-            findPreference(PREF_CATEGORY_PROJECT).setVisible(false);
-            Preference copyrightNotice = new Preference(getContext());
-            copyrightNotice.setIcon(R.drawable.ic_info_white);
-            copyrightNotice.getIcon().mutate()
-                    .setColorFilter(new PorterDuffColorFilter(0xffcc0000, PorterDuff.Mode.MULTIPLY));
-            copyrightNotice.setSummary("This application is based on AntennaPod."
-                    + " The AntennaPod team does NOT provide support for this unofficial version."
-                    + " If you can read this message, the developers of this modification"
-                    + " violate the GNU General Public License (GPL).");
-            findPreference(PREF_CATEGORY_PROJECT).getParent().addPreference(copyrightNotice);
-        } else if (packageHash == -1190467065) {
-            Preference debugNotice = new Preference(getContext());
-            debugNotice.setIcon(R.drawable.ic_info_white);
-            debugNotice.getIcon().mutate()
-                    .setColorFilter(new PorterDuffColorFilter(0xffcc0000, PorterDuff.Mode.MULTIPLY));
-            debugNotice.setOrder(-1);
-            debugNotice.setSummary("This is a development version of AntennaPod and not meant for daily use");
-            findPreference(PREF_CATEGORY_PROJECT).getParent().addPreference(debugNotice);
-        }
+        // SHUFFLEPOD: personal fork. The About screen (AntennaPod copyright and licenses) stays visible,
+        // with a prominent notice that this is an unofficial version; AntennaPod community links are hidden.
+        findPreference(PREF_VIEW_FORUM).setVisible(false);
+        findPreference(PREF_CONTRIBUTE).setVisible(false);
+        Preference forkNotice = new Preference(getContext());
+        forkNotice.setIcon(R.drawable.ic_info_white);
+        forkNotice.getIcon().mutate()
+                .setColorFilter(new PorterDuffColorFilter(0xffcc0000, PorterDuff.Mode.MULTIPLY));
+        forkNotice.setOrder(-1);
+        forkNotice.setSummary(R.string.shufflepod_fork_notice);
+        findPreference(PREF_CATEGORY_PROJECT).getParent().addPreference(forkNotice);
     }
 
     @Override

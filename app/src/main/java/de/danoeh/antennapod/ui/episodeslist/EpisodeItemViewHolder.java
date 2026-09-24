@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.ui.episodeslist;
 
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodEpisodeBadges; // SHUFFLEPOD
 import android.app.Activity;
 import android.text.Layout;
 import android.text.format.Formatter;
@@ -105,6 +106,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         isFavorite.setVisibility(item.isTagged(FeedItem.TAG_FAVORITE) ? View.VISIBLE : View.GONE);
         isInQueue.setVisibility(item.isTagged(FeedItem.TAG_QUEUE) ? View.VISIBLE : View.GONE);
         container.setAlpha(item.isPlayed() ? 0.5f : 1.0f);
+        ShufflepodEpisodeBadges.bind(itemView, container, item); // SHUFFLEPOD
 
         ItemActionButton actionButton = ItemActionButton.forItem(item);
         actionButton.configure(secondaryActionButton, secondaryActionIcon, activity);
@@ -202,6 +204,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
         isVideo.setVisibility(View.GONE);
         isFavorite.setVisibility(View.GONE);
         isInQueue.setVisibility(View.GONE);
+        ShufflepodEpisodeBadges.hide(itemView); // SHUFFLEPOD
         title.setText("███████");
         pubDate.setText("████");
         duration.setText("████");
@@ -265,6 +268,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
                 || isInQueue.getVisibility() == View.VISIBLE
                 || isVideo.getVisibility() == View.VISIBLE
                 || isFavorite.getVisibility() == View.VISIBLE
+                || ShufflepodEpisodeBadges.isShown(itemView) // SHUFFLEPOD
                 || isInbox.getVisibility() == View.VISIBLE;
         separatorIcons.setVisibility(hasIcons ? View.VISIBLE : View.GONE);
     }
