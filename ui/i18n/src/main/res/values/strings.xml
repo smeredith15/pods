@@ -1039,6 +1039,7 @@
     <string name="wearos_open_on_phone" tools:ignore="UnusedResources">Open on phone</string>
 
     <!-- SHUFFLEPOD: fork strings. Kept together at the end to make upstream merges easy. -->
+    <string name="shufflepod_fork_notice">This is a personal, unofficial version based on AntennaPod (GPL-3.0). The AntennaPod team does not provide support for it, so please don\'t report its problems to them.</string>
     <string name="shufflepod_archive_label">Archive</string>
     <string name="shufflepod_unarchive_label">Unarchive</string>
     <string name="shufflepod_archived_label">Archived</string>
