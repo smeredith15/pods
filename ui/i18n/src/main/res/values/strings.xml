@@ -1041,6 +1041,7 @@
     <!-- SHUFFLEPOD: fork strings. Kept together at the end to make upstream merges easy. -->
     <string name="shufflepod_archive_label">Archive</string>
     <string name="shufflepod_unarchive_label">Unarchive</string>
+    <string name="shufflepod_archived_label">Archived</string>
     <string name="shufflepod_archive_older_label">Archive all older episodes…</string>
     <string name="shufflepod_mark_older_played_label">Mark all older episodes as played…</string>
     <string name="shufflepod_show_archived_label">Show archived episodes</string>

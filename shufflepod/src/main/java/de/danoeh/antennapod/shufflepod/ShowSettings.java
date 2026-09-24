@@ -14,7 +14,9 @@ import de.danoeh.antennapod.model.feed.Feed;
  */
 public final class ShowSettings {
 
-    /** Where new episodes of a show go when they are added to the queue automatically. */
+    /**
+     * Where new episodes of a show go when they are added to the queue automatically.
+     */
     public enum QueuePosition {
         BOTTOM, TOP
     }

@@ -121,6 +121,16 @@
                     app:tint="?attr/colorOnSurfaceVariant"
                     app:srcCompat="@drawable/ic_star" />
 
+                <!-- SHUFFLEPOD -->
+                <ImageView
+                    android:id="@+id/shufflepodArchived"
+                    android:layout_width="12sp"
+                    android:layout_height="12sp"
+                    android:contentDescription="@string/shufflepod_archived_label"
+                    android:visibility="gone"
+                    app:tint="?attr/colorOnSurfaceVariant"
+                    app:srcCompat="@drawable/ic_shufflepod_archive" />
+
                 <ImageView
                     android:id="@+id/ivInPlaylist"
                     android:layout_width="12sp"

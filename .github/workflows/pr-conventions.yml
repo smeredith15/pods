@@ -7,6 +7,7 @@ on:
 jobs:
   pr-title:
     name: "Check"
+    if: github.repository == 'AntennaPod/AntennaPod' # SHUFFLEPOD: upstream PR template rules don't apply to the fork
     runs-on: ubuntu-latest
     steps:
       - name: Check PR Conventions
