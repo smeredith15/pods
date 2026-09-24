@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerQueue; // SHUFFLEPOD
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.playback.service.PlaybackService;
@@ -82,8 +83,9 @@ public class AudioPlayerFragment extends Fragment implements
         ChapterSeekBar.OnSeekBarChangeListener, MaterialToolbar.OnMenuItemClickListener {
     public static final String TAG = "AudioPlayerFragment";
     public static final int POS_COVER = 0;
-    public static final int POS_DESCRIPTION = 1;
-    private static final int NUM_CONTENT_FRAGMENTS = 2;
+    public static final int POS_QUEUE = 1; // SHUFFLEPOD: swipe up from the cover to see the queue
+    public static final int POS_DESCRIPTION = 2; // SHUFFLEPOD: was 1
+    private static final int NUM_CONTENT_FRAGMENTS = 3; // SHUFFLEPOD: was 2
 
     private TextView txtvPlaybackSpeed;
     private ViewPager2 pager;
@@ -555,6 +557,8 @@ public class AudioPlayerFragment extends Fragment implements
             switch (position) {
                 case POS_COVER:
                     return new CoverFragment();
+                case POS_QUEUE: // SHUFFLEPOD
+                    return ShufflepodPlayerQueue.newEmbeddedQueue(); // SHUFFLEPOD
                 default:
                 case POS_DESCRIPTION:
                     return new ItemDescriptionFragment();

@@ -66,7 +66,8 @@ public class BottomNavigationTest {
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
                 withText(R.string.home_label)), 1000));
 
-        clickBottomNavItem(R.string.queue_label_short);
+        // SHUFFLEPOD: Now Playing replaces Queue in the bar; with nothing playing it opens the Queue screen
+        clickBottomNavItem(R.string.shufflepod_now_playing_label_short);
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
                 withText(R.string.queue_label)), 1000));
 

@@ -28,6 +28,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerQueue; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentPanel; // SHUFFLEPOD
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
@@ -420,7 +421,11 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        if (ShufflepodPlayerQueue.isEmbedded(this)) { // SHUFFLEPOD: shown inside the Now Playing screen
+            toolbar.setNavigationIcon(null); // SHUFFLEPOD
+        } else { // SHUFFLEPOD
+            ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        } // SHUFFLEPOD
         toolbar.inflateMenu(R.menu.queue);
         refreshToolbarState();
         progressBar = root.findViewById(R.id.progressBar);
@@ -473,6 +478,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setDistanceToTriggerSync(getResources().getInteger(R.integer.swipe_refresh_distance));
         swipeRefreshLayout.setOnRefreshListener(() -> FeedUpdateManager.getInstance().runOnceOrAsk(requireContext()));
+        swipeRefreshLayout.setEnabled(!ShufflepodPlayerQueue.isEmbedded(this)); // SHUFFLEPOD: pull-down pages back
 
         emptyView = new EmptyViewHandler(getContext());
         emptyView.attachToRecyclerView(recyclerView);

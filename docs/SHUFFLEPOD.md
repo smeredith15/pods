@@ -313,6 +313,13 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 - **Up Next panel:** lists forced episodes first ("Next: …"), then the pool.
 - Stored in `shufflepod.db` (table `forced_episode`, schema version 3).
 
+### Now Playing tab
+
+- **Now Playing** replaces Queue in the bottom bar (Queue moves to "More" and stays in the drawer). It isn't a screen of its own: it opens the full player, or the Queue screen when nothing is loaded.
+- In the full player, the vertical pager is now **cover → queue → show notes**: swipe up from the cover to see the queue (with its Entertainment strip), swipe up again for show notes. The embedded queue has no pull-to-refresh, so pulling down pages back to the cover.
+- Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
+- If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
+
 ### TODO / later
 
 - [ ] **Silent download-ahead:** quietly pick the next Entertainment episode in advance and download it, without revealing it in Up Next, so it plays offline.

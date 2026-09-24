@@ -1063,6 +1063,8 @@
         <item quantity="one">Mark %1$d episode of %2$s published before this one as played?</item>
         <item quantity="other">Mark %1$d episodes of %2$s published before this one as played?</item>
     </plurals>
+    <string name="shufflepod_now_playing_label">Now Playing</string>
+    <string name="shufflepod_now_playing_label_short">Playing</string>
     <string name="shufflepod_entertainment_label">Entertainment</string>
     <string name="shufflepod_entertainment_label_short">Entertainment</string>
     <string name="shufflepod_entertainment_intro">Ticked shows form the Entertainment pool. When the queue runs out, the oldest unplayed episode of a random show from the pool plays next.</string>
