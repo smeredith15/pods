@@ -40,6 +40,7 @@ import de.danoeh.antennapod.model.download.DownloadResult;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
+import de.danoeh.antennapod.shufflepod.ArchiveStore; // SHUFFLEPOD
 import de.danoeh.antennapod.net.download.serviceinterface.FeedUpdateManager;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.DBWriter;
@@ -287,6 +288,8 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
             viewBinding.toolbar.getMenu().findItem(R.id.sort_items).setVisible(false);
         }
         FeedMenuHandler.onPrepareMenu(viewBinding.toolbar.getMenu(), Collections.singletonList(feed));
+        viewBinding.toolbar.getMenu().findItem(R.id.shufflepod_show_archived_item) // SHUFFLEPOD
+                .setChecked(ArchiveStore.isShowArchived()); // SHUFFLEPOD
     }
 
     @Override
@@ -328,6 +331,11 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         } else if (item.getItemId() == R.id.remove_archive_feed || item.getItemId() == R.id.remove_restore_feed) {
             new RemoveFeedDialogClose(Collections.singletonList(feed)).show(getParentFragmentManager(), null);
             return true;
+        } else if (item.getItemId() == R.id.shufflepod_show_archived_item) { // SHUFFLEPOD
+            ArchiveStore.setShowArchived(!ArchiveStore.isShowArchived()); // SHUFFLEPOD
+            updateToolbar(); // SHUFFLEPOD
+            loadItems(); // SHUFFLEPOD
+            return true; // SHUFFLEPOD
         } else if (item.getItemId() == R.id.action_search) {
             ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance(feed.getId(), feed.getTitle()));
             return true;
@@ -662,7 +670,8 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         disposable = Observable.fromCallable(
                 () -> {
                     feed = DBReader.getFeed(feedID, true, 0, page * EPISODES_PER_PAGE);
-                    int count = DBReader.getFeedEpisodeCount(feed.getId(), feed.getItemFilter());
+                    int count = DBReader.getFeedEpisodeCount(feed.getId(),
+                            ArchiveStore.hideArchivedUnlessShown(feed.getItemFilter())); // SHUFFLEPOD
                     return new Pair<>(feed, count);
                 })
                 .subscribeOn(Schedulers.computation())

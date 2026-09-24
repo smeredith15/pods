@@ -25,6 +25,7 @@ import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.model.feed.SubscriptionsFilter;
 import de.danoeh.antennapod.model.download.DownloadResult;
+import de.danoeh.antennapod.shufflepod.ArchiveStore; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.database.mapper.ChapterCursor;
 import de.danoeh.antennapod.storage.database.mapper.DownloadResultCursor;
 import de.danoeh.antennapod.storage.database.mapper.FeedCursor;
@@ -338,6 +339,9 @@ public final class DBReader {
                 FeedItemFilter filter = (filtered && feed.getItemFilter() != null)
                         ? feed.getItemFilter() : FeedItemFilter.unfiltered();
                 filter = new FeedItemFilter(filter, FeedItemFilter.INCLUDE_ALL_FEED_STATES);
+                if (filtered) {
+                    filter = ArchiveStore.hideArchivedUnlessShown(filter); // SHUFFLEPOD
+                }
                 List<FeedItem> items = getFeedItemList(feed, filter, feed.getSortOrder(), offset, limit);
                 for (FeedItem item : items) {
                     item.setFeed(feed);

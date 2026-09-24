@@ -36,6 +36,9 @@ jobs:
       - name: Configure parallel build
         run: echo "org.gradle.parallel=true" >> local.properties
 
+      - name: Run fork unit tests
+        run: ./gradlew :shufflepod:testDebugUnitTest
+
       - name: Build signed release APK
         if: env.SIGNING_KEYSTORE_BASE64 != ''
         run: |

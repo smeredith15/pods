@@ -16,6 +16,7 @@ dependencies {
     implementation project(':event')
     implementation project(':model')
     implementation project(':net:download:service-interface')
+    implementation project(':shufflepod') // SHUFFLEPOD
     implementation project(':net:sync:service-interface')
     implementation project(':storage:preferences')
     implementation project(':system')

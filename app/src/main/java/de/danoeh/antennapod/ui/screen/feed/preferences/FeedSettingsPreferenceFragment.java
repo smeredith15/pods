@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.ui.screen.feed.preferences;
 
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFeedSettings; // SHUFFLEPOD
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -129,6 +130,7 @@ public class FeedSettingsPreferenceFragment extends PreferenceFragmentCompat {
                     updateAutoDeleteSummary();
                     updateAutoDownloadEnabledSummary();
                     updateNewEpisodesActionSummary();
+                    ShufflepodFeedSettings.setup(this, feed); // SHUFFLEPOD
 
                     if (feed.isLocalFeed()) {
                         findPreference(PREF_AUTHENTICATION).setVisible(false);

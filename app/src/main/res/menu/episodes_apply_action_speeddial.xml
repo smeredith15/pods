@@ -22,6 +22,18 @@
         android:icon="@drawable/ic_mark_unplayed"
         android:title="@string/mark_as_unplayed_label" />
 
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_unarchive_item"
+        android:icon="@drawable/ic_shufflepod_unarchive"
+        android:title="@string/shufflepod_unarchive_label" />
+
+    <item
+        android:id="@+id/shufflepod_archive_item"
+        android:icon="@drawable/ic_shufflepod_archive"
+        android:title="@string/shufflepod_archive_label" />
+    <!-- /SHUFFLEPOD -->
+
     <item
         android:id="@+id/mark_read_item"
         android:icon="@drawable/ic_mark_played"

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.storage.database.PodDBAdapter;
+import de.danoeh.antennapod.shufflepod.ArchiveStore; // SHUFFLEPOD
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +88,11 @@ public class FeedItemFilterQuery {
                     + " IN (SELECT " + PodDBAdapter.KEY_ID + " FROM " + PodDBAdapter.TABLE_NAME_FEEDS
                     + " WHERE " + PodDBAdapter.KEY_STATE + " IN (" + TextUtils.join(",", allowedStates) + "))");
         }
+
+        String archivedExclusion = ArchiveStore.sqlExclusion(filter, keyItemId); // SHUFFLEPOD
+        if (!archivedExclusion.isEmpty()) { // SHUFFLEPOD
+            statements.add(archivedExclusion); // SHUFFLEPOD
+        } // SHUFFLEPOD
 
         if (statements.isEmpty()) {
             return "";

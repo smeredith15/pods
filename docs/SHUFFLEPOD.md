@@ -2,7 +2,7 @@
 
 A personal fork of [AntennaPod](https://github.com/AntennaPod/AntennaPod), the open-source Android podcast manager, extended with four features no existing app offers:
 
-1. **Oldest-first shuffle.** Pick a random show from a chosen pool, then always play that show's oldest remaining episode.
+1. **News and Entertainment pipelines.** A News queue that always plays first, then an Entertainment pool that plays the oldest remaining episode of a random (or forced) show. Plus an "archived" state separate from "played".
 2. **Listening stats.** Richer statistics built on a detailed listening log.
 3. **Per-show checklists.** A small to-do list attached to each podcast.
 4. **Following people.** Follow guests and creators across shows, not just shows.
@@ -23,7 +23,7 @@ This app is for personal use only. It will not be published to any app store.
 - [Guiding principles for the fork](#guiding-principles-for-the-fork)
 - [Finding your way around the codebase](#finding-your-way-around-the-codebase)
 - [Custom data storage](#custom-data-storage)
-- [Feature 1: Oldest-first shuffle](#feature-1-oldest-first-shuffle)
+- [Feature 1: News and Entertainment pipelines](#feature-1-news-and-entertainment-pipelines)
 - [Feature 2: Listening stats](#feature-2-listening-stats)
 - [Feature 3: Per-show checklists](#feature-3-per-show-checklists)
 - [Feature 4: Following people](#feature-4-following-people)
@@ -257,50 +257,46 @@ This schema is a starting point. Adjust it once the open questions are answered.
 
 ---
 
-## Feature 1: Oldest-first shuffle
+## Feature 1: News and Entertainment pipelines
 
-### Behavior
+This replaces the original "oldest-first shuffle" idea with two pipelines for subscribed shows.
 
-- The user defines one or more **shuffle pools**. A pool is either a tag/folder or a hand-picked set of shows. **DECISION:** Tags only, manual only, or both?
-- **Shuffle play** picks a random show from the pool, finds that show's oldest *eligible* episode, and plays it.
-- **Continuous shuffle:** when that episode ends, pick another show and repeat until stopped.
-- **Eligible episode:** not marked played. Partially played episodes count, and resume from their saved position. **DECISION:** Should streaming be allowed, or only downloaded episodes? A "prefer downloaded, stream if online" option is a reasonable default.
-- Shows with no eligible episodes are skipped. If the whole pool is exhausted, stop and say so.
+### News (the queue)
 
-### Selection options (build the first, consider the rest)
+- **News is AntennaPod's normal queue.** News and sports shows use the existing per-show setting "New episodes: add to queue".
+- **Per-show queue position** (new): each show is **Bottom** (the default) or **Top**.
+  - *Bottom:* new episodes are appended to the end of the queue.
+  - *Top:* new episodes go to the top, with two rules. They never go above the episode that's currently playing, since nothing ever interrupts playback. And they never go above another queued episode from the same show; they go right after the last one.
+- **Nothing interrupts playback.** A new News episode that arrives while anything is playing waits until that episode ends.
+- The queue can be reordered, and episodes from any show can be added to it by hand (existing AntennaPod behavior).
 
-- **Uniform per show** (default): every show with remaining episodes is equally likely.
-- **No immediate repeats:** never pick the same show twice in a row if another is available.
-- **Weighted by backlog:** shows with more remaining episodes are picked more often. **DECISION:** Wanted?
-- **Recency cooldown:** reduce the chance of shows played recently.
+### Entertainment (below the queue)
 
-### Design
+- **The Entertainment tab** lists subscriptions. Tick the shows that are in the Entertainment pool right now.
+- **Up Next** is the Queue screen with an Entertainment section added under the News queue. It shows, in order:
+  1. **Forced episodes**, as actual episodes, in the order they will play. Each can be deleted.
+  2. **The pool.** With one show in the pool, its next episode is shown, since it plays straight through. With several shows, only the list of shows is shown, never which episode comes next.
+- **When the News queue runs out**, the next Entertainment episode is chosen: the first forced episode if there is one, otherwise a **pure random** show from the pool (no repeat avoidance), playing that show's **oldest eligible** episode. Only this one episode moves into the queue, and only when it's about to play, so News that arrives later always comes first.
+- **Eligible** means not played and not archived. Partly played episodes count and resume from their position. Streaming is fine.
+- **Force next** ("play the next N episodes of this show"): available from the Now Playing screen and from each show in the Entertainment section. It adds that show's next N oldest eligible episodes to the forced list, bypassing the shuffle. Forced episodes are deletable at any time.
+- Android Auto: nothing special. Once chosen, the next episode is in the queue like any other.
 
-- `ShuffleEngine` (pure logic): takes a list of candidate shows, each with its oldest eligible episode and any history needed for options, plus a random number source. Returns the chosen episode. Passing the random source in makes it deterministic in tests.
-- `ShuffleController` (Android side): loads candidates from AntennaPod's database via `DBReader`, calls the engine, and hands the result to playback.
+### Archive
 
-**Integration approach: keep the queue topped up, don't rewrite the playback service.** AntennaPod already knows how to play the next queue item when an episode ends. While shuffle mode is active, the controller keeps exactly one shuffle-chosen episode at the front of the queue. When playback of that episode ends (listen for the playback-ended event), it picks the next one and inserts it. This avoids touching `PlaybackService` internals, which is the part of the codebase most likely to change upstream and most likely to break in subtle ways.
+- **Archived** means done without being heard. It is separate from **played**, so stats can tell the two apart.
+- The Entertainment pool skips archived episodes. They're hidden from a show's episode list by default, with a filter to show them.
+- Stored in the fork's own database, keyed by feed URL + episode GUID (see [Custom data storage](#custom-data-storage)).
+- **Bulk action:** "Archive everything before this episode" and "Mark everything before this episode as played", for catching up after migrating from Pocket Casts.
 
-**DECISION:** When shuffle stops, what happens to episodes it added to the queue? Options: leave them, or remove the one it added if it's unplayed.
+### Build order
 
-### UI
+1. Archive, the bulk actions, and per-show Top/Bottom.
+2. The Entertainment pool, the Entertainment tab, and the Up Next section.
+3. Force next, from Now Playing and from the Entertainment section.
 
-- A "Shuffle" action on the subscriptions screen or a folder's screen.
-- A pool manager screen (create, rename, delete, choose shows).
-- A visible indicator in the player while shuffle mode is active, with a "skip to next show" action.
-- Optional later: a home screen widget or notification action.
+### TODO / later
 
-### Edge cases
-
-- **Truncated feeds.** Many podcasts only include their latest 100 to 300 episodes in the RSS feed. "Oldest remaining" then means oldest *in the feed*, not the true first episode. Some shows have back catalogs only on premium feeds. Nothing to fix here, just be aware.
-- **Missing or wrong publish dates.** Sort by publish date, with the feed's own order as a tiebreaker. Some feeds republish old episodes with new dates.
-- **Trailers and bonus episodes** may be the "oldest" episode. Consider a per-show "skip episodes shorter than N minutes" or title-keyword filter later.
-- **Imported episodes you have already heard.** See [Migrating from Pocket Casts](#migrating-from-pocket-casts). This is the biggest practical issue for this feature.
-
-### Done when
-
-- I can start continuous shuffle from a folder, and it plays the oldest unplayed episode of a random show, then moves on to another show, for at least a full commute without manual intervention.
-- `ShuffleEngine` has unit tests covering: empty pool, single show, exhausted shows, no-immediate-repeat, and deterministic output with a seeded random source.
+- [ ] **Silent download-ahead:** quietly pick the next Entertainment episode in advance and download it, without revealing it in Up Next, so it plays offline.
 
 ---
 

@@ -1037,4 +1037,33 @@
     <string name="wearos_play_on_phone" tools:ignore="UnusedResources">Play on phone</string>
     <string name="wearos_browse_phone" tools:ignore="UnusedResources">Browse phone</string>
     <string name="wearos_open_on_phone" tools:ignore="UnusedResources">Open on phone</string>
+
+    <!-- SHUFFLEPOD: fork strings. Kept together at the end to make upstream merges easy. -->
+    <string name="shufflepod_archive_label">Archive</string>
+    <string name="shufflepod_unarchive_label">Unarchive</string>
+    <string name="shufflepod_archive_older_label">Archive all older episodes…</string>
+    <string name="shufflepod_mark_older_played_label">Mark all older episodes as played…</string>
+    <string name="shufflepod_show_archived_label">Show archived episodes</string>
+    <plurals name="shufflepod_archived_message">
+        <item quantity="one">%d episode archived.</item>
+        <item quantity="other">%d episodes archived.</item>
+    </plurals>
+    <plurals name="shufflepod_unarchived_message">
+        <item quantity="one">%d episode unarchived.</item>
+        <item quantity="other">%d episodes unarchived.</item>
+    </plurals>
+    <string name="shufflepod_older_none">There are no older episodes to change.</string>
+    <plurals name="shufflepod_archive_older_confirm">
+        <item quantity="one">Archive %1$d episode of %2$s published before this one?</item>
+        <item quantity="other">Archive %1$d episodes of %2$s published before this one?</item>
+    </plurals>
+    <plurals name="shufflepod_mark_older_played_confirm">
+        <item quantity="one">Mark %1$d episode of %2$s published before this one as played?</item>
+        <item quantity="other">Mark %1$d episodes of %2$s published before this one as played?</item>
+    </plurals>
+    <string name="shufflepod_queue_position_title">Position in queue</string>
+    <string name="shufflepod_queue_position_bottom">Bottom of the queue</string>
+    <string name="shufflepod_queue_position_top">Top of the queue</string>
+    <string name="shufflepod_queue_position_bottom_summary">New episodes are added to the end of the queue</string>
+    <string name="shufflepod_queue_position_top_summary">New episodes go to the top of the queue, after the episode that is playing and after this show\'s other queued episodes</string>
 </resources>

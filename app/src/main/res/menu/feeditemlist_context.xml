@@ -20,6 +20,28 @@
         android:menuCategory="container"
         android:title="@string/mark_as_unplayed_label" />
 
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_archive_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_archive_label" />
+
+    <item
+        android:id="@+id/shufflepod_unarchive_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_unarchive_label" />
+
+    <item
+        android:id="@+id/shufflepod_archive_older_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_archive_older_label" />
+
+    <item
+        android:id="@+id/shufflepod_mark_older_played_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_mark_older_played_label" />
+    <!-- /SHUFFLEPOD -->
+
     <item
         android:id="@+id/add_to_queue_item"
         android:menuCategory="container"

@@ -219,7 +219,7 @@ public abstract class FeedDatabaseWriter {
         }
 
         // We need to add to queue after items are saved to database
-        DBWriter.addQueueItem(context, itemsToAddToQueue.toArray(new FeedItem[0]));
+        ShufflepodQueueWriter.addNewEpisodes(context, resultFeed, itemsToAddToQueue); // SHUFFLEPOD: per-show Top/Bottom
 
         adapter.close();
 

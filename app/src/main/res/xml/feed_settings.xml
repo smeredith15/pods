@@ -78,6 +78,12 @@
             android:summary="@string/global_default"
             android:title="@string/pref_new_episodes_action_title" />
 
+        <!-- SHUFFLEPOD -->
+        <Preference
+            android:icon="@drawable/ic_playlist_play"
+            android:key="shufflepodQueuePosition"
+            android:title="@string/shufflepod_queue_position_title" />
+
         <de.danoeh.antennapod.ui.preferences.preference.MaterialListPreference
             android:entries="@array/spnEnableAutoDownloadItems"
             android:entryValues="@array/spnEnableAutoDownloadValues"

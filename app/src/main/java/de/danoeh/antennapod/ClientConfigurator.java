@@ -1,5 +1,6 @@
 package de.danoeh.antennapod;
 
+import de.danoeh.antennapod.shufflepod.Shufflepod; // SHUFFLEPOD
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -40,6 +41,7 @@ public class ClientConfigurator {
             e.printStackTrace();
         }
         PodDBAdapter.init(context);
+        Shufflepod.init(context); // SHUFFLEPOD
         UserPreferences.init(context);
         SynchronizationCredentials.init(context);
         SynchronizationSettings.init(context);
