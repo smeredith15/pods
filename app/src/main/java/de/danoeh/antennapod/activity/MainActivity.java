@@ -83,6 +83,7 @@ import de.danoeh.antennapod.ui.screen.queue.QueueFragment;
 import de.danoeh.antennapod.ui.screen.rating.RatingDialogManager;
 import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
+import de.danoeh.antennapod.ui.shufflepod.EntertainmentFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.view.BottomSheetBackPressedCallback;
 import de.danoeh.antennapod.ui.view.LockableBottomSheetBehavior;
 import org.apache.commons.lang3.ArrayUtils;
@@ -475,6 +476,9 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
                 break;
             case StatisticsFragment.TAG:
                 fragment = new StatisticsFragment();
+                break;
+            case EntertainmentFragment.TAG: // SHUFFLEPOD
+                fragment = new EntertainmentFragment();
                 break;
             case DiscoveryFragment.TAG:
                 fragment = new DiscoveryFragment();

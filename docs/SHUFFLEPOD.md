@@ -290,9 +290,20 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 
 ### Build order
 
-1. Archive, the bulk actions, and per-show Top/Bottom.
-2. The Entertainment pool, the Entertainment tab, and the Up Next section.
+1. ✅ Archive, the bulk actions, and per-show Top/Bottom.
+2. ✅ The Entertainment pool, the Entertainment tab, and the Up Next section.
 3. Force next, from Now Playing and from the Entertainment section.
+
+### How stage 2 works (as built)
+
+- **What plays next** when an episode ends or is skipped (`ShufflepodEntertainment.nextAfter`, hooked into `Media3PlaybackService.startNextInQueue`):
+  1. the next episode in the queue, as in AntennaPod;
+  2. otherwise any other queued episode, so News always comes first. This includes the case where the finished episode wasn't in the queue, where AntennaPod itself would just stop;
+  3. otherwise the oldest eligible episode of a random pool show, which is added to the end of the queue and played.
+- **Eligible** means unplayed (partly played counts), not archived, with audio, and not already queued.
+- **Entertainment tab:** in the navigation drawer, and in the bottom bar's "More" menu until you move it. It lists subscriptions with how many eligible episodes each has left; tap a row to add or remove it from the pool.
+- **Up Next panel:** a strip under the queue saying what comes after it. With one show it names that show's next episode; with several it lists the shows only. Tap it to open the Entertainment tab.
+- Pool membership is stored in `shufflepod.db` (table `entertainment_pool`, schema version 2).
 
 ### TODO / later
 

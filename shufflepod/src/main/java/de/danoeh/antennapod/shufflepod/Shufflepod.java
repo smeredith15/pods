@@ -28,6 +28,7 @@ public final class Shufflepod {
         SQLiteDatabase db = created.getReadableDatabase();
         ShowSettings.load(db);
         ArchiveStore.load(db);
+        EntertainmentPool.load(db);
         database = created;
     }
 
