@@ -3,9 +3,9 @@
     <string-array name="nav_drawer_section_tags">
         <item>HomeFragment</item>
         <item>QueueFragment</item>
-        <item>EntertainmentFragment</item> <!-- SHUFFLEPOD -->
         <item>NewEpisodesFragment</item>
         <item>SubscriptionFragment</item>
+        <item>EntertainmentFragment</item> <!-- SHUFFLEPOD: first under "More" -->
         <item>EpisodesFragment</item>
         <item>DownloadsFragment</item>
         <item>PlaybackHistoryFragment</item>
