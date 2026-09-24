@@ -1063,6 +1063,26 @@
         <item quantity="one">Mark %1$d episode of %2$s published before this one as played?</item>
         <item quantity="other">Mark %1$d episodes of %2$s published before this one as played?</item>
     </plurals>
+    <string name="shufflepod_entertainment_label">Entertainment</string>
+    <string name="shufflepod_entertainment_label_short">Entertainment</string>
+    <string name="shufflepod_entertainment_intro">Ticked shows form the Entertainment pool. When the queue runs out, the oldest unplayed episode of a random show from the pool plays next.</string>
+    <plurals name="shufflepod_entertainment_pool_size">
+        <item quantity="one">%d show in the pool</item>
+        <item quantity="other">%d shows in the pool</item>
+    </plurals>
+    <plurals name="shufflepod_entertainment_episodes_left">
+        <item quantity="one">%d episode left</item>
+        <item quantity="other">%d episodes left</item>
+    </plurals>
+    <string name="shufflepod_entertainment_none_left">No episodes left</string>
+    <string name="shufflepod_panel_title">Then from Entertainment</string>
+    <string name="shufflepod_panel_empty">No shows in the Entertainment pool yet. Tap to choose some.</string>
+    <string name="shufflepod_panel_exhausted">The shows in the Entertainment pool have no episodes left.</string>
+    <string name="shufflepod_panel_single">%1$s · %2$s</string>
+    <plurals name="shufflepod_panel_shuffle">
+        <item quantity="one">Shuffling %1$d show: %2$s</item>
+        <item quantity="other">Shuffling %1$d shows: %2$s</item>
+    </plurals>
     <string name="shufflepod_queue_position_title">Position in queue</string>
     <string name="shufflepod_queue_position_bottom">Bottom of the queue</string>
     <string name="shufflepod_queue_position_top">Top of the queue</string>

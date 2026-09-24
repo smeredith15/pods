@@ -13,6 +13,7 @@ import de.danoeh.antennapod.ui.screen.home.HomeFragment;
 import de.danoeh.antennapod.ui.screen.queue.QueueFragment;
 import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
+import de.danoeh.antennapod.ui.shufflepod.EntertainmentFragment; // SHUFFLEPOD
 
 public abstract class NavigationNames {
     public static @DrawableRes int getDrawable(String tag) {
@@ -33,6 +34,8 @@ public abstract class NavigationNames {
                 return R.drawable.ic_subscriptions;
             case StatisticsFragment.TAG:
                 return R.drawable.ic_chart_box;
+            case EntertainmentFragment.TAG: // SHUFFLEPOD
+                return R.drawable.ic_shuffle;
             case AddFeedFragment.TAG:
                 return R.drawable.ic_add;
             case FavoritesFragment.TAG:
@@ -60,6 +63,8 @@ public abstract class NavigationNames {
                 return R.string.playback_history_label;
             case StatisticsFragment.TAG:
                 return R.string.statistics_label;
+            case EntertainmentFragment.TAG: // SHUFFLEPOD
+                return R.string.shufflepod_entertainment_label;
             case AddFeedFragment.TAG:
                 return R.string.add_feed_label;
             case FavoritesFragment.TAG:
@@ -89,6 +94,8 @@ public abstract class NavigationNames {
                 return R.string.playback_history_label_short;
             case StatisticsFragment.TAG:
                 return R.string.statistics_label_short;
+            case EntertainmentFragment.TAG: // SHUFFLEPOD
+                return R.string.shufflepod_entertainment_label_short;
             case AddFeedFragment.TAG:
                 return R.string.add_feed_label_short;
             case FavoritesFragment.TAG:
@@ -120,6 +127,8 @@ public abstract class NavigationNames {
                 return R.id.bottom_navigation_subscriptions;
             case StatisticsFragment.TAG:
                 return R.id.bottom_navigation_statistics;
+            case EntertainmentFragment.TAG: // SHUFFLEPOD
+                return R.id.bottom_navigation_entertainment;
             case HomeFragment.TAG: // fall-through
             default:
                 return R.id.bottom_navigation_home;
@@ -145,6 +154,8 @@ public abstract class NavigationNames {
             return SubscriptionFragment.TAG;
         } else if (id == R.id.bottom_navigation_statistics) {
             return StatisticsFragment.TAG;
+        } else if (id == R.id.bottom_navigation_entertainment) { // SHUFFLEPOD
+            return EntertainmentFragment.TAG;
         } else if (id == R.id.bottom_navigation_home) {
             return HomeFragment.TAG;
         }

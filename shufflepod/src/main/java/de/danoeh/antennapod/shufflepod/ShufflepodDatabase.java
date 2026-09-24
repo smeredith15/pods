@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class ShufflepodDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "shufflepod.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     static final String TABLE_SHOW_SETTINGS = "show_settings";
     static final String KEY_FEED_URL = "feed_url";
@@ -20,6 +20,10 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
     static final String KEY_ITEM_ID = "item_id";
     static final String KEY_EPISODE_KEY = "episode_key";
     static final String KEY_ARCHIVED_AT = "archived_at";
+
+    static final String TABLE_ENTERTAINMENT_POOL = "entertainment_pool";
+    static final String KEY_FEED_ID = "feed_id";
+    static final String KEY_ADDED_AT = "added_at";
 
     static final String TABLE_APP_SETTING = "app_setting";
     static final String KEY_NAME = "name";
@@ -43,9 +47,20 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_APP_SETTING + " ("
                 + KEY_NAME + " TEXT PRIMARY KEY NOT NULL, "
                 + KEY_VALUE + " TEXT)");
+        createEntertainmentPool(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            createEntertainmentPool(db);
+        }
+    }
+
+    private static void createEntertainmentPool(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + TABLE_ENTERTAINMENT_POOL + " ("
+                + KEY_FEED_URL + " TEXT PRIMARY KEY NOT NULL, "
+                + KEY_FEED_ID + " INTEGER NOT NULL, "
+                + KEY_ADDED_AT + " INTEGER NOT NULL)");
     }
 }

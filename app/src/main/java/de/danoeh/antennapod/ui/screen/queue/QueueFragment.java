@@ -28,6 +28,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import de.danoeh.antennapod.ui.shufflepod.EntertainmentPanel; // SHUFFLEPOD
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
 import de.danoeh.antennapod.ui.screen.InboxFragment;
@@ -84,6 +85,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
     private static final String SCROLL_OFFSET_KEY = "scroll_offset";
 
     private TextView infoBar;
+    private EntertainmentPanel entertainmentPanel; // SHUFFLEPOD
     private EpisodeItemListRecyclerView recyclerView;
     private QueueRecyclerAdapter recyclerAdapter;
     private EmptyViewHandler emptyView;
@@ -113,6 +115,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
     public void onStart() {
         super.onStart();
         loadItems();
+        entertainmentPanel.refresh(); // SHUFFLEPOD
         EventBus.getDefault().register(this);
     }
 
@@ -127,6 +130,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
     @Override
     public void onStop() {
         super.onStop();
+        entertainmentPanel.dispose(); // SHUFFLEPOD
         EventBus.getDefault().unregister(this);
         if (disposable != null) {
             disposable.dispose();
@@ -174,6 +178,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         recyclerAdapter.updateDragDropEnabled();
         refreshToolbarState();
         refreshInfoBar();
+        entertainmentPanel.refresh(); // SHUFFLEPOD
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -425,6 +430,7 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         boolean largePadding = displayUpArrow || !UserPreferences.isBottomNavigationEnabled();
         int paddingHorizontal = (int) (getResources().getDisplayMetrics().density * (largePadding ? 60 : 16));
         infoBar.setPadding(paddingHorizontal, 0, paddingHorizontal, 0);
+        entertainmentPanel = new EntertainmentPanel(root, (MainActivity) getActivity()); // SHUFFLEPOD
 
         recyclerView = root.findViewById(R.id.recyclerView);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();

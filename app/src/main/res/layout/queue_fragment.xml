@@ -38,6 +38,7 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/shufflepodEntertainmentPanel"
         android:layout_below="@id/appbar">
 
         <de.danoeh.antennapod.ui.episodeslist.EpisodeItemListRecyclerView
@@ -47,6 +48,13 @@
             android:paddingHorizontal="@dimen/additional_horizontal_spacing" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- SHUFFLEPOD: what plays from Entertainment when the queue runs out -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/shufflepod_entertainment_panel" />
 
     <ProgressBar
         android:id="@+id/progressBar"

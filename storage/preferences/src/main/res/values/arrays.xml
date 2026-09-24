@@ -5,6 +5,7 @@
         <item>QueueFragment</item>
         <item>NewEpisodesFragment</item>
         <item>SubscriptionFragment</item>
+        <item>EntertainmentFragment</item> <!-- SHUFFLEPOD: first under "More" -->
         <item>EpisodesFragment</item>
         <item>DownloadsFragment</item>
         <item>PlaybackHistoryFragment</item>
