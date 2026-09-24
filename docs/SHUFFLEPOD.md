@@ -9,6 +9,8 @@ A personal fork of [AntennaPod](https://github.com/AntennaPod/AntennaPod), the o
 
 This app is for personal use only. It will not be published to any app store.
 
+> **Decisions made so far:** little prior Android/Java experience, so Claude does the building. Builds through GitHub Actions. Free flavor, no Chromecast. Android Auto must keep working. Mid-way through dozens of shows in Pocket Casts, so the "mark everything before date X as played" tool moves up into M1.
+
 > **How to use this document:** It is a working plan, not finished documentation. Sections marked **DECISION** need an answer before that part is built. The full list is in [Open questions](#open-questions). Update this file as decisions are made so it stays the source of truth.
 
 ---
@@ -75,32 +77,50 @@ Before writing any code, confirm AntennaPod covers the baseline. Verify each ite
 
 ## Getting set up
 
-### Prerequisites
+### What's already done
 
-- Android Studio (latest stable).
-- The JDK version the project's Gradle build expects (check `build.gradle` or the project's CI config; Android Studio's bundled JDK is usually right).
-- An Android phone with Developer Options and USB debugging enabled.
-- A GitHub account for the fork.
+- This repo (`smeredith15/pods`) **is** the fork. It contains AntennaPod's full git history, merged at release tag `3.12.2`, and `upstream` points at `https://github.com/AntennaPod/AntennaPod.git`.
+- This plan lives at `docs/SHUFFLEPOD.md` so it doesn't collide with upstream's `README.md`.
+- Application ID is `io.github.smeredith15.pods` (debug builds: `io.github.smeredith15.pods.debug`), so it installs alongside the official AntennaPod. File-provider authorities were changed to match.
+- The app is named **"Podcasts"** on the phone ("Podcasts Debug" for debug builds). Set in `common.gradle`.
+- We ship the **free** flavor (no Google Play Services, no Chromecast). Android Auto support is in the main manifest, so it works in the free flavor too.
 
-### Steps
+### Building (GitHub Actions)
 
-1. **Fork** `AntennaPod/AntennaPod` on GitHub into your account.
-2. **Clone** your fork and add upstream as a remote:
-   ```bash
-   git clone git@github.com:<you>/AntennaPod.git shufflepod
-   cd shufflepod
-   git remote add upstream https://github.com/AntennaPod/AntennaPod.git
-   ```
-3. **Create a working branch.** Keep `develop` (or whatever upstream's default branch is) as a pristine mirror of upstream:
-   ```bash
-   git checkout -b shufflepod
-   ```
-4. **Change the application ID** so the fork can be installed alongside the official app during the transition. Find `applicationId` in the app module's `build.gradle` and change it (for example, to `com.<you>.shufflepod`). Also change the app's display name string so you can tell the two apps apart.
-5. **Pick a build flavor.** The project has used product flavors that differ in whether Google Play Services (for example, Chromecast) is included. Use the flavor without Play Services unless you want casting. **DECISION:** Do you need Chromecast?
-6. **Build and install** a debug build from Android Studio onto your phone to confirm everything works before changing anything.
-7. **Set up release signing before you rely on the app.** Create your own keystore and configure a signed release build. This matters because Android will only install an update over an existing app if both are signed with the same key. If you lose the key or switch keys, you have to uninstall, which deletes all app data. **Back up the keystore and its passwords somewhere safe outside the repo.** Keep signing config in `local.properties` or environment variables, never in git.
+There is no local Android Studio setup. Every push to a fork branch runs `.github/workflows/shufflepod-build.yml`, which builds the APK and attaches it to the run.
 
----
+To install a build:
+1. On GitHub, open **Actions → Build APK**, then the latest run.
+2. Under **Artifacts**, download `podcasts-apk-…` (a zip), and unzip it on the phone.
+3. Open the `.apk` and allow "install unknown apps" for your browser or file manager when asked.
+
+### Release signing (one-time setup, required before daily use)
+
+Android only installs an update over an existing app if both are signed with the same key. Without signing secrets, CI makes debug builds with a throwaway key that changes every run, so each new build has to be uninstalled first, which **deletes all app data**. Once the four secrets below are set, CI makes signed release builds that update in place.
+
+In the repo on GitHub: **Settings → Secrets and variables → Actions → New repository secret**, and add:
+
+| Secret | Value |
+|---|---|
+| `SIGNING_KEYSTORE_BASE64` | The keystore file, base64-encoded (`base64 -w0 release.keystore`) |
+| `SIGNING_STORE_PASSWORD` | Keystore password |
+| `SIGNING_KEY_ALIAS` | Key alias |
+| `SIGNING_KEY_PASSWORD` | Key password |
+
+**Back up the keystore file and its passwords outside the repo** (password manager). If they are lost, you have to uninstall and reinstall, which wipes app data.
+
+### Android Auto with a sideloaded app
+
+Android Auto hides apps that weren't installed from the Play Store. To make "Podcasts" appear: open Android Auto settings on the phone, tap **Version** repeatedly until developer mode is enabled, then in the top-right menu open **Developer settings** and turn on **Unknown sources**.
+
+### Syncing with upstream
+
+```bash
+git fetch upstream --tags
+git merge 3.13.0        # merge the next upstream release tag, not develop
+```
+
+Then resolve conflicts (search for `SHUFFLEPOD`) and push. CI will build the result.
 
 ## Guiding principles for the fork
 
@@ -491,10 +511,10 @@ AntennaPod is licensed under the GPL-3.0. For purely personal use with no distri
 Answer these before or during the relevant milestone, then fold the answers into the sections above.
 
 **General**
-1. How comfortable am I with Java/Kotlin and Android development? (Affects how much of M0 is learning time.)
+1. ~~How comfortable am I with Java/Kotlin and Android development?~~ **Answered:** little experience; Claude builds.
 2. Java or Kotlin for new code?
-3. Do I need Chromecast (affects build flavor)?
-4. Do I need Android Auto or Wear OS support to keep working? (Check they work in the fork during M0.)
+3. ~~Do I need Chromecast?~~ **Answered:** no, so we use the free flavor.
+4. ~~Do I need Android Auto or Wear OS?~~ **Answered:** Android Auto yes (check it works during M0). Wear OS not needed.
 5. Is sync to a second device needed ever, or is one phone enough?
 6. Plain SQLite or Room for the Shufflepod database?
 
@@ -520,4 +540,4 @@ Answer these before or during the relevant milestone, then fold the answers into
 19. Follow creators (hosts who start new shows) as well as guests? Hosts are better served by person tags and by searching for new feeds, which is a slightly different problem.
 
 **Migration**
-20. Roughly how many shows, and how many have partially heard back catalogs?
+20. ~~Roughly how many shows?~~ **Answered:** partway through dozens of shows, so "mark before date as played" is part of M1.
