@@ -43,6 +43,13 @@
         custom:showAsAction="never">
     </item>
 
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_play_next_from_show_item"
+        android:title="@string/shufflepod_play_next_from_show_label"
+        android:visible="false"
+        custom:showAsAction="never" />
+
     <item
         android:id="@+id/open_feed_item"
         android:icon="@drawable/ic_feed"

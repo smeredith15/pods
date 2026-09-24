@@ -1083,6 +1083,21 @@
         <item quantity="one">Shuffling %1$d show: %2$s</item>
         <item quantity="other">Shuffling %1$d shows: %2$s</item>
     </plurals>
+    <string name="shufflepod_play_next_from_show_label">Play next from this show…</string>
+    <string name="shufflepod_play_next_title">Play next from %s</string>
+    <plurals name="shufflepod_play_next_count">
+        <item quantity="one">%d episode</item>
+        <item quantity="other">%d episodes</item>
+    </plurals>
+    <plurals name="shufflepod_forced_added">
+        <item quantity="one">The next %1$d episode of %2$s will play after the queue.</item>
+        <item quantity="other">The next %1$d episodes of %2$s will play after the queue.</item>
+    </plurals>
+    <string name="shufflepod_forced_none">%s has no more episodes to add.</string>
+    <string name="shufflepod_forced_section">Playing next</string>
+    <string name="shufflepod_shows_section">Shows</string>
+    <string name="shufflepod_forced_remove">Remove</string>
+    <string name="shufflepod_panel_forced">Next: %s</string>
     <string name="shufflepod_queue_position_title">Position in queue</string>
     <string name="shufflepod_queue_position_bottom">Bottom of the queue</string>
     <string name="shufflepod_queue_position_top">Top of the queue</string>
