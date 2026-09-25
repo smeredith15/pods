@@ -1018,6 +1018,7 @@ public class PodDBAdapter {
                 + " WHERE " + TABLE_NAME_FEED_ITEMS + "." + KEY_FEED + "=" + feed.getId()
                 + whereClauseAnd
                 + " ORDER BY " + orderByQuery
+                + ", " + TABLE_NAME_FEED_ITEMS + "." + KEY_ID // SHUFFLEPOD: keep tie order with the extra indexes
                 + " LIMIT " + offset + ", " + limit;
         return db.rawQuery(query, null);
     }
