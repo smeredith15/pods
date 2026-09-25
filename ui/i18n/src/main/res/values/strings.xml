@@ -1172,4 +1172,6 @@
     <string name="shufflepod_pocketcasts_not_found_header">Shows not found here:</string>
     <string name="shufflepod_pocketcasts_failed">Import failed: %s</string>
     <string name="shufflepod_no_audio_label">No audio file</string>
+    <string name="shufflepod_pocketcasts_token_help">Signed in to Pocket Casts with Google or Apple? Leave email and password empty and paste a token instead. On a computer, sign in at play.pocketcasts.com, open the browser\'s developer tools (F12), go to Network, click any request to api.pocketcasts.com and copy the value of its Authorization header.</string>
+    <string name="shufflepod_pocketcasts_token_hint">Token (optional)</string>
 </resources>

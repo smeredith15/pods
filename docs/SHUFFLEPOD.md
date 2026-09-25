@@ -495,7 +495,7 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 5. Per-podcast settings (speed, auto-download, folders) need to be set up again by hand.
 
 **As built:** Podcasts → ⋮ → **Import from Pocket Casts…** (`PocketCastsImportDialog`, `PocketCastsImport`, `PocketCastsClient`, and `PocketCastsMatcher` in `:shufflepod`).
-- Signs in to Pocket Casts' private web-player API (`user/login`, scope `webplayer`). The password is sent only there and not stored.
+- Signs in to Pocket Casts' private web-player API (`user/login`, scope `webplayer`). The password is sent only there and not stored. Accounts that use Google or Apple sign-in can paste the web player's `Authorization` token instead.
 - Reads the subscription list and each show's episode statuses. For shows with played or archived episodes, it also reads Pocket Casts' episode catalog, for URLs, titles and dates.
 - Shows are matched by normalized title, falling back to the website link. Episodes are matched by audio URL, then audio file name, then title plus publish date within 3 days.
 - **Played** (`playingStatus` 3) → marked played. **Archived** only (`isDeleted`) → archived. Both leave the queue.
