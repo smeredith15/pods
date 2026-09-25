@@ -33,7 +33,9 @@ public abstract class FeedMenuHandler {
                 allArchived = false;
             }
         }
-        setItemVisibility(menu, R.id.remove_all_inbox_item, allSubscribed);
+        setItemVisibility(menu, R.id.remove_all_inbox_item, false); // SHUFFLEPOD: no inbox (was allSubscribed)
+        setItemVisibility(menu, R.id.shufflepod_bulk_news_item, allSubscribed); // SHUFFLEPOD
+        setItemVisibility(menu, R.id.shufflepod_bulk_entertainment_item, allSubscribed); // SHUFFLEPOD
         setItemVisibility(menu, R.id.remove_archive_feed, !allArchived && allSubscribed);
         setItemVisibility(menu, R.id.remove_restore_feed, allArchived);
         boolean singleNonLocalFeedSelected = selectedItems.size() == 1 && !selectedItems.get(0).isLocalFeed();

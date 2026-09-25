@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.storage.database;
 
+import de.danoeh.antennapod.shufflepod.ShowTags; // SHUFFLEPOD
 import android.content.Context;
 import android.util.Log;
 import de.danoeh.antennapod.event.FeedListUpdateEvent;
@@ -169,6 +170,9 @@ public abstract class FeedDatabaseWriter {
                             // Auto download currently only considers episodes in the inbox
                             action = FeedPreferences.NewEpisodesAction.ADD_TO_INBOX;
                         }
+                        action = ShowTags.isNews(savedFeed.getPreferences()) // SHUFFLEPOD: News tag, no inbox
+                                ? FeedPreferences.NewEpisodesAction.ADD_TO_QUEUE
+                                : FeedPreferences.NewEpisodesAction.NOTHING; // SHUFFLEPOD
                         switch (action) {
                             case ADD_TO_INBOX:
                                 item.setNew();

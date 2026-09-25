@@ -29,6 +29,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 import de.danoeh.antennapod.ui.share.ShareUtils;
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFeedMenu; // SHUFFLEPOD
 
 public class FeedMultiSelectActionHandler {
     private static final String TAG = "FeedSelectHandler";
@@ -64,6 +65,8 @@ public class FeedMultiSelectActionHandler {
             if (!selectedItems.get(0).isLocalFeed()) {
                 ShareUtils.shareFeedLink(activity, selectedItems.get(0));
             }
+        } else if (ShufflepodFeedMenu.onBulkAction(activity, id, selectedItems)) { // SHUFFLEPOD
+            return; // SHUFFLEPOD
         } else {
             Log.e(TAG, "Unrecognized speed dial action item. Do nothing. id=" + id);
         }

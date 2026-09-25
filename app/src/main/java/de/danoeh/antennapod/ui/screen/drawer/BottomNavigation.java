@@ -37,6 +37,7 @@ public class BottomNavigation {
     private final Context context;
 
     private Disposable bottomNavigationBadgeLoader = null;
+    private View moreMenuAnchor = null; // SHUFFLEPOD
 
     public BottomNavigation(BottomNavigationView bottomNavigationView) {
         this.bottomNavigationView = bottomNavigationView;
@@ -51,14 +52,13 @@ public class BottomNavigation {
         Menu menu = bottomNavigationView.getMenu();
         menu.clear();
         int maxItems = Math.min(5, bottomNavigationView.getMaxItemCount());
-        for (int i = 0; i < drawerItems.size() && i < maxItems - 1; i++) {
+        for (int i = 0; i < drawerItems.size() && i < maxItems; i++) { // SHUFFLEPOD: was maxItems - 1
             String tag = drawerItems.get(i);
             MenuItem item = menu.add(0, NavigationNames.getBottomNavigationItemId(tag),
                     0, context.getString(NavigationNames.getShortLabel(tag)));
             item.setIcon(NavigationNames.getDrawable(tag));
         }
-        MenuItem moreItem = menu.add(0, R.id.bottom_navigation_more, 0, context.getString(R.string.overflow_more));
-        moreItem.setIcon(R.drawable.dots_vertical);
+        // SHUFFLEPOD: no "More" tab; it opens from the toolbar button instead (see showMoreMenu)
         bottomNavigationView.setOnItemSelectedListener(bottomItemSelectedListener);
         updateBottomNavigationBadgeIfNeeded();
     }
@@ -93,12 +93,17 @@ public class BottomNavigation {
         }
     };
 
+    public void showMoreMenu(View anchor) { // SHUFFLEPOD
+        moreMenuAnchor = anchor;
+        showBottomNavigationMorePopup();
+    } // SHUFFLEPOD
+
     private void showBottomNavigationMorePopup() {
         List<String> drawerItems = UserPreferences.getVisibleDrawerItemOrder();
         drawerItems.remove(NavListAdapter.SUBSCRIPTION_LIST_TAG);
 
         final List<MenuItem> popupMenuItems = new ArrayList<>();
-        for (int i = bottomNavigationView.getMaxItemCount() - 1; i < drawerItems.size(); i++) {
+        for (int i = Math.min(5, bottomNavigationView.getMaxItemCount()); i < drawerItems.size(); i++) { // SHUFFLEPOD
             String tag = drawerItems.get(i);
             MenuItem item = new MenuBuilder(context).add(0, NavigationNames.getBottomNavigationItemId(tag),
                     0, context.getString(NavigationNames.getLabel(tag)));
@@ -117,7 +122,7 @@ public class BottomNavigation {
 
         final ListPopupWindow listPopupWindow = new ListPopupWindow(context);
         listPopupWindow.setWidth((int) (250 * context.getResources().getDisplayMetrics().density));
-        listPopupWindow.setAnchorView(bottomNavigationView);
+        listPopupWindow.setAnchorView(moreMenuAnchor != null ? moreMenuAnchor : bottomNavigationView); // SHUFFLEPOD
         listPopupWindow.setAdapter(new BottomNavigationMoreAdapter(context, popupMenuItems));
         listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
             int itemId = popupMenuItems.get(position).getItemId();
@@ -128,7 +133,8 @@ public class BottomNavigation {
             }
             listPopupWindow.dismiss();
         });
-        listPopupWindow.setDropDownGravity(Gravity.END | Gravity.BOTTOM);
+        listPopupWindow.setDropDownGravity(moreMenuAnchor != null ? Gravity.START // SHUFFLEPOD
+                : Gravity.END | Gravity.BOTTOM);
         listPopupWindow.setModal(true);
         listPopupWindow.show();
     }

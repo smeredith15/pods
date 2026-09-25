@@ -223,8 +223,8 @@ public class EspressoTestUtils {
     }
 
     public static void clickBottomNavOverflow(@StringRes int text) {
-        onView(allOf(withText(R.string.overflow_more),
-                isDescendantOfA(withId(R.id.bottomNavigationView)), isDisplayed())).perform(click());
+        // SHUFFLEPOD: "More" is the toolbar's navigation button now that the bar has five tabs
+        onView(allOf(withContentDescription(R.string.overflow_more), isDisplayed())).perform(click());
         onView(allOf(withText(text), isDisplayed())).perform(click());
     }
 

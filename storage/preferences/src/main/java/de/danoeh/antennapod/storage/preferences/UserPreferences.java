@@ -192,7 +192,8 @@ public abstract class UserPreferences {
     }
 
     public static List<String> getHiddenDrawerItems() {
-        String hiddenItems = prefs.getString(PREF_HIDDEN_DRAWER_ITEMS, "");
+        String hiddenItems = prefs.getString(PREF_HIDDEN_DRAWER_ITEMS,
+                "HomeFragment,NewEpisodesFragment"); // SHUFFLEPOD: was ""
         return new ArrayList<>(Arrays.asList(TextUtils.split(hiddenItems, ",")));
     }
 
@@ -745,7 +746,7 @@ public abstract class UserPreferences {
     }
 
     public static String getDefaultPage() {
-        return prefs.getString(PREF_DEFAULT_PAGE, "HomeFragment");
+        return prefs.getString(PREF_DEFAULT_PAGE, "SubscriptionFragment"); // SHUFFLEPOD: was HomeFragment
     }
 
     public static void setDefaultPage(String defaultPage) {

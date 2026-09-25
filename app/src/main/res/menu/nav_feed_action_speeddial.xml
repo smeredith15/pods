@@ -6,6 +6,20 @@
         android:title="@string/edit_tags"
         android:icon="@drawable/ic_tag"/>
 
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_bulk_news_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_bulk_news_label"
+        android:icon="@drawable/ic_shufflepod_news"/>
+
+    <item
+        android:id="@+id/shufflepod_bulk_entertainment_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_bulk_entertainment_label"
+        android:icon="@drawable/ic_shuffle"/>
+    <!-- /SHUFFLEPOD -->
+
     <item
         android:id="@+id/share_feed"
         android:menuCategory="container"

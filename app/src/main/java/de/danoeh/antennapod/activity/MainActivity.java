@@ -85,6 +85,7 @@ import de.danoeh.antennapod.ui.screen.rating.RatingDialogManager;
 import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentFragment; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.NewsFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.PeopleFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.view.BottomSheetBackPressedCallback;
 import de.danoeh.antennapod.ui.view.LockableBottomSheetBehavior;
@@ -369,6 +370,10 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
             drawerToggle.syncState();
             drawerToggle.setDrawerIndicatorEnabled(!displayUpArrow);
             drawerToggle.setToolbarNavigationClickListener(v -> getSupportFragmentManager().popBackStack());
+        } else if (!displayUpArrow && bottomNavigation != null) { // SHUFFLEPOD: "More" moved out of the full bar
+            toolbar.setNavigationIcon(R.drawable.ic_shufflepod_menu);
+            toolbar.setNavigationContentDescription(R.string.overflow_more);
+            toolbar.setNavigationOnClickListener(v -> bottomNavigation.showMoreMenu(toolbar)); // SHUFFLEPOD
         } else if (!displayUpArrow) {
             toolbar.setNavigationIcon(null);
         } else {
@@ -484,6 +489,9 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
                 break;
             case PeopleFragment.TAG: // SHUFFLEPOD
                 fragment = new PeopleFragment();
+                break;
+            case NewsFragment.TAG: // SHUFFLEPOD
+                fragment = new NewsFragment();
                 break;
             case DiscoveryFragment.TAG:
                 fragment = new DiscoveryFragment();

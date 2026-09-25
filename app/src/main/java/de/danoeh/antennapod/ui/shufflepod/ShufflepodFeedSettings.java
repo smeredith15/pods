@@ -11,15 +11,21 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.shufflepod.ShowSettings;
 
 /**
- * Fork settings shown on a podcast's settings screen.
+ * Fork settings shown on a podcast's settings screen. "New episodes action" is hidden: the News tag
+ * decides whether new episodes go to the queue, and there is no inbox.
  */
 public final class ShufflepodFeedSettings {
     private static final String PREF_QUEUE_POSITION = "shufflepodQueuePosition";
+    private static final String PREF_NEW_EPISODES_ACTION = "feedNewEpisodesAction";
 
     private ShufflepodFeedSettings() {
     }
 
     public static void setup(@NonNull PreferenceFragmentCompat fragment, @NonNull Feed feed) {
+        Preference newEpisodesAction = fragment.findPreference(PREF_NEW_EPISODES_ACTION);
+        if (newEpisodesAction != null) {
+            newEpisodesAction.setVisible(false);
+        }
         Preference preference = fragment.findPreference(PREF_QUEUE_POSITION);
         if (preference == null) {
             return;

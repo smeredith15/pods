@@ -41,6 +41,7 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.shufflepod.ArchiveStore; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFeedMenu; // SHUFFLEPOD
 import de.danoeh.antennapod.net.download.serviceinterface.FeedUpdateManager;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.DBWriter;
@@ -290,6 +291,7 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         FeedMenuHandler.onPrepareMenu(viewBinding.toolbar.getMenu(), Collections.singletonList(feed));
         viewBinding.toolbar.getMenu().findItem(R.id.shufflepod_show_archived_item) // SHUFFLEPOD
                 .setChecked(ArchiveStore.isShowArchived()); // SHUFFLEPOD
+        ShufflepodFeedMenu.prepare(viewBinding.toolbar.getMenu(), feed); // SHUFFLEPOD
     }
 
     @Override
@@ -339,6 +341,8 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         } else if (item.getItemId() == R.id.action_search) {
             ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance(feed.getId(), feed.getTitle()));
             return true;
+        } else if (ShufflepodFeedMenu.onMenuItemClick(viewBinding.toolbar.getMenu(), item, feed)) { // SHUFFLEPOD
+            return true; // SHUFFLEPOD
         }
 
         return FeedMenuHandler.onMenuItemClicked(this, item.getItemId(), feed);
