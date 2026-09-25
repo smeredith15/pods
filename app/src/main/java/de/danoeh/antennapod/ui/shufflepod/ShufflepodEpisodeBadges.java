@@ -1,13 +1,16 @@
 package de.danoeh.antennapod.ui.shufflepod;
 
+import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.shufflepod.ArchiveStore;
 
 /**
- * Fork status icons on episode list rows.
+ * Fork status icons on episode list rows (archived, no audio file), and the show name in bold on queue rows.
  */
 public final class ShufflepodEpisodeBadges {
     private ShufflepodEpisodeBadges() {
@@ -22,6 +25,10 @@ public final class ShufflepodEpisodeBadges {
         if (archived) {
             container.setAlpha(0.5f);
         }
+        View noAudio = itemView.findViewById(R.id.shufflepodNoAudio);
+        if (noAudio != null) {
+            noAudio.setVisibility(item.hasMedia() ? View.GONE : View.VISIBLE);
+        }
     }
 
     public static void hide(View itemView) {
@@ -29,10 +36,27 @@ public final class ShufflepodEpisodeBadges {
         if (badge != null) {
             badge.setVisibility(View.GONE);
         }
+        View noAudio = itemView.findViewById(R.id.shufflepodNoAudio);
+        if (noAudio != null) {
+            noAudio.setVisibility(View.GONE);
+        }
     }
 
     public static boolean isShown(View itemView) {
         View badge = itemView.findViewById(R.id.shufflepodArchived);
-        return badge != null && badge.getVisibility() == View.VISIBLE;
+        View noAudio = itemView.findViewById(R.id.shufflepodNoAudio);
+        return (badge != null && badge.getVisibility() == View.VISIBLE)
+                || (noAudio != null && noAudio.getVisibility() == View.VISIBLE);
+    }
+
+    public static void showFeedTitle(TextView size, FeedItem item) {
+        size.setText(item != null && item.getFeed() != null ? item.getFeed().getTitle() : "");
+        size.setTypeface(Typeface.create(size.getTypeface(), Typeface.BOLD));
+        size.setMaxLines(1);
+        size.setEllipsize(TextUtils.TruncateAt.END);
+    }
+
+    public static void resetSize(TextView size) {
+        size.setTypeface(Typeface.create(size.getTypeface(), Typeface.NORMAL));
     }
 }

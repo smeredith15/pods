@@ -49,6 +49,7 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView position;
     private final TextView duration;
     private final TextView size;
+    private boolean feedTitleShownInsteadOfSize = false; // SHUFFLEPOD
     public final ImageView isInbox;
     public final ImageView isInQueue;
     private final ImageView isVideo;
@@ -93,6 +94,8 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(FeedItem item) {
         this.item = item;
+        feedTitleShownInsteadOfSize = false; // SHUFFLEPOD
+        ShufflepodEpisodeBadges.resetSize(size); // SHUFFLEPOD
         placeholder.setText(item.getFeed().getTitle());
         title.setText(item.getTitle());
         if (item.isPlayed()) {
@@ -181,19 +184,28 @@ public class EpisodeItemViewHolder extends RecyclerView.ViewHolder {
             size.setText("");
             MediaSizeLoader.getFeedMediaSizeObservable(media).subscribe(
                     sizeValue -> {
-                        if (sizeValue > 0) {
+                        if (feedTitleShownInsteadOfSize) { // SHUFFLEPOD
+                            return; // SHUFFLEPOD
+                        } else if (sizeValue > 0) { // SHUFFLEPOD: was if
                             size.setText(Formatter.formatShortFileSize(activity, sizeValue));
                         } else {
                             size.setText("");
                         }
                     }, error -> {
-                        size.setText("");
+                        if (!feedTitleShownInsteadOfSize) { // SHUFFLEPOD
+                            size.setText("");
+                        } // SHUFFLEPOD
                         Log.e(TAG, Log.getStackTraceString(error));
                     });
         } else {
             size.setText("");
         }
     }
+
+    public void showFeedTitleInsteadOfSize() { // SHUFFLEPOD: used by the queue
+        feedTitleShownInsteadOfSize = true;
+        ShufflepodEpisodeBadges.showFeedTitle(size, item);
+    } // SHUFFLEPOD
 
     public void bindDummy() {
         item = new FeedItem();
