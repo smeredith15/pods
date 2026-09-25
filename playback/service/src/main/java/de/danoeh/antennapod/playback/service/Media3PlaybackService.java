@@ -901,6 +901,7 @@ public class Media3PlaybackService extends MediaLibraryService {
 
     @Subscribe(threadMode = ThreadMode.MAIN) // SHUFFLEPOD: a show's own speed now applies to its playing episode
     @SuppressWarnings("unused")
+    @UnstableApi
     public void speedPresetChanged(SpeedPresetChangedEvent event) {
         if (currentPlayable == null || player == null || currentPlayable.getItem() == null
                 || currentPlayable.getItem().getFeed() == null
