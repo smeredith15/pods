@@ -262,6 +262,7 @@
     </string-array>
 
     <string-array name="default_page_values">
+        <item>NowPlayingFragment</item> <!-- SHUFFLEPOD -->
         <item>HomeFragment</item>
         <item>QueueFragment</item>
         <item>NewEpisodesFragment</item>
@@ -272,6 +273,7 @@
     </string-array>
 
     <string-array name="default_page_titles">
+        <item>@string/shufflepod_now_playing_label</item> <!-- SHUFFLEPOD -->
         <item>@string/home_label</item>
         <item>@string/queue_label</item>
         <item>@string/inbox_label</item>

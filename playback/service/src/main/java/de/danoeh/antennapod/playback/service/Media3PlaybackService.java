@@ -645,7 +645,7 @@ public class Media3PlaybackService extends MediaLibraryService {
 
         SynchronizationQueue.getInstance().enqueueEpisodePlayed(media, ended || almostEnded);
         if (item != null) {
-            if (ended || almostEnded) {
+            if (ended || almostEnded || (skipped && !UserPreferences.shouldSkipKeepEpisode())) { // SHUFFLEPOD
                 DBWriter.markItemsPlayed(FeedItem.PLAYED, true, Collections.singletonList(item));
             }
             if (ended || almostEnded || (skipped && !UserPreferences.shouldSkipKeepEpisode())) {

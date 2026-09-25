@@ -10,8 +10,8 @@ import de.danoeh.antennapod.R;
 
 /**
  * Tabs above the Now Playing pages: Now playing (cover), Up next (queue) and Show notes. Swiping up from the
- * cover still opens the queue; on the queue and show notes the page swipe is off, so the list scrolls and
- * pulling down at the top closes the player.
+ * cover still opens the queue; on the queue and show notes the page swipe is off, so the list scrolls.
+ * Pulling down at the top of the queue goes back to the cover; on the show notes it closes the player.
  */
 public final class ShufflepodPlayerTabs {
     private static final int POS_COVER = 0;

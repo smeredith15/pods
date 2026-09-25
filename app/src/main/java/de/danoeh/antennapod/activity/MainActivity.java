@@ -192,7 +192,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
         fm.addOnBackStackChangedListener(this::updateMainBackCallbackEnabledState);
         if (fm.findFragmentByTag(MAIN_FRAGMENT_TAG) == null) {
             if (!UserPreferences.DEFAULT_PAGE_REMEMBER.equals(UserPreferences.getDefaultPage())) {
-                loadFragment(UserPreferences.getDefaultPage(), null);
+                loadFragment(NowPlayingTab.startPage(UserPreferences.getDefaultPage()), null); // SHUFFLEPOD
             } else {
                 String lastFragment = NavDrawerFragment.getLastNavFragment(this);
                 if (ArrayUtils.contains(getResources().getStringArray(R.array.nav_drawer_section_tags), lastFragment)) {
@@ -446,6 +446,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
         playerView.setLayoutParams(playerParams);
         RelativeLayout playerContent = findViewById(R.id.playerContent);
         playerContent.setPadding(systemBarInsets.left, systemBarInsets.top, systemBarInsets.right, 0);
+        NowPlayingTab.onPlayerVisible(this, visible); // SHUFFLEPOD
     }
 
     public RecyclerView.RecycledViewPool getRecycledViewPool() {
@@ -707,7 +708,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
     }
 
     private void updateMainBackCallbackEnabledState() {
-        String defaultPage = UserPreferences.getDefaultPage();
+        String defaultPage = NowPlayingTab.screenFor(UserPreferences.getDefaultPage()); // SHUFFLEPOD
         boolean shouldEnable = getSupportFragmentManager().getBackStackEntryCount() > 0
                 || (!NavDrawerFragment.getLastNavFragment(this).equals(defaultPage)
                         && !UserPreferences.DEFAULT_PAGE_REMEMBER.equals(defaultPage))
@@ -723,7 +724,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
 
         @Override
         public void handleOnBackPressed() {
-            String defaultPage = UserPreferences.getDefaultPage();
+            String defaultPage = NowPlayingTab.screenFor(UserPreferences.getDefaultPage()); // SHUFFLEPOD
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
             } else if (!NavDrawerFragment.getLastNavFragment(MainActivity.this).equals(defaultPage)

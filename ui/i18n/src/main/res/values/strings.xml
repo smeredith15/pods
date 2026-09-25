@@ -1203,4 +1203,18 @@
     </plurals>
     <string name="shufflepod_news_releases_speed_note">Playback speed uses each show\'s own speed, or your default speed for shows that use it.</string>
     <string name="shufflepod_news_releases_empty">Mark shows as News to see how much audio they release each day.</string>
+    <string name="shufflepod_folder_dormant">Dormant</string>
+    <string name="shufflepod_folder_dormant_sum">No new episodes in 3+ months</string>
+    <string name="shufflepod_folder_seasonal">Seasonal</string>
+    <string name="shufflepod_folder_seasonal_sum">Releases in seasons with long breaks</string>
+    <plurals name="shufflepod_folder_show_count">
+        <item quantity="one">%d show</item>
+        <item quantity="other">%d shows</item>
+    </plurals>
+    <string name="shufflepod_new_folder">New folder</string>
+    <string name="shufflepod_folder_name_hint">Folder name</string>
+    <string name="shufflepod_folder_shows_title">Shows in %1$s</string>
+    <string name="shufflepod_folder_empty">No shows in this folder yet. Tap + to add some.</string>
+    <string name="shufflepod_smart_folder_empty">No shows match right now.</string>
+    <string name="shufflepod_folder_last_release">Last episode %1$s</string>
 </resources>

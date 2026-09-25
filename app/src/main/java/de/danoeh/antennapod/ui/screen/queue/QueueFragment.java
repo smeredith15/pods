@@ -480,6 +480,9 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
         swipeRefreshLayout.setOnRefreshListener(() -> // SHUFFLEPOD: pull-down refreshes only News shows
                 ShufflepodNewsRefresh.runNow(requireContext()));
         swipeRefreshLayout.setEnabled(!ShufflepodPlayerQueue.isEmbedded(this)); // SHUFFLEPOD: pull-down pages back
+        if (ShufflepodPlayerQueue.isEmbedded(this)) { // SHUFFLEPOD
+            ShufflepodPlayerQueue.pullDownToCover(this, recyclerView); // SHUFFLEPOD
+        } // SHUFFLEPOD
 
         emptyView = new EmptyViewHandler(getContext());
         emptyView.attachToRecyclerView(recyclerView);

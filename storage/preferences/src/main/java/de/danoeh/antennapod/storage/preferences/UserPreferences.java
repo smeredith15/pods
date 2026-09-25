@@ -406,7 +406,7 @@ public abstract class UserPreferences {
     }
 
     public static boolean shouldSkipKeepEpisode() {
-        return prefs.getBoolean(PREF_SKIP_KEEPS_EPISODE, true);
+        return prefs.getBoolean(PREF_SKIP_KEEPS_EPISODE, false); // SHUFFLEPOD: was true
     }
 
     public static boolean shouldFavoriteKeepEpisode() {

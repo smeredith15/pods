@@ -52,6 +52,11 @@ public final class ShowPicker {
 
     public static void show(Context context, @StringRes int title, String tag, boolean includePeople,
                             @Nullable Runnable onDone) {
+        show(context, context.getString(title), tag, includePeople, onDone);
+    }
+
+    public static void show(Context context, CharSequence title, String tag, boolean includePeople,
+                            @Nullable Runnable onDone) {
         Observable.fromCallable(() -> {
             List<Entry> entries = new ArrayList<>();
             if (includePeople) {
@@ -76,7 +81,7 @@ public final class ShowPicker {
                         error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
-    private static void showDialog(Context context, @StringRes int title, String tag, List<Entry> entries,
+    private static void showDialog(Context context, CharSequence title, String tag, List<Entry> entries,
                                    @Nullable Runnable onDone) {
         View view = LayoutInflater.from(context).inflate(R.layout.shufflepod_picker_dialog, null);
         EditText searchInput = view.findViewById(R.id.searchInput);

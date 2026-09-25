@@ -85,8 +85,9 @@
                 android:key="prefSmartMarkAsPlayedSecs"
                 android:summary="@string/pref_smart_mark_as_played_sum"
                 android:title="@string/pref_smart_mark_as_played_title"/>
+        <!-- SHUFFLEPOD: defaultValue was true -->
         <SwitchPreferenceCompat
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:enabled="true"
                 android:key="prefSkipKeepsEpisode"
                 android:summary="@string/pref_skip_keeps_episodes_sum"

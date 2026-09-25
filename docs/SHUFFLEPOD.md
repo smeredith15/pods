@@ -346,6 +346,21 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
   - Shows in the old Entertainment pool (the `entertainment_pool` table, now unused) got the Entertainment tag.
   - All inbox ("new") flags were cleared.
 
+### Folders on the Podcasts page (as built)
+
+The tag chips are replaced by folder rows at the top of the Podcasts list (`ShufflepodFolders`, a `ConcatAdapter` in front of the subscriptions adapter; in the grid layouts the rows span the full width). The order is News, Entertainment, the other tags alphabetically, the smart folders, then "New folder". A thin divider separates the folders from all the shows, and the whole page scrolls as one list. Tags are not exclusive, so a show can be in several folders and still appears in the full list. News and Entertainment open their tabs; other folders open `FolderFragment`, which can add or remove shows and rename or delete the tag.
+
+Smart folders are computed from release dates (`ReleasePattern` in :shufflepod, unit tested; `ShufflepodSmartFolders` runs one indexed query per show and caches the result for an hour):
+- **Seasonal:** at least 6 episodes, forming at least two runs of 3 or more episodes separated by a break. A break is a gap of at least 60 days and at least 5 times the show's median gap.
+- **Dormant:** no new episode for 90 days, unless the show is seasonal and the current gap is at most 1.5 times its longest earlier break (it's probably just between seasons).
+
+### Player and playback details (as built)
+
+- The episode's speed is applied as soon as the media session resolves it (`ShufflepodEarlySpeed`, hooked into `MediaLibrarySessionCallback`), so playback no longer starts at 1x and then speeds up.
+- Pulling down at the top of the queue page in the player goes back to the cover (`ShufflepodPlayerQueue.pullDownToCover`) instead of closing the player.
+- Now Playing can be chosen as the default page. The app then opens on Podcasts and expands the player once it has loaded (`NowPlayingTab.startPage`); Back returns to Podcasts before leaving the app.
+- Skip marks the episode played and removes it from the queue. "Keep skipped episodes" now defaults to off (migrated once), and Media3's `updateDatabaseAfterPlayback` also marks skipped episodes played.
+
 ### News refresh (as built)
 
 - AntennaPod's full refresh checks each show at most every 12 hours, only on Wi-Fi by default, and takes minutes with 700+ shows. So new News episodes could wait half a day.
