@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.model.feed.Feed;
+import de.danoeh.antennapod.shufflepod.CompletedShows;
 import de.danoeh.antennapod.shufflepod.ReleasePattern;
 
 /**
@@ -24,8 +25,8 @@ public final class ShufflepodSmartFolders {
     }
 
     /**
-     * The subscribed shows matching the pattern ({@link ReleasePattern#DORMANT} or
-     * {@link ReleasePattern#SEASONAL}), sorted by title.
+     * The subscribed shows matching the pattern ({@link ReleasePattern#DORMANT}, {@link ReleasePattern#SEASONAL}
+     * or {@link ReleasePattern#FINISHED}), sorted by title. Finished shows are not also listed as dormant.
      */
     public static List<Feed> getFeeds(int pattern) {
         Map<Long, Integer> current = getPatterns();
@@ -73,7 +74,11 @@ public final class ShufflepodSmartFolders {
                 continue;
             }
             long[] dates = releaseDates(feed.getId());
-            newPatterns.put(feed.getId(), ReleasePattern.classify(dates, now));
+            int flags = ReleasePattern.classify(dates, now);
+            if (CompletedShows.isComplete(feed.getDownloadUrl())) {
+                flags = (flags & ~ReleasePattern.DORMANT) | ReleasePattern.FINISHED;
+            }
+            newPatterns.put(feed.getId(), flags);
             if (dates.length > 0) {
                 newLastReleases.put(feed.getId(), dates[dates.length - 1]);
             }

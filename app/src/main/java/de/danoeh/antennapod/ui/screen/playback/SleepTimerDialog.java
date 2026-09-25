@@ -268,6 +268,12 @@ public class SleepTimerDialog extends BottomSheetDialogFragment {
                 Snackbar.make(viewBinding.getRoot(), R.string.time_dialog_invalid_input, Snackbar.LENGTH_LONG).show();
             }
         });
+        viewBinding.shufflepodEndOfEpisodeButton.setOnClickListener(v -> { // SHUFFLEPOD
+            viewBinding.timeEditText.setText("1"); // SHUFFLEPOD
+            viewBinding.sleepTimerType.setSelection(SleepTimerType.EPISODES.index); // SHUFFLEPOD
+            SleepTimerPreferences.setSleepTimerType(SleepTimerType.EPISODES); // SHUFFLEPOD
+            viewBinding.setSleeptimerButton.performClick(); // SHUFFLEPOD
+        }); // SHUFFLEPOD
         return viewBinding.getRoot();
     }
 

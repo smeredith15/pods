@@ -98,8 +98,7 @@ public class FolderFragment extends Fragment {
                 return false;
             });
         } else {
-            toolbar.setTitle(pattern == ReleasePattern.DORMANT
-                    ? R.string.shufflepod_folder_dormant : R.string.shufflepod_folder_seasonal);
+            toolbar.setTitle(smartTitle(pattern));
         }
         boolean displayUpArrow = getParentFragmentManager().getBackStackEntryCount() != 0;
         ((MainActivity) requireActivity()).setupToolbarToggle(toolbar, displayUpArrow);
@@ -122,6 +121,24 @@ public class FolderFragment extends Fragment {
         if (disposable != null) {
             disposable.dispose();
         }
+    }
+
+    private static int smartTitle(int pattern) {
+        if (pattern == ReleasePattern.DORMANT) {
+            return R.string.shufflepod_folder_dormant;
+        } else if (pattern == ReleasePattern.FINISHED) {
+            return R.string.shufflepod_folder_finished;
+        }
+        return R.string.shufflepod_folder_seasonal;
+    }
+
+    private static int smartDescription(int pattern) {
+        if (pattern == ReleasePattern.DORMANT) {
+            return R.string.shufflepod_folder_dormant_sum;
+        } else if (pattern == ReleasePattern.FINISHED) {
+            return R.string.shufflepod_folder_finished_sum;
+        }
+        return R.string.shufflepod_folder_seasonal_sum;
     }
 
     private NavDrawerData.TagItem tagItem() {
@@ -159,8 +176,7 @@ public class FolderFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     summary.setVisibility(result.isEmpty() || tag == null ? View.VISIBLE : View.GONE);
                     if (tag == null) {
-                        String description = getString(pattern == ReleasePattern.DORMANT
-                                ? R.string.shufflepod_folder_dormant_sum : R.string.shufflepod_folder_seasonal_sum);
+                        String description = getString(smartDescription(pattern));
                         summary.setText(result.isEmpty()
                                 ? getString(R.string.shufflepod_smart_folder_empty) : description);
                     } else {

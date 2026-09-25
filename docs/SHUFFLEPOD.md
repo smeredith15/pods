@@ -353,12 +353,14 @@ The tag chips are replaced by folder rows at the top of the Podcasts list (`Shuf
 Smart folders are computed from release dates (`ReleasePattern` in :shufflepod, unit tested; `ShufflepodSmartFolders` runs one indexed query per show and caches the result for an hour):
 - **Seasonal:** at least 6 episodes, forming at least two runs of 3 or more episodes separated by a break. A break is a gap of at least 60 days and at least 5 times the show's median gap.
 - **Dormant:** no new episode for 90 days, unless the show is seasonal and the current gap is at most 1.5 times its longest earlier break (it's probably just between seasons).
+- **Finished:** the feed says the series is complete (`<itunes:complete>Yes</itunes:complete>`). The parser reports the tag (`Itunes` and `FeedHandler` hooks, so :parser:feed now depends on :shufflepod), and `CompletedShows` stores the set of feed URLs in shufflepod.db's `app_setting`. A show joins or leaves the folder on its next refresh. Finished shows are not also listed as Dormant.
 
 ### Player and playback details (as built)
 
 - The episode's speed is applied as soon as the media session resolves it (`ShufflepodEarlySpeed`, hooked into `MediaLibrarySessionCallback`), so playback no longer starts at 1x and then speeds up.
 - Pulling down at the top of the queue page in the player goes back to the cover (`ShufflepodPlayerQueue.pullDownToCover`) instead of closing the player.
 - Now Playing can be chosen as the default page. The app then opens on Podcasts and expands the player once it has loaded (`NowPlayingTab.startPage`); Back returns to Podcasts before leaving the app.
+- The sleep timer has a one-tap **End of episode** button (an episode timer set to 1).
 - Skip marks the episode played and removes it from the queue. "Keep skipped episodes" now defaults to off (migrated once), and Media3's `updateDatabaseAfterPlayback` also marks skipped episodes played.
 
 ### News refresh (as built)
@@ -418,7 +420,7 @@ Mark the ones worth building. **DECISION:** Which of these matter, and what's mi
 
 ### News releases tab (as built)
 
-Statistics has a fourth tab, **News releases**. It covers the News-tagged shows over the last 8 whole weeks, ending at midnight today, so each weekday is counted exactly 8 times. For each day of the week it shows the average audio released in real time and at playback speed. It also shows per-day and per-week totals and a per-show weekly breakdown. The playback-speed figure divides each episode's length by its show's own speed, or by the current global speed if the show uses the default. The numbers are recomputed each time the tab opens, so changes to speed settings or News tags show up right away. Episodes with no listed length are counted and reported, but add no time. The code is `ShufflepodReleaseStats` (storage:database, which uses a `PodDBAdapter.shufflepodQuery` hook) and `ShufflepodNewsReleasesFragment` (ui:statistics).
+Statistics has a fourth tab, **News releases**. It covers the News-tagged shows over the last 8 whole weeks, ending at midnight today, so each weekday is counted exactly 8 times. For each day of the week it shows the average audio released in real time and at playback speed. It also shows per-day and per-week totals and a per-show weekly breakdown. The playback-speed figure divides each episode's length by its show's own speed, or by the current global speed if the show uses the default. The numbers are recomputed each time the tab opens, so changes to speed settings or News tags show up right away. Episodes with no listed length are counted and reported, but add no time. The code is `ShufflepodReleaseStats` (storage:database, which uses a `PodDBAdapter.shufflepodQuery` hook) and `ShufflepodNewsReleasesFragment` (ui:statistics). A "Your listening" section shows how much of that audio was actually played (FeedMedia `played_duration`, capped at each episode's length), per week and at playback speed, as a share of what was released, along with how many of the episodes are marked played. Each show's row also shows its listened share.
 
 ### Done when
 

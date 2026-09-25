@@ -1196,7 +1196,10 @@
     <string name="shufflepod_news_releases_per_week">Per week</string>
     <string name="shufflepod_news_releases_per_day">Per day</string>
     <string name="shufflepod_news_releases_by_show">By show, per week</string>
-    <string name="shufflepod_news_releases_show_speed">%1$s (%2$s×)</string>
+    <string name="shufflepod_news_releases_show_speed">%1$s (%2$s×) · %3$d%% listened</string>
+    <string name="shufflepod_news_releases_listening">Your listening</string>
+    <string name="shufflepod_news_releases_listened_per_week">Listened per week</string>
+    <string name="shufflepod_news_releases_listened_summary">You listened to %1$d%% of the News audio released in this period. %2$d of its %3$d episodes are marked played.</string>
     <plurals name="shufflepod_news_releases_no_duration">
         <item quantity="one">%d episode has no length listed and is not counted.</item>
         <item quantity="other">%d episodes have no length listed and are not counted.</item>
@@ -1207,6 +1210,8 @@
     <string name="shufflepod_folder_dormant_sum">No new episodes in 3+ months</string>
     <string name="shufflepod_folder_seasonal">Seasonal</string>
     <string name="shufflepod_folder_seasonal_sum">Releases in seasons with long breaks</string>
+    <string name="shufflepod_folder_finished">Finished</string>
+    <string name="shufflepod_folder_finished_sum">The feed says the series is complete. Shows are added here after their next refresh.</string>
     <plurals name="shufflepod_folder_show_count">
         <item quantity="one">%d show</item>
         <item quantity="other">%d shows</item>
@@ -1217,4 +1222,5 @@
     <string name="shufflepod_folder_empty">No shows in this folder yet. Tap + to add some.</string>
     <string name="shufflepod_smart_folder_empty">No shows match right now.</string>
     <string name="shufflepod_folder_last_release">Last episode %1$s</string>
+    <string name="shufflepod_sleep_end_of_episode">End of episode</string>
 </resources>

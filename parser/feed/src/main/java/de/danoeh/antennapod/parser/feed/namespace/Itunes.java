@@ -8,6 +8,7 @@ import androidx.core.text.HtmlCompat;
 import de.danoeh.antennapod.parser.feed.HandlerState;
 import de.danoeh.antennapod.parser.feed.element.SyndElement;
 import de.danoeh.antennapod.parser.feed.util.DurationParser;
+import de.danoeh.antennapod.shufflepod.CompletedShows; // SHUFFLEPOD
 import org.xml.sax.Attributes;
 
 
@@ -79,6 +80,9 @@ public class Itunes extends Namespace {
             }
         } else if (NEW_FEED_URL.equals(localName) && content.trim().startsWith("http")) {
             state.redirectUrl = content.trim();
+        } else if ("complete".equals(localName) && state.getCurrentItem() == null // SHUFFLEPOD
+                && state.getFeed() != null) { // SHUFFLEPOD
+            CompletedShows.onTagParsed(state.getFeed().getDownloadUrl(), content); // SHUFFLEPOD
         }
     }
 }

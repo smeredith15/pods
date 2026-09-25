@@ -9,6 +9,10 @@ import java.util.Arrays;
 public final class ReleasePattern {
     public static final int DORMANT = 1;
     public static final int SEASONAL = 2;
+    /**
+     * Not computed by {@link #classify}: the feed says the series is complete ({@link CompletedShows}).
+     */
+    public static final int FINISHED = 4;
 
     static final long DAY = 24L * 60 * 60 * 1000;
     static final long DORMANT_AFTER = 90 * DAY;

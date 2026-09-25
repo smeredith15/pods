@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.parser.feed;
 
 import de.danoeh.antennapod.parser.feed.util.TypeGetter;
+import de.danoeh.antennapod.shufflepod.CompletedShows; // SHUFFLEPOD
 import org.apache.commons.io.input.XmlStreamReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -31,6 +32,7 @@ public class FeedHandler {
 
         saxParser.parse(inputSource, handler);
         inputStreamReader.close();
+        CompletedShows.onFeedParsed(feed.getDownloadUrl()); // SHUFFLEPOD: Finished smart folder
         return new FeedHandlerResult(handler.state.feed, handler.state.alternateUrls, handler.state.redirectUrl);
     }
 }

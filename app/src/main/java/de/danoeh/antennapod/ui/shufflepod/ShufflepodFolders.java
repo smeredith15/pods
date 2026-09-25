@@ -120,7 +120,8 @@ public class ShufflepodFolders {
         }
         smartDisposable = Observable.fromCallable(() -> new int[] {
             ShufflepodSmartFolders.count(ReleasePattern.DORMANT),
-            ShufflepodSmartFolders.count(ReleasePattern.SEASONAL)})
+            ShufflepodSmartFolders.count(ReleasePattern.SEASONAL),
+            ShufflepodSmartFolders.count(ReleasePattern.FINISHED)})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(counts -> {
@@ -129,6 +130,8 @@ public class ShufflepodFolders {
                             R.drawable.ic_sleep, counts[0]));
                     smartRows.add(Row.smart(ReleasePattern.SEASONAL, R.string.shufflepod_folder_seasonal,
                             R.drawable.ic_refresh, counts[1]));
+                    smartRows.add(Row.smart(ReleasePattern.FINISHED, R.string.shufflepod_folder_finished,
+                            R.drawable.ic_check, counts[2]));
                     notifyChanged();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
