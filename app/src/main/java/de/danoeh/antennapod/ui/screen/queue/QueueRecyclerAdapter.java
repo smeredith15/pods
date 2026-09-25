@@ -71,6 +71,7 @@ public class QueueRecyclerAdapter extends EpisodeItemListAdapter {
         }
 
         holder.isInQueue.setVisibility(View.GONE);
+        holder.showFeedTitleInsteadOfSize(); // SHUFFLEPOD
     }
 
     @Override
