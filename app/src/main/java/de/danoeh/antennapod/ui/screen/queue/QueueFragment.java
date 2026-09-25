@@ -30,6 +30,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerQueue; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentPanel; // SHUFFLEPOD
+import de.danoeh.antennapod.net.download.service.feed.ShufflepodNewsRefresh; // SHUFFLEPOD
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
 import de.danoeh.antennapod.ui.screen.InboxFragment;
@@ -477,7 +478,8 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
 
         swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setDistanceToTriggerSync(getResources().getInteger(R.integer.swipe_refresh_distance));
-        swipeRefreshLayout.setOnRefreshListener(() -> FeedUpdateManager.getInstance().runOnceOrAsk(requireContext()));
+        swipeRefreshLayout.setOnRefreshListener(() -> // SHUFFLEPOD: pull-down refreshes only News shows
+                ShufflepodNewsRefresh.runNow(requireContext()));
         swipeRefreshLayout.setEnabled(!ShufflepodPlayerQueue.isEmbedded(this)); // SHUFFLEPOD: pull-down pages back
 
         emptyView = new EmptyViewHandler(getContext());

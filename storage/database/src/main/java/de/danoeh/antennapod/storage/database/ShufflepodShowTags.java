@@ -33,6 +33,13 @@ public final class ShufflepodShowTags {
         return result;
     }
 
+    /**
+     * The News shows, for modules that don't see the fork's tag constants.
+     */
+    public static List<Feed> getNewsFeeds() {
+        return getFeeds(ShowTags.NEWS);
+    }
+
     public static List<Long> getFeedIds(String tag) {
         List<Long> ids = new ArrayList<>();
         for (Feed feed : getFeeds(tag)) {

@@ -37,6 +37,7 @@ import de.danoeh.antennapod.model.download.DownloadRequest;
 import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequestBuilder;
 import de.danoeh.antennapod.parser.feed.FeedHandlerResult;
 import de.danoeh.antennapod.storage.database.NonSubscribedFeedsCleaner;
+import de.danoeh.antennapod.storage.database.ShufflepodShowTags; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.notifications.NotificationUtils;
 import java.util.ArrayList;
@@ -71,7 +72,11 @@ public class FeedUpdateWorker extends Worker {
         boolean isAutomaticRefresh = !getInputData().getBoolean(FeedUpdateManagerImpl.EXTRA_MANUAL, false);
         boolean isAutomaticRefreshEnabled = !UserPreferences.isAutoUpdateDisabled();
         if (feedId == -1) { // Update all
-            toUpdate = DBReader.getFeedList();
+            boolean newsOnly = getInputData().getBoolean(ShufflepodNewsRefresh.EXTRA_NEWS_ONLY, false); // SHUFFLEPOD
+            toUpdate = newsOnly ? ShufflepodShowTags.getNewsFeeds() : DBReader.getFeedList(); // SHUFFLEPOD
+            if (newsOnly && toUpdate.isEmpty()) { // SHUFFLEPOD: no News shows, nothing to do
+                return Result.success(); // SHUFFLEPOD
+            } // SHUFFLEPOD
             Iterator<Feed> itr = toUpdate.iterator();
             while (itr.hasNext()) {
                 Feed feed = itr.next();

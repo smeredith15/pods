@@ -337,6 +337,12 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
   - Shows in the old Entertainment pool (the `entertainment_pool` table, now unused) got the Entertainment tag.
   - All inbox ("new") flags were cleared.
 
+### News refresh (as built)
+
+- AntennaPod's full refresh checks each show at most every 12 hours, only on Wi-Fi by default, and takes minutes with 700+ shows. So new News episodes could wait half a day.
+- `ShufflepodNewsRefresh` runs `FeedUpdateWorker` for **News shows only** every 30 minutes, on any connection. It is scheduled from `MainActivity` (next to the full refresh), and the worker is hooked to read an `EXTRA_NEWS_ONLY` flag.
+- Pulling down on the queue refreshes only the News shows too, so it takes seconds. Podcasts → pull down still refreshes everything.
+
 ### Performance with a large library (700+ shows)
 
 - Two extra indexes are created in AntennaPod's database the first time it opens (`ShufflepodDbIndexes`, hooked into `PodDBHelper.onOpen`): `(feed, read)` and `(feed, pubDate)` on `FeedItems`. Only indexes are added; no tables or columns change, so the schema version stays upstream's. Without them, the Subscriptions screen's per-show counters and "latest episode" sort read every episode row, descriptions included. On a 352k-episode test database this took the counters from 1.19 s to 0.11 s and the sort from 0.44 s to 0.03 s.
