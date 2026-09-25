@@ -322,7 +322,7 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 
 ### Tabs, tags and no inbox (as built)
 
-- **Bottom bar:** Playing, Podcasts (renamed from Subscriptions), News, Entertainment, People. The bar only holds five, so "More" (Queue, Episodes, Downloads, History, Favorites, Statistics, Add podcast, Home, Inbox, Customize, Settings) is the ☰ button at the left of each tab's toolbar. Home and Inbox are hidden by default, and the app opens on Podcasts. Existing installs have their tab order reset once (`ShufflepodMigrations`).
+- **Bottom bar:** Playing, Podcasts (renamed from Subscriptions), News, Entertainment, People. The bar only holds five, so "More" (Queue, Episodes, Downloads, History, Favorites, Statistics, Add podcast, Home, Inbox, Customize, Settings) is the ⋮ button at the left of each tab's toolbar. Home and Inbox are hidden by default, and the app opens on Podcasts. Existing installs have their tab order reset once (`ShufflepodMigrations`).
 - **News and Entertainment are tags** (`ShowTags.NEWS` = "News", `ShowTags.ENTERTAINMENT` = "Entertainment"), stored as ordinary AntennaPod tags. They show up as folders on the Podcasts screen, and other tags work alongside them. The tags are the source of truth:
   - A **News** show's new episodes go to the queue, at the top or bottom per show (hooked into `FeedDatabaseWriter`). New episodes of every other show are just stored, never put in an inbox. The per-show "New episodes action" setting is hidden.
   - An **Entertainment** show is in the pool. People are pooled separately, from People or the Entertainment tab.

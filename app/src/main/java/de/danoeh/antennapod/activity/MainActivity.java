@@ -371,7 +371,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
             drawerToggle.setDrawerIndicatorEnabled(!displayUpArrow);
             drawerToggle.setToolbarNavigationClickListener(v -> getSupportFragmentManager().popBackStack());
         } else if (!displayUpArrow && bottomNavigation != null) { // SHUFFLEPOD: "More" moved out of the full bar
-            toolbar.setNavigationIcon(R.drawable.ic_shufflepod_menu);
+            toolbar.setNavigationIcon(R.drawable.dots_vertical);
             toolbar.setNavigationContentDescription(R.string.overflow_more);
             toolbar.setNavigationOnClickListener(v -> bottomNavigation.showMoreMenu(toolbar)); // SHUFFLEPOD
         } else if (!displayUpArrow) {
