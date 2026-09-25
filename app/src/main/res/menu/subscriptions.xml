@@ -59,4 +59,9 @@
         android:id="@+id/show_archive"
         android:title="@string/archive_feed_label_noun"
         custom:showAsAction="never" />
+    <!-- SHUFFLEPOD -->
+    <item
+        android:id="@+id/shufflepod_pocketcasts_import_item"
+        android:title="@string/shufflepod_pocketcasts_import_label"
+        custom:showAsAction="never" />
 </menu>

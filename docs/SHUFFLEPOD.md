@@ -494,6 +494,14 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 4. Positions of partially played episodes will not carry over.
 5. Per-podcast settings (speed, auto-download, folders) need to be set up again by hand.
 
+**As built:** Podcasts → ⋮ → **Import from Pocket Casts…** (`PocketCastsImportDialog`, `PocketCastsImport`, `PocketCastsClient`, and `PocketCastsMatcher` in `:shufflepod`).
+- Signs in to Pocket Casts' private web-player API (`user/login`, scope `webplayer`). The password is sent only there and not stored.
+- Reads the subscription list and each show's episode statuses. For shows with played or archived episodes, it also reads Pocket Casts' episode catalog, for URLs, titles and dates.
+- Shows are matched by normalized title, falling back to the website link. Episodes are matched by audio URL, then audio file name, then title plus publish date within 3 days.
+- **Played** (`playingStatus` 3) → marked played. **Archived** only (`isDeleted`) → archived. Both leave the queue.
+- Never un-plays or un-archives anything. Positions and stars are not imported.
+- Episodes a feed no longer contains are counted in the summary, not created.
+
 **DECISION:** Roughly how many shows are in Pocket Casts, and how many have deep back catalogs I've partially worked through? This decides whether the "mark before date" tool is needed early.
 
 ---
