@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/shufflepod_person_in_pool_item"
+        android:checkable="true"
+        android:title="@string/shufflepod_person_in_pool_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_person_shows_item"
+        android:title="@string/shufflepod_person_shows_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_person_refresh_item"
+        android:title="@string/shufflepod_person_refresh_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_person_find_past_item"
+        android:title="@string/shufflepod_person_find_past_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_person_edit_item"
+        android:title="@string/shufflepod_edit_person_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_person_unfollow_item"
+        android:title="@string/shufflepod_person_unfollow_label"
+        custom:showAsAction="never" />
+
+</menu>

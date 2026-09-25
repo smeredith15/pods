@@ -30,6 +30,7 @@ public final class Shufflepod {
         ArchiveStore.load(db);
         EntertainmentPool.load(db);
         ForcedEpisodes.load(db);
+        People.load(db);
         database = created;
     }
 

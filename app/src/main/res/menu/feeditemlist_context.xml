@@ -40,6 +40,16 @@
         android:id="@+id/shufflepod_mark_older_played_item"
         android:menuCategory="container"
         android:title="@string/shufflepod_mark_older_played_label" />
+    <item
+        android:id="@+id/shufflepod_person_mute_episode_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_person_mute_episode_label"
+        android:visible="false" />
+    <item
+        android:id="@+id/shufflepod_person_mute_show_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_person_mute_show_label"
+        android:visible="false" />
     <!-- /SHUFFLEPOD -->
 
     <item

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/shufflepod_add_person_item"
+        android:icon="@drawable/ic_add"
+        android:title="@string/shufflepod_add_person_label"
+        custom:showAsAction="always" />
+
+    <item
+        android:id="@+id/shufflepod_people_refresh_item"
+        android:title="@string/shufflepod_person_refresh_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/shufflepod_podcast_index_item"
+        android:title="@string/shufflepod_podcast_index_label"
+        custom:showAsAction="never" />
+
+</menu>

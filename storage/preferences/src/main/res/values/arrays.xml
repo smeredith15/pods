@@ -7,6 +7,7 @@
         <item>SubscriptionFragment</item>
         <item>QueueFragment</item> <!-- SHUFFLEPOD: moved; also one swipe up in Now Playing -->
         <item>EntertainmentFragment</item> <!-- SHUFFLEPOD: first under "More" -->
+        <item>PeopleFragment</item> <!-- SHUFFLEPOD -->
         <item>EpisodesFragment</item>
         <item>DownloadsFragment</item>
         <item>PlaybackHistoryFragment</item>

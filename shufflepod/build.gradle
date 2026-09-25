@@ -11,6 +11,7 @@ dependencies {
     implementation project(':model')
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
+    implementation "androidx.annotation:annotation:$annotationVersion"
 
     testImplementation "junit:junit:$junitVersion"
 }

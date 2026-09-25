@@ -13,8 +13,11 @@ import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.shufflepod.EntertainmentPool;
+import de.danoeh.antennapod.shufflepod.People;
+import de.danoeh.antennapod.shufflepod.Person;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment;
+import de.danoeh.antennapod.storage.database.ShufflepodPeople;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -69,7 +72,7 @@ public class EntertainmentPanel {
         }
         String forcedLine = text.getContext().getString(R.string.shufflepod_panel_forced,
                 TextUtils.join(", ", titles));
-        if (EntertainmentPool.isEmpty()) {
+        if (EntertainmentPool.isEmpty() && People.getPooledPeople().isEmpty()) {
             return forcedLine;
         }
         return forcedLine + "\n" + describePool();
@@ -77,10 +80,19 @@ public class EntertainmentPanel {
 
     private String describePool() {
         List<Long> feedIds = EntertainmentPool.getFeedIds();
-        if (feedIds.isEmpty()) {
+        List<Person> people = People.getPooledPeople();
+        if (feedIds.isEmpty() && people.isEmpty()) {
             return text.getContext().getString(R.string.shufflepod_panel_empty);
         }
-        if (feedIds.size() == 1) {
+        if (feedIds.isEmpty() && people.size() == 1) {
+            FeedItem next = ShufflepodPeople.oldestEligible(people.get(0).getId(), -1);
+            if (next == null) {
+                return text.getContext().getString(R.string.shufflepod_panel_exhausted);
+            }
+            return text.getContext().getString(R.string.shufflepod_panel_single,
+                    next.getTitle(), next.getFeed() != null ? next.getFeed().getTitle() : "");
+        }
+        if (feedIds.size() == 1 && people.isEmpty()) {
             FeedItem next = ShufflepodEntertainment.oldestEligible(feedIds.get(0), -1);
             if (next == null) {
                 return text.getContext().getString(R.string.shufflepod_panel_exhausted);
@@ -95,6 +107,9 @@ public class EntertainmentPanel {
             if (feed != null && feed.getState() == Feed.STATE_SUBSCRIBED) {
                 titles.add(feed.getTitle());
             }
+        }
+        for (Person person : people) {
+            titles.add(person.getName());
         }
         if (titles.isEmpty()) {
             return text.getContext().getString(R.string.shufflepod_panel_exhausted);

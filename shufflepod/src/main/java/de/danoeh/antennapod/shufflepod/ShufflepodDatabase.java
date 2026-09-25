@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class ShufflepodDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "shufflepod.db";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     static final String TABLE_SHOW_SETTINGS = "show_settings";
     static final String KEY_FEED_URL = "feed_url";
@@ -27,6 +27,17 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
 
     static final String TABLE_FORCED_EPISODE = "forced_episode";
     static final String KEY_ID = "id";
+
+    static final String TABLE_PERSON = "person";
+    static final String KEY_ALIASES = "aliases";
+    static final String KEY_IN_POOL = "in_pool";
+    static final String KEY_SINCE = "since";
+    static final String TABLE_PERSON_EPISODE = "person_episode";
+    static final String KEY_PERSON_ID = "person_id";
+    static final String KEY_SOURCE = "source";
+    static final String TABLE_PERSON_MUTED_SHOW = "person_muted_show";
+    static final String KEY_TITLE = "title";
+    static final String TABLE_PERSON_MUTED_EPISODE = "person_muted_episode";
 
     static final String TABLE_APP_SETTING = "app_setting";
     static final String KEY_NAME = "name";
@@ -52,6 +63,7 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
                 + KEY_VALUE + " TEXT)");
         createEntertainmentPool(db);
         createForcedEpisodes(db);
+        createPeople(db);
     }
 
     @Override
@@ -62,6 +74,37 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
         if (oldVersion < 3) {
             createForcedEpisodes(db);
         }
+        if (oldVersion < 4) {
+            createPeople(db);
+        }
+    }
+
+    private static void createPeople(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + TABLE_PERSON + " ("
+                + KEY_ID + " INTEGER PRIMARY KEY, "
+                + KEY_NAME + " TEXT NOT NULL, "
+                + KEY_ALIASES + " TEXT, "
+                + KEY_IN_POOL + " INTEGER NOT NULL DEFAULT 0, "
+                + KEY_SINCE + " INTEGER NOT NULL DEFAULT 0, "
+                + KEY_ADDED_AT + " INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE " + TABLE_PERSON_EPISODE + " ("
+                + KEY_PERSON_ID + " INTEGER NOT NULL, "
+                + KEY_ITEM_ID + " INTEGER NOT NULL, "
+                + KEY_FEED_URL + " TEXT NOT NULL, "
+                + KEY_EPISODE_KEY + " TEXT NOT NULL, "
+                + KEY_SOURCE + " TEXT, "
+                + KEY_ADDED_AT + " INTEGER NOT NULL, "
+                + "PRIMARY KEY (" + KEY_PERSON_ID + ", " + KEY_FEED_URL + ", " + KEY_EPISODE_KEY + "))");
+        db.execSQL("CREATE TABLE " + TABLE_PERSON_MUTED_SHOW + " ("
+                + KEY_PERSON_ID + " INTEGER NOT NULL, "
+                + KEY_FEED_URL + " TEXT NOT NULL, "
+                + KEY_TITLE + " TEXT, "
+                + "PRIMARY KEY (" + KEY_PERSON_ID + ", " + KEY_FEED_URL + "))");
+        db.execSQL("CREATE TABLE " + TABLE_PERSON_MUTED_EPISODE + " ("
+                + KEY_PERSON_ID + " INTEGER NOT NULL, "
+                + KEY_FEED_URL + " TEXT NOT NULL, "
+                + KEY_EPISODE_KEY + " TEXT NOT NULL, "
+                + "PRIMARY KEY (" + KEY_PERSON_ID + ", " + KEY_FEED_URL + ", " + KEY_EPISODE_KEY + "))");
     }
 
     private static void createForcedEpisodes(SQLiteDatabase db) {
