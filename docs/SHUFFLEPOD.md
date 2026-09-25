@@ -360,6 +360,7 @@ Smart folders are computed from release dates (`ReleasePattern` in :shufflepod, 
 - The episode's speed is applied as soon as the media session resolves it (`ShufflepodEarlySpeed`, hooked into `MediaLibrarySessionCallback`), so playback no longer starts at 1x and then speeds up.
 - Pulling down at the top of the queue page in the player goes back to the cover (`ShufflepodPlayerQueue.pullDownToCover`) instead of closing the player.
 - Now Playing can be chosen as the default page. The app then opens on Podcasts and expands the player once it has loaded (`NowPlayingTab.startPage`); Back returns to Podcasts before leaving the app.
+- A finished episode no longer starts over while the next one loads (`ShufflepodEndGuard`). While the queue loader runs, play and seek-to-default-position requests are ignored; Media3 turns "play" on an ended item into a restart. A playback error in the last 15 seconds (or the smart mark-as-played window, if longer) counts as the episode ending, so a stream that drops just before the end moves on to the next episode instead of being replayed.
 - The sleep timer has a one-tap **End of episode** button (an episode timer set to 1).
 - Skip marks the episode played and removes it from the queue. "Keep skipped episodes" now defaults to off (migrated once), and Media3's `updateDatabaseAfterPlayback` also marks skipped episodes played.
 

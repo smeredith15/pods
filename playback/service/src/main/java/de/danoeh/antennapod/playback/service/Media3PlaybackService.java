@@ -146,7 +146,26 @@ public class Media3PlaybackService extends MediaLibraryService {
             }
 
             @Override
+            public void seekToDefaultPosition() {
+                if (ShufflepodEndGuard.isLoadingNext(this, currentPlayable, queueLoaderDisposable)) { // SHUFFLEPOD
+                    return; // SHUFFLEPOD
+                } // SHUFFLEPOD
+                super.seekToDefaultPosition();
+            }
+
+            @Override
+            public void seekToDefaultPosition(int mediaItemIndex) {
+                if (ShufflepodEndGuard.isLoadingNext(this, currentPlayable, queueLoaderDisposable)) { // SHUFFLEPOD
+                    return; // SHUFFLEPOD
+                } // SHUFFLEPOD
+                super.seekToDefaultPosition(mediaItemIndex);
+            }
+
+            @Override
             public void play() {
+                if (ShufflepodEndGuard.isLoadingNext(this, currentPlayable, queueLoaderDisposable)) { // SHUFFLEPOD
+                    return; // SHUFFLEPOD: the next episode starts on its own once loaded
+                } // SHUFFLEPOD
                 if (handleStreamingConfirmation()) {
                     return;
                 } else if (shouldBlockForStreamingConfirmation()) {
@@ -434,6 +453,10 @@ public class Media3PlaybackService extends MediaLibraryService {
 
         @Override
         public void onPlayerError(@NonNull PlaybackException error) {
+            if (ShufflepodEndGuard.isNearEnd(currentPlayable, player.getCurrentPosition())) { // SHUFFLEPOD
+                handlePlaybackEnded(); // SHUFFLEPOD: stream failed in the last seconds, move on
+                return; // SHUFFLEPOD
+            } // SHUFFLEPOD
             PlaybackService.isRunning = false;
             EventBus.getDefault().post(new PlayerErrorEvent(
                     ExoPlayerUtils.translateErrorReason(error, Media3PlaybackService.this)));
