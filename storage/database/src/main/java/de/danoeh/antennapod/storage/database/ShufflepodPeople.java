@@ -19,6 +19,7 @@ import de.danoeh.antennapod.shufflepod.ArchiveStore;
 import de.danoeh.antennapod.shufflepod.People;
 import de.danoeh.antennapod.shufflepod.Person;
 import de.danoeh.antennapod.shufflepod.PersonMatcher;
+import de.danoeh.antennapod.storage.database.mapper.FeedItemCursor;
 
 /**
  * SHUFFLEPOD: database side of following people. Finds a person's episodes in the subscribed shows,
@@ -26,6 +27,8 @@ import de.danoeh.antennapod.shufflepod.PersonMatcher;
  * All methods must be called off the main thread.
  */
 public final class ShufflepodPeople {
+
+    private static final int ID_CHUNK = 500;
 
     private ShufflepodPeople() {
     }
@@ -147,13 +150,21 @@ public final class ShufflepodPeople {
      * The episodes in a person's folder, newest first. Episodes AntennaPod no longer has are dropped.
      */
     public static List<FeedItem> getEpisodes(long personId) {
-        List<FeedItem> result = new ArrayList<>();
-        for (long itemId : People.getItemIds(personId)) {
-            FeedItem item = DBReader.getFeedItem(itemId);
-            if (item == null) {
-                People.forgetItem(personId, itemId);
-            } else {
-                result.add(item);
+        return getEpisodes(personId, true);
+    }
+
+    private static List<FeedItem> getEpisodes(long personId, boolean withFeeds) {
+        List<Long> ids = People.getItemIds(personId);
+        List<FeedItem> result = loadItems(ids, withFeeds);
+        if (result.size() < ids.size()) {
+            Set<Long> found = new HashSet<>();
+            for (FeedItem item : result) {
+                found.add(item.getId());
+            }
+            for (long itemId : ids) {
+                if (!found.contains(itemId)) {
+                    People.forgetItem(personId, itemId);
+                }
             }
         }
         Collections.sort(result, (a, b) -> {
@@ -184,12 +195,44 @@ public final class ShufflepodPeople {
 
     public static int eligibleCount(long personId) {
         int count = 0;
-        for (FeedItem item : getEpisodes(personId)) {
+        for (FeedItem item : getEpisodes(personId, false)) {
             if (isEligible(item)) {
                 count++;
             }
         }
         return count;
+    }
+
+    /**
+     * Loads the episodes in a few queries instead of one lookup per episode.
+     */
+    private static List<FeedItem> loadItems(List<Long> ids, boolean withFeeds) {
+        List<FeedItem> result = new ArrayList<>(ids.size());
+        if (ids.isEmpty()) {
+            return result;
+        }
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        try {
+            for (int start = 0; start < ids.size(); start += ID_CHUNK) {
+                List<Long> chunk = ids.subList(start, Math.min(ids.size(), start + ID_CHUNK));
+                String[] args = new String[chunk.size()];
+                for (int i = 0; i < chunk.size(); i++) {
+                    args[i] = String.valueOf(chunk.get(i));
+                }
+                try (FeedItemCursor cursor = new FeedItemCursor(adapter.getFeedItemCursor(args))) {
+                    while (cursor.moveToNext()) {
+                        result.add(cursor.getFeedItem());
+                    }
+                }
+            }
+        } finally {
+            adapter.close();
+        }
+        if (withFeeds) {
+            DBReader.loadFeedDataOfFeedItemList(result);
+        }
+        return result;
     }
 
     private static boolean isEligible(FeedItem item) {
