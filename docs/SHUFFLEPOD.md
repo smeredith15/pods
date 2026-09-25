@@ -400,6 +400,10 @@ Mark the ones worth building. **DECISION:** Which of these matter, and what's mi
 - `StatsCalculator` (pure logic) takes sessions and completions in, returns plain result objects. Unit test it with synthetic data, especially around midnight boundaries, time zones, and overlapping sessions.
 - A stats screen modeled on the existing statistics screens. Start with plain lists and numbers. Add a charting library later only if needed.
 
+### News releases tab (as built)
+
+Statistics has a fourth tab, **News releases**. It covers the News-tagged shows over the last 8 whole weeks, ending at midnight today, so each weekday is counted exactly 8 times. For each day of the week it shows the average audio released in real time and at playback speed. It also shows per-day and per-week totals and a per-show weekly breakdown. The playback-speed figure divides each episode's length by its show's own speed, or by the current global speed if the show uses the default. The numbers are recomputed each time the tab opens, so changes to speed settings or News tags show up right away. Episodes with no listed length are counted and reported, but add no time. The code is `ShufflepodReleaseStats` (storage:database, which uses a `PodDBAdapter.shufflepodQuery` hook) and `ShufflepodNewsReleasesFragment` (ui:statistics).
+
 ### Done when
 
 - Sessions are logged reliably (compare total logged time against AntennaPod's own playback time stats for a week; they should roughly agree).
