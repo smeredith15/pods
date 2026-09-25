@@ -1018,6 +1018,7 @@ public class PodDBAdapter {
                 + " WHERE " + TABLE_NAME_FEED_ITEMS + "." + KEY_FEED + "=" + feed.getId()
                 + whereClauseAnd
                 + " ORDER BY " + orderByQuery
+                + ", " + TABLE_NAME_FEED_ITEMS + "." + KEY_ID // SHUFFLEPOD: keep tie order with the extra indexes
                 + " LIMIT " + offset + ", " + limit;
         return db.rawQuery(query, null);
     }
@@ -1582,5 +1583,11 @@ public class PodDBAdapter {
             Log.w("DBAdapter", "Upgrading from version " + oldVersion + " to " + newVersion + ".");
             DBUpgrader.upgrade(db, oldVersion, newVersion);
         }
+
+        @Override
+        public void onOpen(final SQLiteDatabase db) { // SHUFFLEPOD: faster Subscriptions screen
+            super.onOpen(db);
+            ShufflepodDbIndexes.ensure(db);
+        } // SHUFFLEPOD
     }
 }

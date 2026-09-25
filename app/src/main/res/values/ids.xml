@@ -31,6 +31,7 @@
     <item name="bottom_navigation_statistics" type="id"/>
     <item name="bottom_navigation_entertainment" type="id"/> <!-- SHUFFLEPOD -->
     <item name="bottom_navigation_people" type="id"/> <!-- SHUFFLEPOD -->
+    <item name="bottom_navigation_news" type="id"/> <!-- SHUFFLEPOD -->
     <item name="bottom_navigation_now_playing" type="id"/> <!-- SHUFFLEPOD -->
     <item name="bottom_navigation_more" type="id"/>
     <item name="bottom_navigation_customize" type="id"/>

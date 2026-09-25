@@ -62,22 +62,27 @@ public class BottomNavigationTest {
         UserPreferences.setDrawerItemOrder(Collections.emptyList(), Collections.emptyList());
         activityRule.launchActivity(new Intent());
 
-        clickBottomNavItem(R.string.home_label_short);
-        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
-                withText(R.string.home_label)), 1000));
-
-        // SHUFFLEPOD: Now Playing replaces Queue in the bar; with nothing playing it opens the Queue screen
+        // SHUFFLEPOD: the bar is Playing, Podcasts, News, Entertainment, People; "More" is in the toolbar.
+        // Now Playing with nothing playing opens the Queue screen.
         clickBottomNavItem(R.string.shufflepod_now_playing_label_short);
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
                 withText(R.string.queue_label)), 1000));
 
-        clickBottomNavItem(R.string.inbox_label_short);
-        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
-                withText(R.string.inbox_label)), 1000));
-
         clickBottomNavItem(R.string.subscriptions_label_short);
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
                 withText(R.string.subscriptions_label)), 1000));
+
+        clickBottomNavItem(R.string.shufflepod_news_label_short);
+        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
+                withText(R.string.shufflepod_news_label)), 1000));
+
+        clickBottomNavItem(R.string.shufflepod_entertainment_label_short);
+        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
+                withText(R.string.shufflepod_entertainment_label)), 1000));
+
+        clickBottomNavItem(R.string.shufflepod_people_label_short);
+        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
+                withText(R.string.shufflepod_people_label)), 1000));
 
         clickBottomNavOverflow(R.string.episodes_label);
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),

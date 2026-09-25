@@ -12,12 +12,13 @@ import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.shufflepod.EntertainmentPool;
 import de.danoeh.antennapod.shufflepod.People;
 import de.danoeh.antennapod.shufflepod.Person;
+import de.danoeh.antennapod.shufflepod.ShowTags;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment;
 import de.danoeh.antennapod.storage.database.ShufflepodPeople;
+import de.danoeh.antennapod.storage.database.ShufflepodShowTags;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -72,14 +73,14 @@ public class EntertainmentPanel {
         }
         String forcedLine = text.getContext().getString(R.string.shufflepod_panel_forced,
                 TextUtils.join(", ", titles));
-        if (EntertainmentPool.isEmpty() && People.getPooledPeople().isEmpty()) {
+        if (ShufflepodShowTags.getFeedIds(ShowTags.ENTERTAINMENT).isEmpty() && People.getPooledPeople().isEmpty()) {
             return forcedLine;
         }
         return forcedLine + "\n" + describePool();
     }
 
     private String describePool() {
-        List<Long> feedIds = EntertainmentPool.getFeedIds();
+        List<Long> feedIds = ShufflepodShowTags.getFeedIds(ShowTags.ENTERTAINMENT);
         List<Person> people = People.getPooledPeople();
         if (feedIds.isEmpty() && people.isEmpty()) {
             return text.getContext().getString(R.string.shufflepod_panel_empty);

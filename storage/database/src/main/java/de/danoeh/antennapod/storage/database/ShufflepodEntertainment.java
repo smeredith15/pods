@@ -16,10 +16,10 @@ import de.danoeh.antennapod.model.feed.FeedItemFilter;
 import de.danoeh.antennapod.model.feed.SortOrder;
 import de.danoeh.antennapod.shufflepod.ArchiveStore;
 import de.danoeh.antennapod.shufflepod.EntertainmentPicker;
-import de.danoeh.antennapod.shufflepod.EntertainmentPool;
 import de.danoeh.antennapod.shufflepod.ForcedEpisodes;
 import de.danoeh.antennapod.shufflepod.People;
 import de.danoeh.antennapod.shufflepod.Person;
+import de.danoeh.antennapod.shufflepod.ShowTags;
 
 /**
  * SHUFFLEPOD: the Entertainment pipeline. When the News queue runs out, the next episode is the
@@ -73,7 +73,7 @@ public final class ShufflepodEntertainment {
     @Nullable
     public static FeedItem pick(long excludeItemId) {
         List<FeedItem> candidates = new ArrayList<>();
-        for (long feedId : EntertainmentPool.getFeedIds()) {
+        for (long feedId : ShufflepodShowTags.getFeedIds(ShowTags.ENTERTAINMENT)) {
             FeedItem oldest = oldestEligible(feedId, excludeItemId);
             if (oldest != null) {
                 candidates.add(oldest);

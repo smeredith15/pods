@@ -3,6 +3,7 @@ package de.danoeh.antennapod;
 import de.danoeh.antennapod.shufflepod.People; // SHUFFLEPOD
 import de.danoeh.antennapod.shufflepod.Shufflepod; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.PeopleSyncWorker; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodMigrations; // SHUFFLEPOD
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -59,6 +60,7 @@ public class ClientConfigurator {
         AntennapodHttpClient.setProxyConfig(UserPreferences.getProxyConfig());
         SleepTimerPreferences.init(context);
         NotificationUtils.createChannels(context);
+        ShufflepodMigrations.run(context); // SHUFFLEPOD
         if (!People.getPeople().isEmpty()) { // SHUFFLEPOD
             PeopleSyncWorker.schedule(context);
         } // SHUFFLEPOD

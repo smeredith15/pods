@@ -20,27 +20,27 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
-import de.danoeh.antennapod.shufflepod.EntertainmentPool;
 import de.danoeh.antennapod.shufflepod.ForcedEpisodes;
 import de.danoeh.antennapod.shufflepod.People;
 import de.danoeh.antennapod.shufflepod.Person;
-import de.danoeh.antennapod.storage.database.DBReader;
+import de.danoeh.antennapod.shufflepod.ShowTags;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment;
 import de.danoeh.antennapod.storage.database.ShufflepodPeople;
+import de.danoeh.antennapod.storage.database.ShufflepodShowTags;
+import de.danoeh.antennapod.ui.screen.feed.FeedItemlistFragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
- * The Entertainment tab: choose which shows and people are in the Entertainment pool.
+ * The Entertainment tab: the shows (tagged Entertainment) and people in the pool, plus forced episodes.
  */
 public class EntertainmentFragment extends Fragment {
     public static final String TAG = "EntertainmentFragment";
@@ -58,6 +58,15 @@ public class EntertainmentFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.shufflepod_entertainment_fragment, container, false);
         MaterialToolbar toolbar = root.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.shufflepod_tag_list);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.shufflepod_add_shows_item) {
+                ShowPicker.show(requireContext(), R.string.shufflepod_add_to_entertainment_title,
+                        ShowTags.ENTERTAINMENT, true, this::load);
+                return true;
+            }
+            return false;
+        });
         boolean displayUpArrow = getParentFragmentManager().getBackStackEntryCount() != 0;
         ((MainActivity) requireActivity()).setupToolbarToggle(toolbar, displayUpArrow);
         summary = root.findViewById(R.id.summary);
@@ -93,21 +102,16 @@ public class EntertainmentFragment extends Fragment {
         final String peopleHeader = getString(R.string.shufflepod_people_section);
         disposable = Observable.fromCallable(() -> {
             List<Row> rows = new ArrayList<>();
-            for (Feed feed : DBReader.getFeedList()) {
-                if (feed.getState() == Feed.STATE_SUBSCRIBED && !feed.isLocalFeed()) {
-                    rows.add(new Row(feed, ShufflepodEntertainment.eligibleCount(feed.getId())));
-                }
+            for (Feed feed : ShufflepodShowTags.getFeeds(ShowTags.ENTERTAINMENT)) {
+                rows.add(new Row(feed, ShufflepodEntertainment.eligibleCount(feed.getId())));
             }
-            Collections.sort(rows, (a, b) -> String.CASE_INSENSITIVE_ORDER.compare(
-                    a.feed.getTitle() != null ? a.feed.getTitle() : "",
-                    b.feed.getTitle() != null ? b.feed.getTitle() : ""));
             List<Object> entries = new ArrayList<>();
             List<FeedItem> forced = ShufflepodEntertainment.forcedEpisodes();
             if (!forced.isEmpty()) {
                 entries.add(forcedHeader);
                 entries.addAll(forced);
             }
-            List<Person> people = People.getPeople();
+            List<Person> people = People.getPooledPeople();
             if (!people.isEmpty()) {
                 entries.add(peopleHeader);
                 for (Person person : people) {
@@ -115,21 +119,25 @@ public class EntertainmentFragment extends Fragment {
                             ShufflepodPeople.eligibleCount(person.getId())));
                 }
             }
-            entries.add(showsHeader);
-            entries.addAll(rows);
+            if (!rows.isEmpty()) {
+                entries.add(showsHeader);
+                entries.addAll(rows);
+            }
             return entries;
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entries -> {
                     adapter.setEntries(entries);
-                    updateSummary();
+                    updateSummary(entries.isEmpty());
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
-    private void updateSummary() {
-        int size = EntertainmentPool.getFeedIds().size() + People.getPooledPeople().size();
-        if (size == 0) {
+    private void updateSummary(boolean empty) {
+        int size = adapter.countRows();
+        if (empty) {
+            summary.setText(R.string.shufflepod_entertainment_empty);
+        } else if (size == 0) {
             summary.setText(R.string.shufflepod_entertainment_intro);
         } else {
             summary.setText(getString(R.string.shufflepod_entertainment_intro) + "\n"
@@ -195,11 +203,23 @@ public class EntertainmentFragment extends Fragment {
             subtitle = itemView.findViewById(R.id.subtitle);
             playNextButton = itemView.findViewById(R.id.playNextButton);
             checkBox = itemView.findViewById(R.id.checkbox);
+            checkBox.setClickable(true);
+            checkBox.setFocusable(true);
         }
     }
 
     private class PoolAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final List<Object> entries = new ArrayList<>();
+
+        int countRows() {
+            int count = 0;
+            for (Object entry : entries) {
+                if (entry instanceof Row || entry instanceof PersonRow) {
+                    count++;
+                }
+            }
+            return count;
+        }
 
         void setEntries(List<Object> newEntries) {
             entries.clear();
@@ -260,16 +280,12 @@ public class EntertainmentFragment extends Fragment {
                     ? holder.itemView.getResources().getQuantityString(
                             R.plurals.shufflepod_entertainment_episodes_left, row.episodesLeft, row.episodesLeft)
                     : holder.itemView.getContext().getString(R.string.shufflepod_entertainment_none_left));
-            holder.checkBox.setChecked(EntertainmentPool.contains(row.feed));
-            holder.itemView.setOnClickListener(v -> {
-                if (EntertainmentPool.contains(row.feed)) {
-                    EntertainmentPool.remove(row.feed);
-                } else {
-                    EntertainmentPool.add(row.feed);
-                }
-                holder.checkBox.setChecked(EntertainmentPool.contains(row.feed));
-                updateSummary();
-            });
+            holder.checkBox.setOnCheckedChangeListener(null);
+            holder.checkBox.setChecked(ShowTags.has(row.feed.getPreferences(), ShowTags.ENTERTAINMENT));
+            holder.checkBox.setOnCheckedChangeListener((button, checked) ->
+                    ShufflepodShowTags.setTag(row.feed, ShowTags.ENTERTAINMENT, checked));
+            holder.itemView.setOnClickListener(v -> ((MainActivity) requireActivity())
+                    .loadChildFragment(FeedItemlistFragment.newInstance(row.feed.getId())));
             holder.playNextButton.setOnClickListener(v -> ForceNextDialog.show(requireContext(),
                     row.feed.getId(), row.feed.getTitle(), -1, EntertainmentFragment.this::load));
             Glide.with(holder.itemView)
@@ -288,12 +304,11 @@ public class EntertainmentFragment extends Fragment {
                             R.plurals.shufflepod_entertainment_episodes_left, row.episodesLeft, row.episodesLeft)
                     : holder.itemView.getContext().getString(R.string.shufflepod_entertainment_none_left));
             holder.playNextButton.setVisibility(View.GONE);
+            holder.checkBox.setOnCheckedChangeListener(null);
             holder.checkBox.setChecked(isPersonInPool(row.personId));
-            holder.itemView.setOnClickListener(v -> {
-                People.setInPool(row.personId, !isPersonInPool(row.personId));
-                holder.checkBox.setChecked(isPersonInPool(row.personId));
-                updateSummary();
-            });
+            holder.checkBox.setOnCheckedChangeListener((button, checked) -> People.setInPool(row.personId, checked));
+            holder.itemView.setOnClickListener(v -> ((MainActivity) requireActivity())
+                    .loadChildFragment(PersonFragment.newInstance(row.personId)));
             Glide.with(holder.itemView).clear(holder.cover);
             holder.cover.setImageResource(R.drawable.ic_shufflepod_person);
         }

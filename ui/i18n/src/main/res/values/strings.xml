@@ -28,8 +28,8 @@
     <string name="downloads_label">Downloads</string>
     <string name="downloads_label_short">Downloads</string>
     <string name="downloads_log_label">Download log</string>
-    <string name="subscriptions_label">Subscriptions</string>
-    <string name="subscriptions_label_short">Subscriptions</string>
+    <string name="subscriptions_label">Podcasts</string> <!-- SHUFFLEPOD: was Subscriptions -->
+    <string name="subscriptions_label_short">Podcasts</string> <!-- SHUFFLEPOD: was Subscriptions -->
     <string name="subscriptions_list_label">Subscriptions list</string>
     <string name="cancel_download_label">Cancel download</string>
     <string name="playback_history_label">Playback history</string>
@@ -1067,7 +1067,7 @@
     <string name="shufflepod_now_playing_label_short">Playing</string>
     <string name="shufflepod_entertainment_label">Entertainment</string>
     <string name="shufflepod_entertainment_label_short">Entertainment</string>
-    <string name="shufflepod_entertainment_intro">Ticked shows form the Entertainment pool. When the queue runs out, the oldest unplayed episode of a random show from the pool plays next.</string>
+    <string name="shufflepod_entertainment_intro">When the queue runs out, the oldest unplayed episode of a random show or person from the pool plays next. Untick to remove; tap + to add.</string>
     <plurals name="shufflepod_entertainment_pool_size">
         <item quantity="one">%d show in the pool</item>
         <item quantity="other">%d shows in the pool</item>
@@ -1078,7 +1078,7 @@
     </plurals>
     <string name="shufflepod_entertainment_none_left">No episodes left</string>
     <string name="shufflepod_panel_title">Then from Entertainment</string>
-    <string name="shufflepod_panel_empty">No shows in the Entertainment pool yet. Tap to choose some.</string>
+    <string name="shufflepod_panel_empty">Nothing in the Entertainment pool yet. Tap to add shows.</string>
     <string name="shufflepod_panel_exhausted">The shows in the Entertainment pool have no episodes left.</string>
     <string name="shufflepod_panel_single">%1$s · %2$s</string>
     <plurals name="shufflepod_panel_shuffle">
@@ -1141,4 +1141,23 @@
     <string name="shufflepod_queue_position_top">Top of the queue</string>
     <string name="shufflepod_queue_position_bottom_summary">New episodes are added to the end of the queue</string>
     <string name="shufflepod_queue_position_top_summary">New episodes go to the top of the queue, after the episode that is playing and after this show\'s other queued episodes</string>
+    <string name="shufflepod_news_label">News</string>
+    <string name="shufflepod_news_label_short">News</string>
+    <string name="shufflepod_news_intro">New episodes of these shows go to the queue (top or bottom, set per show). Other shows just collect episodes. Untick to remove; tap + to add.</string>
+    <string name="shufflepod_news_empty">No News shows yet. Tap + to add some.</string>
+    <string name="shufflepod_entertainment_empty">The Entertainment pool is empty. Tap + to add shows.</string>
+    <string name="shufflepod_add_shows_label">Add shows</string>
+    <string name="shufflepod_add_to_news_title">Add to News</string>
+    <string name="shufflepod_add_to_entertainment_title">Add to Entertainment</string>
+    <string name="shufflepod_picker_search_hint">Search</string>
+    <string name="shufflepod_in_news_label">In News</string>
+    <string name="shufflepod_in_entertainment_label">In Entertainment</string>
+    <string name="shufflepod_bulk_news_label">News…</string>
+    <string name="shufflepod_bulk_entertainment_label">Entertainment…</string>
+    <string name="shufflepod_bulk_add">Add</string>
+    <string name="shufflepod_bulk_remove">Remove</string>
+    <plurals name="shufflepod_bulk_tag_message">
+        <item quantity="one">Add %1$d show to %2$s, or remove it?</item>
+        <item quantity="other">Add %1$d shows to %2$s, or remove them?</item>
+    </plurals>
 </resources>

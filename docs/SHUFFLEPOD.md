@@ -320,6 +320,29 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 - Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
 - If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
 
+### Tabs, tags and no inbox (as built)
+
+- **Bottom bar:** Playing, Podcasts (renamed from Subscriptions), News, Entertainment, People. The bar only holds five, so "More" (Queue, Episodes, Downloads, History, Favorites, Statistics, Add podcast, Home, Inbox, Customize, Settings) is the ⋮ button at the left of each tab's toolbar. Home and Inbox are hidden by default, and the app opens on Podcasts. Existing installs have their tab order reset once (`ShufflepodMigrations`).
+- **News and Entertainment are tags** (`ShowTags.NEWS` = "News", `ShowTags.ENTERTAINMENT` = "Entertainment"), stored as ordinary AntennaPod tags. They show up as folders on the Podcasts screen, and other tags work alongside them. The tags are the source of truth:
+  - A **News** show's new episodes go to the queue, at the top or bottom per show (hooked into `FeedDatabaseWriter`). New episodes of every other show are just stored, never put in an inbox. The per-show "New episodes action" setting is hidden.
+  - An **Entertainment** show is in the pool. People are pooled separately, from People or the Entertainment tab.
+- **Ways to change them:**
+  - The show page's ⋮ menu: In News, In Entertainment.
+  - Multi-select on the Podcasts screen: News… and Entertainment…, each with Add or Remove.
+  - The ordinary tag editor.
+  - The **+** on the News and Entertainment tabs: a searchable checklist of all podcasts (and people, for Entertainment).
+- **News and Entertainment tabs** list only what's included. Untick to remove, or tap a row to open the show.
+- **One-time migration:**
+  - Shows set to "Add to queue" got the News tag.
+  - Shows in the old Entertainment pool (the `entertainment_pool` table, now unused) got the Entertainment tag.
+  - All inbox ("new") flags were cleared.
+
+### Performance with a large library (700+ shows)
+
+- Two extra indexes are created in AntennaPod's database the first time it opens (`ShufflepodDbIndexes`, hooked into `PodDBHelper.onOpen`): `(feed, read)` and `(feed, pubDate)` on `FeedItems`. Only indexes are added; no tables or columns change, so the schema version stays upstream's. Without them, the Subscriptions screen's per-show counters and "latest episode" sort read every episode row, descriptions included. On a 352k-episode test database this took the counters from 1.19 s to 0.11 s and the sort from 0.44 s to 0.03 s.
+- The Subscriptions screen reloads at most once per second (`ReloadThrottle`) instead of once per refreshed feed.
+- Feed refresh runs 8 feeds in parallel instead of 4.
+
 ### TODO / later
 
 - [ ] **Silent download-ahead:** quietly pick the next Entertainment episode in advance and download it, without revealing it in Up Next, so it plays offline.

@@ -37,6 +37,7 @@ import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.MenuItemUtils;
 import de.danoeh.antennapod.ui.screen.AddFeedFragment;
 import de.danoeh.antennapod.ui.screen.SearchFragment;
+import de.danoeh.antennapod.ui.shufflepod.ReloadThrottle; // SHUFFLEPOD
 
 import de.danoeh.antennapod.ui.view.EmptyViewHandler;
 import de.danoeh.antennapod.ui.view.FloatingSelectMenu;
@@ -89,6 +90,8 @@ public class SubscriptionFragment extends Fragment
     private boolean shouldShowTags = false;
 
     private Disposable disposable;
+    private final ReloadThrottle reloadThrottle = // SHUFFLEPOD
+            new ReloadThrottle(1000, this::loadSubscriptionsAndTags);
     private SharedPreferences prefs;
     private static Pair<Integer, Integer> scrollPosition = null;
 
@@ -353,6 +356,7 @@ public class SubscriptionFragment extends Fragment
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        reloadThrottle.cancel(); // SHUFFLEPOD
         if (disposable != null) {
             disposable.dispose();
         }
@@ -471,13 +475,13 @@ public class SubscriptionFragment extends Fragment
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onFeedListChanged(FeedListUpdateEvent event) {
-        loadSubscriptionsAndTags();
+        reloadThrottle.request(); // SHUFFLEPOD: was loadSubscriptionsAndTags()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUnreadItemsChanged(FeedItemEvent event) {
         if (event.unreadStatusChanged) {
-            loadSubscriptionsAndTags();
+            reloadThrottle.request(); // SHUFFLEPOD: was loadSubscriptionsAndTags()
         }
     }
 
