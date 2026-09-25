@@ -320,6 +320,12 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 - Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
 - If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
 
+### Performance with a large library (700+ shows)
+
+- Two extra indexes are created in AntennaPod's database the first time it opens (`ShufflepodDbIndexes`, hooked into `PodDBHelper.onOpen`): `(feed, read)` and `(feed, pubDate)` on `FeedItems`. Only indexes are added; no tables or columns change, so the schema version stays upstream's. Without them, the Subscriptions screen's per-show counters and "latest episode" sort read every episode row, descriptions included. On a 352k-episode test database this took the counters from 1.19 s to 0.11 s and the sort from 0.44 s to 0.03 s.
+- The Subscriptions screen reloads at most once per second (`ReloadThrottle`) instead of once per refreshed feed.
+- Feed refresh runs 8 feeds in parallel instead of 4.
+
 ### TODO / later
 
 - [ ] **Silent download-ahead:** quietly pick the next Entertainment episode in advance and download it, without revealing it in Up Next, so it plays offline.

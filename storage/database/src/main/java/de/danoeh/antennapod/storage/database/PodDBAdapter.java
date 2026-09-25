@@ -1582,5 +1582,11 @@ public class PodDBAdapter {
             Log.w("DBAdapter", "Upgrading from version " + oldVersion + " to " + newVersion + ".");
             DBUpgrader.upgrade(db, oldVersion, newVersion);
         }
+
+        @Override
+        public void onOpen(final SQLiteDatabase db) { // SHUFFLEPOD: faster Subscriptions screen
+            super.onOpen(db);
+            ShufflepodDbIndexes.ensure(db);
+        } // SHUFFLEPOD
     }
 }

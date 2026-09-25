@@ -161,7 +161,7 @@ public class FeedUpdateWorker extends Worker {
     private void refreshFeeds(List<Feed> toUpdate, boolean force) {
         List<Feed> notificationRemainingFeeds = new ArrayList<>(toUpdate);
         updateNotification(notificationRemainingFeeds);
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(8); // SHUFFLEPOD: was 4; 700+ feeds
         for (Feed feed : toUpdate) {
             executor.submit(() -> {
                 if (isStopped()) {
