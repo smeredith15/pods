@@ -29,15 +29,18 @@ import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.shufflepod.EntertainmentPool;
 import de.danoeh.antennapod.shufflepod.ForcedEpisodes;
+import de.danoeh.antennapod.shufflepod.People;
+import de.danoeh.antennapod.shufflepod.Person;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment;
+import de.danoeh.antennapod.storage.database.ShufflepodPeople;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
- * The Entertainment tab: choose which shows are in the Entertainment pool.
+ * The Entertainment tab: choose which shows and people are in the Entertainment pool.
  */
 public class EntertainmentFragment extends Fragment {
     public static final String TAG = "EntertainmentFragment";
@@ -87,6 +90,7 @@ public class EntertainmentFragment extends Fragment {
         }
         final String forcedHeader = getString(R.string.shufflepod_forced_section);
         final String showsHeader = getString(R.string.shufflepod_shows_section);
+        final String peopleHeader = getString(R.string.shufflepod_people_section);
         disposable = Observable.fromCallable(() -> {
             List<Row> rows = new ArrayList<>();
             for (Feed feed : DBReader.getFeedList()) {
@@ -103,6 +107,14 @@ public class EntertainmentFragment extends Fragment {
                 entries.add(forcedHeader);
                 entries.addAll(forced);
             }
+            List<Person> people = People.getPeople();
+            if (!people.isEmpty()) {
+                entries.add(peopleHeader);
+                for (Person person : people) {
+                    entries.add(new PersonRow(person.getId(), person.getName(),
+                            ShufflepodPeople.eligibleCount(person.getId())));
+                }
+            }
             entries.add(showsHeader);
             entries.addAll(rows);
             return entries;
@@ -116,7 +128,7 @@ public class EntertainmentFragment extends Fragment {
     }
 
     private void updateSummary() {
-        int size = EntertainmentPool.getFeedIds().size();
+        int size = EntertainmentPool.getFeedIds().size() + People.getPooledPeople().size();
         if (size == 0) {
             summary.setText(R.string.shufflepod_entertainment_intro);
         } else {
@@ -131,6 +143,18 @@ public class EntertainmentFragment extends Fragment {
 
         Row(Feed feed, int episodesLeft) {
             this.feed = feed;
+            this.episodesLeft = episodesLeft;
+        }
+    }
+
+    private static class PersonRow {
+        final long personId;
+        final String name;
+        final int episodesLeft;
+
+        PersonRow(long personId, String name, int episodesLeft) {
+            this.personId = personId;
+            this.name = name;
             this.episodesLeft = episodesLeft;
         }
     }
@@ -215,6 +239,8 @@ public class EntertainmentFragment extends Fragment {
                 bindForced((ForcedHolder) holder, (FeedItem) entry);
             } else if (holder instanceof ShowHolder && entry instanceof Row) {
                 bindShow((ShowHolder) holder, (Row) entry);
+            } else if (holder instanceof ShowHolder && entry instanceof PersonRow) {
+                bindPerson((ShowHolder) holder, (PersonRow) entry);
             }
         }
 
@@ -229,6 +255,7 @@ public class EntertainmentFragment extends Fragment {
 
         private void bindShow(ShowHolder holder, Row row) {
             holder.title.setText(row.feed.getTitle());
+            holder.playNextButton.setVisibility(View.VISIBLE);
             holder.subtitle.setText(row.episodesLeft > 0
                     ? holder.itemView.getResources().getQuantityString(
                             R.plurals.shufflepod_entertainment_episodes_left, row.episodesLeft, row.episodesLeft)
@@ -252,6 +279,28 @@ public class EntertainmentFragment extends Fragment {
                             .fitCenter()
                             .dontAnimate())
                     .into(holder.cover);
+        }
+
+        private void bindPerson(ShowHolder holder, PersonRow row) {
+            holder.title.setText(row.name);
+            holder.subtitle.setText(row.episodesLeft > 0
+                    ? holder.itemView.getResources().getQuantityString(
+                            R.plurals.shufflepod_entertainment_episodes_left, row.episodesLeft, row.episodesLeft)
+                    : holder.itemView.getContext().getString(R.string.shufflepod_entertainment_none_left));
+            holder.playNextButton.setVisibility(View.GONE);
+            holder.checkBox.setChecked(isPersonInPool(row.personId));
+            holder.itemView.setOnClickListener(v -> {
+                People.setInPool(row.personId, !isPersonInPool(row.personId));
+                holder.checkBox.setChecked(isPersonInPool(row.personId));
+                updateSummary();
+            });
+            Glide.with(holder.itemView).clear(holder.cover);
+            holder.cover.setImageResource(R.drawable.ic_shufflepod_person);
+        }
+
+        private boolean isPersonInPool(long personId) {
+            Person person = People.get(personId);
+            return person != null && person.isInPool();
         }
 
         @Override

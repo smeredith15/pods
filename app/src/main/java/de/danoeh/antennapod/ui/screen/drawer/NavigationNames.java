@@ -15,6 +15,7 @@ import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.NowPlayingTab; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.PeopleFragment; // SHUFFLEPOD
 
 public abstract class NavigationNames {
     public static @DrawableRes int getDrawable(String tag) {
@@ -37,6 +38,8 @@ public abstract class NavigationNames {
                 return R.drawable.ic_chart_box;
             case EntertainmentFragment.TAG: // SHUFFLEPOD
                 return R.drawable.ic_shuffle;
+            case PeopleFragment.TAG: // SHUFFLEPOD
+                return R.drawable.ic_shufflepod_person;
             case NowPlayingTab.TAG: // SHUFFLEPOD
                 return R.drawable.ic_play_24dp;
             case AddFeedFragment.TAG:
@@ -68,6 +71,8 @@ public abstract class NavigationNames {
                 return R.string.statistics_label;
             case EntertainmentFragment.TAG: // SHUFFLEPOD
                 return R.string.shufflepod_entertainment_label;
+            case PeopleFragment.TAG: // SHUFFLEPOD
+                return R.string.shufflepod_people_label;
             case NowPlayingTab.TAG: // SHUFFLEPOD
                 return R.string.shufflepod_now_playing_label;
             case AddFeedFragment.TAG:
@@ -101,6 +106,8 @@ public abstract class NavigationNames {
                 return R.string.statistics_label_short;
             case EntertainmentFragment.TAG: // SHUFFLEPOD
                 return R.string.shufflepod_entertainment_label_short;
+            case PeopleFragment.TAG: // SHUFFLEPOD
+                return R.string.shufflepod_people_label_short;
             case NowPlayingTab.TAG: // SHUFFLEPOD
                 return R.string.shufflepod_now_playing_label_short;
             case AddFeedFragment.TAG:
@@ -136,6 +143,8 @@ public abstract class NavigationNames {
                 return R.id.bottom_navigation_statistics;
             case EntertainmentFragment.TAG: // SHUFFLEPOD
                 return R.id.bottom_navigation_entertainment;
+            case PeopleFragment.TAG: // SHUFFLEPOD
+                return R.id.bottom_navigation_people;
             case NowPlayingTab.TAG: // SHUFFLEPOD
                 return R.id.bottom_navigation_now_playing;
             case HomeFragment.TAG: // fall-through
@@ -165,6 +174,8 @@ public abstract class NavigationNames {
             return StatisticsFragment.TAG;
         } else if (id == R.id.bottom_navigation_entertainment) { // SHUFFLEPOD
             return EntertainmentFragment.TAG;
+        } else if (id == R.id.bottom_navigation_people) { // SHUFFLEPOD
+            return PeopleFragment.TAG;
         } else if (id == R.id.bottom_navigation_now_playing) { // SHUFFLEPOD
             return NowPlayingTab.TAG;
         } else if (id == R.id.bottom_navigation_home) {

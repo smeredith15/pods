@@ -427,6 +427,26 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 
 **DECISION:** Is Phase 2 wanted at all, or is Phase 1 (subscribed shows only) enough?
 
+### As built (phases 1 and 2 together)
+
+- **People tab** (under "More", after Entertainment). It lists the people you follow, with the number of episodes in each person's folder and how many are unplayed. Tap **+** to follow someone. You can enter other spellings, choose **Also find past appearances** (otherwise only episodes published from today on are collected), and choose **Add to the Entertainment pool**.
+- **Person folder:** all of that person's episodes, newest first, with the usual episode actions: play, queue, archive, and swipe. Pull down to look for new appearances. The menu covers:
+  - In Entertainment pool
+  - Shows… (mute or unmute shows)
+  - Look for new appearances
+  - Find past appearances
+  - Edit
+  - Unfollow
+- **Muting:** long-press an episode and choose either **Remove from this person's list**, which mutes that episode, or **Mute this show for this person**. In **Shows…**, untick a show to mute it or tick it to bring it back. Muted shows and episodes are never added again.
+- **Sources:**
+  1. Local: whole-word, accent- and case-insensitive name matching in the titles and descriptions of subscribed shows. It runs whenever the People tab opens and on every sync.
+  2. Podcast Index `search/byperson`, when an API key is set (People → ⋮ → Podcast Index API key). It is free at api.podcastindex.org. The key is stored only on the phone, in `shufflepod.db`.
+- **Unsubscribed shows:** an episode from a show you don't follow is stored under that show as a not-subscribed feed. It plays like any other episode. `NonSubscribedFeedsCleaner` keeps such feeds while a person's folder references them.
+- **Syncing:** `PeopleSyncWorker` runs every 6 hours, starting once at least one person is followed.
+- **Entertainment:** a pooled person counts as one more "show" in the shuffle, taking their oldest eligible episode. Their new episodes only reach the queue this way. People can be pooled from the Entertainment tab (People section) or from the person's menu.
+- **Storage:** tables `person`, `person_episode`, `person_muted_show` and `person_muted_episode` in `shufflepod.db` (schema v4).
+- **Not built yet:** `<podcast:person>` tag parsing and exclusion phrases.
+
 ### Done when
 
 - Phase 1: I can follow a person and see their episodes across my subscriptions, confirm or reject matches, and rejected matches stay rejected.

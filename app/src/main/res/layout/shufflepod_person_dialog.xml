@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="16dp">
+
+    <EditText
+        android:id="@+id/nameInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/shufflepod_person_name_hint"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName|textCapWords" />
+
+    <EditText
+        android:id="@+id/aliasesInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/shufflepod_person_aliases_hint"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName|textCapWords" />
+
+    <CheckBox
+        android:id="@+id/pastCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/shufflepod_person_past_label" />
+
+    <CheckBox
+        android:id="@+id/poolCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/shufflepod_person_pool_label" />
+
+</LinearLayout>

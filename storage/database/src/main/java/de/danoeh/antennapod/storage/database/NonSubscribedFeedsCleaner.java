@@ -1,5 +1,7 @@
 package de.danoeh.antennapod.storage.database;
 
+import de.danoeh.antennapod.shufflepod.People; // SHUFFLEPOD
+import de.danoeh.antennapod.shufflepod.EpisodeKeys; // SHUFFLEPOD
 import android.content.Context;
 import android.util.Log;
 import de.danoeh.antennapod.model.feed.Feed;
@@ -43,6 +45,8 @@ public class NonSubscribedFeedsCleaner {
             return false;
         } else if (feed.hasEpisodeInApp()) {
             return false;
+        } else if (People.isFeedReferenced(EpisodeKeys.feedKey(feed))) { // SHUFFLEPOD: a followed person needs it
+            return false; // SHUFFLEPOD
         }
         long timeSinceLastRefresh = System.currentTimeMillis() - feed.getLastRefreshAttempt();
         if (!feed.hasInteractedWithEpisode()) {

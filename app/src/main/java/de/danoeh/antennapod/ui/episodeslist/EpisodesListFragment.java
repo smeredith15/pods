@@ -182,6 +182,7 @@ public abstract class EpisodesListFragment extends Fragment
                 if (!inActionMode()) {
                     menu.findItem(R.id.multi_select).setVisible(true);
                 }
+                onPrepareContextMenu(menu); // SHUFFLEPOD
                 MenuItemUtils.setOnClickListeners(menu, EpisodesListFragment.this::onContextItemSelected);
             }
 
@@ -439,6 +440,9 @@ public abstract class EpisodesListFragment extends Fragment
 
     protected void updateToolbar() {
     }
+
+    protected void onPrepareContextMenu(ContextMenu menu) { // SHUFFLEPOD: lets subclasses show extra items
+    } // SHUFFLEPOD
 
     protected void onItemsFirstLoaded() {
     }
