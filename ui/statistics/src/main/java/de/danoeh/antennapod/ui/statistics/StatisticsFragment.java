@@ -26,6 +26,7 @@ import de.danoeh.antennapod.ui.common.PagedToolbarFragment;
 import de.danoeh.antennapod.ui.echo.EchoActivity;
 import de.danoeh.antennapod.ui.echo.EchoConfig;
 import de.danoeh.antennapod.ui.statistics.downloads.DownloadStatisticsFragment;
+import de.danoeh.antennapod.ui.statistics.news.ShufflepodNewsReleasesFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.statistics.subscriptions.SubscriptionStatisticsFragment;
 import de.danoeh.antennapod.ui.statistics.years.YearsStatisticsFragment;
 import io.reactivex.rxjava3.core.Completable;
@@ -48,7 +49,8 @@ public class StatisticsFragment extends PagedToolbarFragment {
     private static final int POS_SUBSCRIPTIONS = 0;
     private static final int POS_YEARS = 1;
     private static final int POS_SPACE_TAKEN = 2;
-    private static final int TOTAL_COUNT = 3;
+    private static final int POS_NEWS_RELEASES = 3; // SHUFFLEPOD
+    private static final int TOTAL_COUNT = 4; // SHUFFLEPOD: was 3
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
@@ -92,6 +94,9 @@ public class StatisticsFragment extends PagedToolbarFragment {
                     break;
                 case POS_SPACE_TAKEN:
                     tab.setText(R.string.downloads_label);
+                    break;
+                case POS_NEWS_RELEASES: // SHUFFLEPOD
+                    tab.setText(R.string.shufflepod_news_releases_label);
                     break;
                 default:
                     break;
@@ -160,6 +165,8 @@ public class StatisticsFragment extends PagedToolbarFragment {
                     return new SubscriptionStatisticsFragment();
                 case POS_YEARS:
                     return new YearsStatisticsFragment();
+                case POS_NEWS_RELEASES: // SHUFFLEPOD
+                    return new ShufflepodNewsReleasesFragment();
                 default:
                 case POS_SPACE_TAKEN:
                     return new DownloadStatisticsFragment();

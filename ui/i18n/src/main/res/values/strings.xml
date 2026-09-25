@@ -1185,4 +1185,22 @@
     <string name="shufflepod_player_tab_up_next">Up next</string>
     <string name="shufflepod_player_tab_show_notes">Show notes</string>
     <string name="shufflepod_queue_time_left_with_speed">%1$s • %2$s left (%3$s at playback speed)</string>
+    <string name="shufflepod_news_releases_label">News releases</string>
+    <plurals name="shufflepod_news_releases_summary">
+        <item quantity="one">Average audio released over the last %2$d weeks by your %1$d News show</item>
+        <item quantity="other">Average audio released over the last %2$d weeks by your %1$d News shows</item>
+    </plurals>
+    <string name="shufflepod_news_releases_day">Day</string>
+    <string name="shufflepod_news_releases_real">Real time</string>
+    <string name="shufflepod_news_releases_adjusted">At playback speed</string>
+    <string name="shufflepod_news_releases_per_week">Per week</string>
+    <string name="shufflepod_news_releases_per_day">Per day</string>
+    <string name="shufflepod_news_releases_by_show">By show, per week</string>
+    <string name="shufflepod_news_releases_show_speed">%1$s (%2$s×)</string>
+    <plurals name="shufflepod_news_releases_no_duration">
+        <item quantity="one">%d episode has no length listed and is not counted.</item>
+        <item quantity="other">%d episodes have no length listed and are not counted.</item>
+    </plurals>
+    <string name="shufflepod_news_releases_speed_note">Playback speed uses each show\'s own speed, or your default speed for shows that use it.</string>
+    <string name="shufflepod_news_releases_empty">Mark shows as News to see how much audio they release each day.</string>
 </resources>

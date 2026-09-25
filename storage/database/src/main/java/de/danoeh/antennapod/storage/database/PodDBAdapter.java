@@ -1298,6 +1298,10 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public Cursor shufflepodQuery(String query, String[] args) { // SHUFFLEPOD: fork statistics
+        return db.rawQuery(query, args);
+    } // SHUFFLEPOD
+
     public int getQueueSize() {
         final String query = String.format("SELECT COUNT(%s) FROM %s", KEY_ID, TABLE_NAME_QUEUE);
         try (Cursor c = db.rawQuery(query, null)) {
