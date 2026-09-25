@@ -85,6 +85,7 @@ import de.danoeh.antennapod.ui.screen.rating.RatingDialogManager;
 import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentFragment; // SHUFFLEPOD
+import de.danoeh.antennapod.net.download.service.feed.ShufflepodNewsRefresh; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.NewsFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.PeopleFragment; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.view.BottomSheetBackPressedCallback;
@@ -223,6 +224,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
         bottomSheetBackPressedCallback = new BottomSheetBackPressedCallback(false, sheetBehavior, bottomSheet);
 
         FeedUpdateManager.getInstance().restartUpdateAlarm(this, false);
+        ShufflepodNewsRefresh.schedule(this); // SHUFFLEPOD
         SynchronizationQueue.getInstance().syncIfNotSyncedRecently();
         AutomaticDatabaseExportWorker.enqueueIfNeeded(this, false);
         DatabaseMaintenanceWorker.enqueueIfNeeded(this);

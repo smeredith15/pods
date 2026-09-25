@@ -340,7 +340,7 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 ### News refresh (as built)
 
 - AntennaPod's full refresh checks each show at most every 12 hours, only on Wi-Fi by default, and takes minutes with 700+ shows. So new News episodes could wait half a day.
-- `ShufflepodNewsRefresh` runs `FeedUpdateWorker` for **News shows only** every 30 minutes, on any connection. It is scheduled from `ClientConfigurator`, and the worker is hooked to read an `EXTRA_NEWS_ONLY` flag.
+- `ShufflepodNewsRefresh` runs `FeedUpdateWorker` for **News shows only** every 30 minutes, on any connection. It is scheduled from `MainActivity` (next to the full refresh), and the worker is hooked to read an `EXTRA_NEWS_ONLY` flag.
 - Pulling down on the queue refreshes only the News shows too, so it takes seconds. Podcasts → pull down still refreshes everything.
 
 ### Performance with a large library (700+ shows)
