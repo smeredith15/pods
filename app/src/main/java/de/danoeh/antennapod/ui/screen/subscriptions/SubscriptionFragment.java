@@ -227,11 +227,7 @@ public class SubscriptionFragment extends Fragment
                 loadSubscriptionsAndTags();
             }
         };
-        if (stateToShow == Feed.STATE_SUBSCRIBED) {
-            tagAdapter.setSelectedTag(FeedPreferences.TAG_ROOT); // SHUFFLEPOD: folders replace the tag chips
-        } else {
-            tagAdapter.setSelectedTag(FeedPreferences.TAG_ROOT);
-        }
+        tagAdapter.setSelectedTag(FeedPreferences.TAG_ROOT); // SHUFFLEPOD: folders replace the tag chips
         tagsRecycler.setAdapter(tagAdapter);
         return root;
     }
