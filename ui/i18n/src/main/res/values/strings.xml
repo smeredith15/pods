@@ -1168,7 +1168,7 @@
     <string name="shufflepod_pocketcasts_signing_in">Signing in to Pocket Casts…</string>
     <string name="shufflepod_pocketcasts_progress">Keep the app open.\n\nShow %1$d of %2$d\n%3$s</string>
     <string name="shufflepod_pocketcasts_done_title">Import finished</string>
-    <string name="shufflepod_pocketcasts_done_message">Marked played: %1$d\nArchived: %2$d\nAdded to history without audio: %3$d\nAlready played or archived here: %4$d\nNot found in the show: %5$d\n\nShows matched: %6$d\nShows not found here: %7$d\nShows that could not be read: %8$d</string>
+    <string name="shufflepod_pocketcasts_done_message">Played in Pocket Casts: %1$d\n\nMarked played: %2$d\nArchived: %3$d\nAdded to history without audio: %4$d\nAlready played or archived here: %5$d\nNo title or date available: %6$d\n\nShows matched: %7$d\nShows not found here: %8$d\nShows that could not be read: %9$d</string>
     <string name="shufflepod_pocketcasts_not_found_header">Shows not found here:</string>
     <string name="shufflepod_pocketcasts_failed">Import failed: %s</string>
     <string name="shufflepod_no_audio_label">No audio file</string>
