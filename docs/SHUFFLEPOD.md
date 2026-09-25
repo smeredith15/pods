@@ -322,6 +322,13 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 - Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
 - If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
 
+### Playback details (as built)
+
+- **Play buttons:** episode lists show a Play button (streams if not downloaded) instead of Download. `isStreamOverDownload` now defaults to true, and existing installs are switched once. User-facing "stream" wording says "play".
+- **What plays next is the top of the queue**, skipping the episode that just finished, instead of the episode after it. Sorting or reordering the queue therefore decides what plays next.
+- **Queue summary:** shows the real time left, with the time at each episode's playback speed in brackets. The "Adjust media info to playback speed" setting still controls per-episode times.
+- **Speed changes apply immediately:** changing a show's playback speed (in its settings or in a batch) applies to that show's playing episode right away. `Media3PlaybackService` now handles `SpeedPresetChangedEvent`, as the old service did.
+
 ### Tabs, tags and no inbox (as built)
 
 - **Bottom bar:** Playing, Podcasts (renamed from Subscriptions), News, Entertainment, People. The bar only holds five, so "More" (Queue, Episodes, Downloads, History, Favorites, Statistics, Add podcast, Home, Inbox, Customize, Settings) is the ⋮ button at the left of each tab's toolbar. Home and Inbox are hidden by default, and the app opens on Podcasts. Existing installs have their tab order reset once (`ShufflepodMigrations`).

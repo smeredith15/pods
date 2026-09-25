@@ -250,7 +250,7 @@
     </plurals>
     <string name="play_label">Play</string>
     <string name="pause_label">Pause</string>
-    <string name="stream_label">Stream</string>
+    <string name="stream_label">Play</string> <!-- SHUFFLEPOD: was Stream -->
     <string name="delete_label">Delete</string>
     <plurals name="deleted_episode_message">
         <item quantity="one">%d downloaded episode deleted.</item>
@@ -370,8 +370,8 @@
         <item quantity="one">Downloading over mobile data connection for the next %d minute</item>
         <item quantity="other">Downloading over mobile data connection for the next %d minutes</item>
     </plurals>
-    <string name="confirm_mobile_streaming_notification_title">Confirm mobile streaming</string>
-    <string name="confirm_mobile_streaming_notification_message">Streaming over mobile data connection is disabled in the settings. Tap to stream anyway.</string>
+    <string name="confirm_mobile_streaming_notification_title">Confirm playing over mobile data</string> <!-- SHUFFLEPOD -->
+    <string name="confirm_mobile_streaming_notification_message">Playing without downloading over a mobile data connection is disabled in the settings. Tap to play anyway.</string> <!-- SHUFFLEPOD -->
     <string name="confirm_mobile_streaming_button_always">Always</string>
     <string name="confirm_mobile_streaming_button_once">Once</string>
     <string name="already_downloaded">Episode is already downloaded</string>
@@ -508,14 +508,14 @@
     <string name="pref_pauseOnHeadsetDisconnect_title">Headphones or Bluetooth disconnect</string>
     <string name="pref_unpauseOnHeadsetReconnect_title">Headphones reconnect</string>
     <string name="pref_unpauseOnBluetoothReconnect_title">Bluetooth reconnect</string>
-    <string name="pref_stream_over_download_title">Prefer streaming</string>
-    <string name="pref_stream_over_download_sum">Display stream button instead of download button in lists</string>
+    <string name="pref_stream_over_download_title">Prefer playing</string> <!-- SHUFFLEPOD -->
+    <string name="pref_stream_over_download_sum">Display play button instead of download button in lists</string> <!-- SHUFFLEPOD -->
     <string name="pref_mobileUpdate_title">Mobile updates</string>
     <string name="pref_mobileUpdate_sum">Select what should be allowed over the mobile data connection</string>
     <string name="pref_mobileUpdate_refresh">Podcast refresh</string>
     <string name="pref_mobileUpdate_images">Cover images</string>
     <string name="pref_mobileUpdate_episode_download">Episode download</string>
-    <string name="pref_mobileUpdate_streaming">Streaming</string>
+    <string name="pref_mobileUpdate_streaming">Playing without downloading</string> <!-- SHUFFLEPOD -->
     <string name="user_interface_label">User interface</string>
     <string name="user_interface_sum">Appearance, subscriptions, lockscreen</string>
     <string name="pref_black_theme_title">Full black</string>
@@ -969,7 +969,7 @@
 
     <!-- On-Demand configuration -->
     <string name="on_demand_config_setting_changed">Setting updated successfully.</string>
-    <string name="on_demand_config_stream_text">Looks like you stream a lot. Do you want episode lists to show stream buttons?</string>
+    <string name="on_demand_config_stream_text">Looks like you play a lot without downloading. Do you want episode lists to show play buttons?</string> <!-- SHUFFLEPOD -->
     <string name="on_demand_config_download_text">Looks like you download a lot. Do you want episode lists to show download buttons?</string>
 
     <string name="shortcut_subscription_label">Subscription shortcut</string>
@@ -1184,4 +1184,5 @@
     <string name="shufflepod_player_tab_now_playing">Now playing</string>
     <string name="shufflepod_player_tab_up_next">Up next</string>
     <string name="shufflepod_player_tab_show_notes">Show notes</string>
+    <string name="shufflepod_queue_time_left_with_speed">%1$s • %2$s left (%3$s at playback speed)</string>
 </resources>

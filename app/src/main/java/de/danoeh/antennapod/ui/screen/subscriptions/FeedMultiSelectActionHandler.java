@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.event.MessageEvent;
+import de.danoeh.antennapod.event.settings.SpeedPresetChangedEvent; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.database.DBWriter;
 import de.danoeh.antennapod.databinding.PlaybackSpeedFeedSettingDialogBinding;
 import de.danoeh.antennapod.ui.common.ConfirmationDialog;
@@ -114,6 +115,10 @@ public class FeedMultiSelectActionHandler {
                     float newSpeed = viewBinding.useGlobalCheckbox.isChecked()
                             ? FeedPreferences.SPEED_USE_GLOBAL : viewBinding.seekBar.getCurrentSpeed();
                     saveFeedPreferences(feedPreferences -> feedPreferences.setFeedPlaybackSpeed(newSpeed));
+                    for (Feed feed : selectedItems) { // SHUFFLEPOD: apply to a playing episode of these shows
+                        EventBus.getDefault().post(new SpeedPresetChangedEvent(newSpeed, feed.getId(),
+                                feed.getPreferences().getFeedSkipSilence()));
+                    } // SHUFFLEPOD
                 })
                 .setNegativeButton(R.string.cancel_label, null)
                 .show();

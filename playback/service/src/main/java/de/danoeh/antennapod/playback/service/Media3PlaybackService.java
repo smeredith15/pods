@@ -31,6 +31,7 @@ import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.event.PlayerErrorEvent;
 import de.danoeh.antennapod.event.StreamingConfirmationEvent;
 import de.danoeh.antennapod.event.settings.VolumeAdaptionChangedEvent;
+import de.danoeh.antennapod.event.settings.SpeedPresetChangedEvent; // SHUFFLEPOD
 import de.danoeh.antennapod.event.PlayerStatusEvent;
 import de.danoeh.antennapod.event.playback.BufferUpdateEvent;
 import de.danoeh.antennapod.event.playback.PlaybackPositionEvent;
@@ -897,6 +898,25 @@ public class Media3PlaybackService extends MediaLibraryService {
             sleepTimer.updateRemainingTime(currentLeft + additionalTime);
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN) // SHUFFLEPOD: a show's own speed now applies to its playing episode
+    @SuppressWarnings("unused")
+    public void speedPresetChanged(SpeedPresetChangedEvent event) {
+        if (currentPlayable == null || player == null || currentPlayable.getItem() == null
+                || currentPlayable.getItem().getFeed() == null
+                || currentPlayable.getItem().getFeed().getId() != event.getFeedId()) {
+            return;
+        }
+        FeedPreferences preferences = currentPlayable.getItem().getFeed().getPreferences();
+        preferences.setFeedPlaybackSpeed(event.getSpeed());
+        preferences.setFeedSkipSilence(event.getSkipSilence());
+        player.setPlaybackSpeed(event.getSpeed() == FeedPreferences.SPEED_USE_GLOBAL
+                ? UserPreferences.getPlaybackSpeed() : event.getSpeed());
+        boolean skipSilence = event.getSkipSilence() == FeedPreferences.SkipSilence.GLOBAL
+                ? UserPreferences.isSkipSilence() : event.getSkipSilence() == FeedPreferences.SkipSilence.AGGRESSIVE;
+        PlaybackPreferences.setCurrentlyPlayingTemporarySkipSilence(skipSilence);
+        exoPlayer.setSkipSilenceEnabled(skipSilence);
+    } // SHUFFLEPOD
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     @SuppressWarnings("unused")

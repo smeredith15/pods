@@ -30,13 +30,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerQueue; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.EntertainmentPanel; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodQueueInfo; // SHUFFLEPOD
 import de.danoeh.antennapod.net.download.service.feed.ShufflepodNewsRefresh; // SHUFFLEPOD
 import de.danoeh.antennapod.event.MessageEvent;
 import de.danoeh.antennapod.event.playback.SpeedChangedEvent;
 import de.danoeh.antennapod.ui.screen.InboxFragment;
 import de.danoeh.antennapod.ui.screen.SearchFragment;
 import de.danoeh.antennapod.net.download.serviceinterface.FeedUpdateManager;
-import de.danoeh.antennapod.ui.episodes.PlaybackSpeedUtils;
 import de.danoeh.antennapod.ui.view.FloatingSelectMenu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,7 +52,6 @@ import de.danoeh.antennapod.ui.common.ConfirmationDialog;
 import de.danoeh.antennapod.ui.MenuItemUtils;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.DBWriter;
-import de.danoeh.antennapod.ui.common.Converter;
 import de.danoeh.antennapod.ui.screen.feed.ItemSortDialog;
 import de.danoeh.antennapod.event.EpisodeDownloadEvent;
 import de.danoeh.antennapod.event.FeedItemEvent;
@@ -511,20 +510,8 @@ public class QueueFragment extends Fragment implements MaterialToolbar.OnMenuIte
     }
 
     private void refreshInfoBar() {
-        long timeLeft = 0;
-        for (FeedItem item : queue) {
-            float playbackSpeed = 1;
-            if (UserPreferences.timeRespectsSpeed()) {
-                playbackSpeed = PlaybackSpeedUtils.getCurrentPlaybackSpeed(item.getMedia());
-            }
-            if (item.getMedia() != null) {
-                long itemTimeLeft = item.getMedia().getDuration() - item.getMedia().getPosition();
-                timeLeft += (long) (itemTimeLeft / playbackSpeed);
-            }
-        }
-        String episodes = getResources().getQuantityString(R.plurals.num_episodes, queue.size(), queue.size());
-        String time = Converter.getDurationStringLocalized(getResources(), timeLeft, false);
-        infoBar.setText(getString(R.string.queue_time_left_label, episodes, time));
+        // SHUFFLEPOD: real time left, with the time at playback speed in brackets (was one or the other)
+        infoBar.setText(ShufflepodQueueInfo.summary(getResources(), queue));
 
         if (recyclerAdapter.inActionMode()) {
             infoBar.setVisibility(View.INVISIBLE);
