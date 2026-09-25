@@ -502,6 +502,10 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 - Never un-plays or un-archives anything. Positions and stars are not imported.
 - **Played** episodes that a feed no longer lists get a history-only episode in that show: title and date from Pocket Casts' catalog, marked played, **no audio**. The item identifier is `pocketcasts:<episode uuid>`, so re-running the import doesn't duplicate them. Archived-only episodes the feed no longer lists are just counted.
 - Any episode without an audio file shows a crossed-out headphones badge (`ic_shufflepod_no_audio`) in episode lists.
+- **Custom audio** (`CustomEpisodeDialogs`):
+  - A show's ⋮ menu has **Add episode from URL…**, which creates an episode from a title, a date and an audio URL (item identifier `custom:<uuid>`).
+  - An episode with no audio has **Attach audio from URL…** in its long-press and detail menus.
+  - For whole private or premium feeds, use AntennaPod's own "Add podcast by RSS address", which supports username and password.
 
 **DECISION:** Roughly how many shows are in Pocket Casts, and how many have deep back catalogs I've partially worked through? This decides whether the "mark before date" tool is needed early.
 

@@ -50,6 +50,11 @@
         android:title="@string/shufflepod_in_entertainment_label"
         custom:showAsAction="never" />
     <item
+        android:id="@+id/shufflepod_add_episode_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_add_episode_from_url_label"
+        custom:showAsAction="never" />
+    <item
         android:id="@+id/shufflepod_show_archived_item"
         android:checkable="true"
         android:menuCategory="container"

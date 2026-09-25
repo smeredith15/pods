@@ -341,7 +341,8 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         } else if (item.getItemId() == R.id.action_search) {
             ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance(feed.getId(), feed.getTitle()));
             return true;
-        } else if (ShufflepodFeedMenu.onMenuItemClick(viewBinding.toolbar.getMenu(), item, feed)) { // SHUFFLEPOD
+        } else if (ShufflepodFeedMenu.onMenuItemClick(requireContext(), viewBinding.toolbar.getMenu(), item,
+                feed)) { // SHUFFLEPOD
             return true; // SHUFFLEPOD
         }
 

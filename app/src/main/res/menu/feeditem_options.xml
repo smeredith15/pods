@@ -26,6 +26,11 @@
 
     <!-- SHUFFLEPOD -->
     <item
+        android:id="@+id/shufflepod_attach_audio_item"
+        android:menuCategory="container"
+        android:title="@string/shufflepod_attach_audio_label"
+        android:visible="false" />
+    <item
         android:id="@+id/shufflepod_archive_item"
         custom:showAsAction="collapseActionView"
         android:title="@string/shufflepod_archive_label" />

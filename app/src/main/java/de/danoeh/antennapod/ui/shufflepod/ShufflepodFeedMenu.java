@@ -31,14 +31,21 @@ public final class ShufflepodFeedMenu {
                 ShowTags.isNews(feed.getPreferences()));
         setChecked(menu.findItem(R.id.shufflepod_in_entertainment_item), subscribed,
                 ShowTags.has(feed.getPreferences(), ShowTags.ENTERTAINMENT));
+        MenuItem addEpisode = menu.findItem(R.id.shufflepod_add_episode_item);
+        if (addEpisode != null) {
+            addEpisode.setVisible(subscribed && !feed.isLocalFeed());
+        }
     }
 
     /**
      * Returns true if the item was one of the fork's.
      */
-    public static boolean onMenuItemClick(Menu menu, MenuItem item, Feed feed) {
+    public static boolean onMenuItemClick(Context context, Menu menu, MenuItem item, Feed feed) {
         String tag;
-        if (item.getItemId() == R.id.shufflepod_in_news_item) {
+        if (item.getItemId() == R.id.shufflepod_add_episode_item) {
+            CustomEpisodeDialogs.showAddEpisode(context, feed);
+            return true;
+        } else if (item.getItemId() == R.id.shufflepod_in_news_item) {
             tag = ShowTags.NEWS;
         } else if (item.getItemId() == R.id.shufflepod_in_entertainment_item) {
             tag = ShowTags.ENTERTAINMENT;

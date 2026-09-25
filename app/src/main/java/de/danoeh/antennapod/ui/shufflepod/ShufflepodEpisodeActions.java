@@ -33,7 +33,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Episode menu actions added by the fork: archive, unarchive, and the "everything older" bulk actions.
+ * Episode menu actions added by the fork: archive, unarchive, the "everything older" bulk actions, and
+ * attaching audio to an episode without any.
  */
 public final class ShufflepodEpisodeActions {
     private static final String TAG = "ShufflepodEpisodeAction";
@@ -62,6 +63,7 @@ public final class ShufflepodEpisodeActions {
         setVisible(menu, R.id.shufflepod_mark_older_played_item, canChangeOlder);
         setVisible(menu, R.id.shufflepod_play_next_from_show_item,
                 items.size() == 1 && isSubscribed(items.get(0)));
+        setVisible(menu, R.id.shufflepod_attach_audio_item, items.size() == 1 && !items.get(0).hasMedia());
     }
 
     public static boolean onMenuItemClicked(@NonNull Fragment fragment, int menuItemId, @NonNull FeedItem item) {
@@ -74,6 +76,9 @@ public final class ShufflepodEpisodeActions {
             return true;
         } else if (menuItemId == R.id.shufflepod_mark_older_played_item) {
             changeOlderEpisodes(activity, item, false);
+            return true;
+        } else if (menuItemId == R.id.shufflepod_attach_audio_item) {
+            CustomEpisodeDialogs.showAttachAudio(activity, item);
             return true;
         } else if (menuItemId == R.id.shufflepod_play_next_from_show_item) {
             ForceNextDialog.show(activity, item.getFeedId(),
