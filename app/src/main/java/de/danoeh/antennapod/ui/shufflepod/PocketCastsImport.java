@@ -52,8 +52,13 @@ public final class PocketCastsImport {
         public final List<String> unmatchedTitles = new ArrayList<>();
     }
 
-    public static Result run(Context context, String email, String password, Progress progress) throws Exception {
-        PocketCastsClient client = PocketCastsClient.login(email, password);
+    /**
+     * Signs in with the token if one is given, otherwise with email and password.
+     */
+    public static Result run(Context context, String email, String password, String token, Progress progress)
+            throws Exception {
+        PocketCastsClient client = token.trim().isEmpty()
+                ? PocketCastsClient.login(email, password) : PocketCastsClient.fromToken(token);
         List<PocketCastsClient.Podcast> podcasts = client.getSubscriptions();
 
         Map<String, Feed> byTitle = new HashMap<>();

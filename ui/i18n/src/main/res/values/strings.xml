@@ -1172,4 +1172,13 @@
     <string name="shufflepod_pocketcasts_not_found_header">Shows not found here:</string>
     <string name="shufflepod_pocketcasts_failed">Import failed: %s</string>
     <string name="shufflepod_no_audio_label">No audio file</string>
+    <string name="shufflepod_pocketcasts_token_help">Signed in to Pocket Casts with Google or Apple? Leave email and password empty and paste a token instead. On a computer, sign in at play.pocketcasts.com, open the browser\'s developer tools (F12), go to Network, click any request to api.pocketcasts.com and copy the value of its Authorization header.</string>
+    <string name="shufflepod_pocketcasts_token_hint">Token (optional)</string>
+    <string name="shufflepod_add_episode_from_url_label">Add episode from URL…</string>
+    <string name="shufflepod_attach_audio_label">Attach audio from URL…</string>
+    <string name="shufflepod_custom_episode_title_hint">Episode title</string>
+    <string name="shufflepod_custom_episode_date_hint">Date (YYYY-MM-DD)</string>
+    <string name="shufflepod_custom_episode_url_hint">Audio file URL (https://…)</string>
+    <string name="shufflepod_custom_episode_invalid">Enter a title, a date written as YYYY-MM-DD, and an audio URL starting with https://</string>
+    <string name="shufflepod_custom_episode_saved">Episode saved</string>
 </resources>

@@ -35,21 +35,23 @@ public final class PocketCastsImportDialog {
         View view = LayoutInflater.from(context).inflate(R.layout.shufflepod_pocketcasts_dialog, null);
         EditText emailInput = view.findViewById(R.id.emailInput);
         EditText passwordInput = view.findViewById(R.id.passwordInput);
+        EditText tokenInput = view.findViewById(R.id.tokenInput);
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.shufflepod_pocketcasts_import_label)
                 .setView(view)
                 .setPositiveButton(R.string.shufflepod_pocketcasts_import_button, (dialog, which) -> {
                     String email = emailInput.getText().toString().trim();
                     String password = passwordInput.getText().toString();
-                    if (!email.isEmpty() && !password.isEmpty()) {
-                        runImport(context, email, password);
+                    String token = tokenInput.getText().toString();
+                    if (!token.trim().isEmpty() || (!email.isEmpty() && !password.isEmpty())) {
+                        runImport(context, email, password, token);
                     }
                 })
                 .setNegativeButton(R.string.cancel_label, null)
                 .show();
     }
 
-    private static void runImport(Context context, String email, String password) {
+    private static void runImport(Context context, String email, String password, String token) {
         final AlertDialog progressDialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.shufflepod_pocketcasts_import_label)
                 .setMessage(R.string.shufflepod_pocketcasts_signing_in)
@@ -60,7 +62,7 @@ public final class PocketCastsImportDialog {
         }
         final Handler main = new Handler(Looper.getMainLooper());
         final Context appContext = context.getApplicationContext();
-        Observable.fromCallable(() -> PocketCastsImport.run(appContext, email, password,
+        Observable.fromCallable(() -> PocketCastsImport.run(appContext, email, password, token,
                 (done, total, title) -> main.post(() -> progressDialog.setMessage(context.getString(
                         R.string.shufflepod_pocketcasts_progress, Math.min(done + 1, total), total, title)))))
                 .subscribeOn(Schedulers.io())

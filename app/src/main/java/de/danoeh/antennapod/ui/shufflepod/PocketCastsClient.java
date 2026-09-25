@@ -61,6 +61,17 @@ public final class PocketCastsClient {
         public long publishedMs;
     }
 
+    /**
+     * Uses a token copied from the web player, for accounts that sign in with Google or Apple.
+     */
+    public static PocketCastsClient fromToken(String token) {
+        String trimmed = token.trim();
+        if (trimmed.regionMatches(true, 0, "Bearer ", 0, 7)) {
+            trimmed = trimmed.substring(7).trim();
+        }
+        return new PocketCastsClient(trimmed);
+    }
+
     public static PocketCastsClient login(String email, String password) throws IOException {
         JSONObject body = new JSONObject();
         try {
