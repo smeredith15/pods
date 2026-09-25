@@ -132,6 +132,15 @@
                     app:srcCompat="@drawable/ic_shufflepod_archive" />
 
                 <ImageView
+                    android:id="@+id/shufflepodNoAudio"
+                    android:layout_width="12sp"
+                    android:layout_height="12sp"
+                    android:contentDescription="@string/shufflepod_no_audio_label"
+                    android:visibility="gone"
+                    app:tint="?attr/colorOnSurfaceVariant"
+                    app:srcCompat="@drawable/ic_shufflepod_no_audio" />
+
+                <ImageView
                     android:id="@+id/ivInPlaylist"
                     android:layout_width="12sp"
                     android:layout_height="12sp"

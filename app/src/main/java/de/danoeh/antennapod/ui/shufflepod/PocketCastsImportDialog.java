@@ -82,7 +82,7 @@ public final class PocketCastsImportDialog {
 
     private static void showResult(Context context, PocketCastsImport.Result result) {
         StringBuilder message = new StringBuilder(context.getString(R.string.shufflepod_pocketcasts_done_message,
-                result.markedPlayed, result.archived, result.alreadyDone, result.notInFeed,
+                result.markedPlayed, result.archived, result.historyAdded, result.alreadyDone, result.notInFeed,
                 result.showsMatched, result.showsUnmatched, result.showsFailed));
         if (!result.unmatchedTitles.isEmpty()) {
             List<String> listed = result.unmatchedTitles.subList(0,

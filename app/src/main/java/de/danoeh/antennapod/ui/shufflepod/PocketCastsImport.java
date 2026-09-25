@@ -6,9 +6,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.danoeh.antennapod.event.FeedItemEvent;
 import de.danoeh.antennapod.model.feed.Feed;
@@ -22,8 +25,9 @@ import de.danoeh.antennapod.storage.database.DBWriter;
 
 /**
  * One-time import of played and archived state from Pocket Casts into the matching shows here.
- * Only ever marks episodes played or archived; never un-plays anything. Episodes Pocket Casts knows but
- * the show's feed no longer has are counted, not created. Must run off the main thread.
+ * Only ever marks episodes played or archived; never un-plays anything. Played episodes that the show's
+ * feed no longer lists are added as played, history-only episodes (title and date, no audio), keyed by
+ * their Pocket Casts ID so running the import again doesn't duplicate them. Must run off the main thread.
  */
 public final class PocketCastsImport {
 
@@ -34,7 +38,10 @@ public final class PocketCastsImport {
         void onShow(int done, int total, String title);
     }
 
+    private static final String HISTORY_ID_PREFIX = "pocketcasts:";
+
     public static final class Result {
+        public int historyAdded;
         public int showsMatched;
         public int showsUnmatched;
         public int markedPlayed;
@@ -86,6 +93,24 @@ public final class PocketCastsImport {
         return result;
     }
 
+    /**
+     * Adds a played episode with no audio for listening history. Returns false if it already exists or
+     * Pocket Casts has no usable title and date for it.
+     */
+    private static boolean addHistoryEpisode(Feed feed, String uuid, PocketCastsClient.CatalogEpisode info,
+                                             Set<String> identifiers) throws Exception {
+        String identifier = HISTORY_ID_PREFIX + uuid;
+        if (identifiers.contains(identifier) || info.title == null || info.title.isEmpty()
+                || info.publishedMs <= 0) {
+            return false;
+        }
+        FeedItem item = new FeedItem(0, info.title, identifier, null, new Date(info.publishedMs),
+                FeedItem.PLAYED, feed);
+        DBWriter.setFeedItem(item, false).get();
+        identifiers.add(identifier);
+        return true;
+    }
+
     private static void importShow(Context context, PocketCastsClient client, PocketCastsClient.Podcast podcast,
                                    Feed feed, Result result) throws Exception {
         List<PocketCastsClient.EpisodeStatus> wanted = new ArrayList<>();
@@ -105,9 +130,13 @@ public final class PocketCastsImport {
         List<FeedItem> items = DBReader.getFeedItemList(feed, FeedItemFilter.unfiltered(),
                 SortOrder.DATE_NEW_OLD, 0, Integer.MAX_VALUE);
         Map<Long, FeedItem> itemsById = new HashMap<>();
+        Set<String> identifiers = new HashSet<>();
         List<PocketCastsMatcher.Episode> local = new ArrayList<>();
         for (FeedItem item : items) {
             itemsById.put(item.getId(), item);
+            if (item.getItemIdentifier() != null) {
+                identifiers.add(item.getItemIdentifier());
+            }
             local.add(new PocketCastsMatcher.Episode(item.getId(),
                     item.getMedia() != null ? item.getMedia().getDownloadUrl() : null, item.getTitle(),
                     item.getPubDate() != null ? item.getPubDate().getTime() : 0));
@@ -125,7 +154,14 @@ public final class PocketCastsImport {
             long id = matcher.match(new PocketCastsMatcher.Episode(0, info.url, info.title, info.publishedMs));
             FeedItem item = id >= 0 ? itemsById.get(id) : null;
             if (item == null) {
-                result.notInFeed++;
+                if (status.playingStatus == PocketCastsClient.STATUS_PLAYED
+                        && addHistoryEpisode(feed, status.uuid, info, identifiers)) {
+                    result.historyAdded++;
+                } else if (identifiers.contains(HISTORY_ID_PREFIX + status.uuid)) {
+                    result.alreadyDone++;
+                } else {
+                    result.notInFeed++;
+                }
             } else if (item.isPlayed() || ArchiveStore.isArchived(item)) {
                 result.alreadyDone++;
             } else if (status.playingStatus == PocketCastsClient.STATUS_PLAYED) {

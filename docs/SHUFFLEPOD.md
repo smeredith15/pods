@@ -500,7 +500,8 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 - Shows are matched by normalized title, falling back to the website link. Episodes are matched by audio URL, then audio file name, then title plus publish date within 3 days.
 - **Played** (`playingStatus` 3) → marked played. **Archived** only (`isDeleted`) → archived. Both leave the queue.
 - Never un-plays or un-archives anything. Positions and stars are not imported.
-- Episodes a feed no longer contains are counted in the summary, not created.
+- **Played** episodes that a feed no longer lists get a history-only episode in that show: title and date from Pocket Casts' catalog, marked played, **no audio**. The item identifier is `pocketcasts:<episode uuid>`, so re-running the import doesn't duplicate them. Archived-only episodes the feed no longer lists are just counted.
+- Any episode without an audio file shows a crossed-out headphones badge (`ic_shufflepod_no_audio`) in episode lists.
 
 **DECISION:** Roughly how many shows are in Pocket Casts, and how many have deep back catalogs I've partially worked through? This decides whether the "mark before date" tool is needed early.
 
