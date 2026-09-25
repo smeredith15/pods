@@ -18,9 +18,7 @@ import de.danoeh.antennapod.shufflepod.ReleasePattern;
 public final class ShufflepodSmartFolders {
     private static final long MAX_AGE_MS = 60 * 60 * 1000;
 
-    private static Map<Long, Integer> patterns = null;
-    private static Map<Long, Long> lastReleases = new HashMap<>();
-    private static long computedAt = 0;
+    private static volatile Snapshot snapshot = null;
 
     private ShufflepodSmartFolders() {
     }
@@ -56,16 +54,16 @@ public final class ShufflepodSmartFolders {
     /**
      * Publish time of the show's newest episode, or 0 if unknown.
      */
-    public static synchronized long getLastRelease(long feedId) {
-        Long value = lastReleases.get(feedId);
+    public static long getLastRelease(long feedId) {
+        Snapshot current = snapshot;
+        Long value = current != null ? current.lastReleases.get(feedId) : null;
         return value != null ? value : 0;
     }
 
     private static Map<Long, Integer> getPatterns() {
-        synchronized (ShufflepodSmartFolders.class) {
-            if (patterns != null && System.currentTimeMillis() - computedAt < MAX_AGE_MS) {
-                return patterns;
-            }
+        Snapshot current = snapshot;
+        if (current != null && System.currentTimeMillis() - current.computedAt < MAX_AGE_MS) {
+            return current.patterns;
         }
         Map<Long, Integer> newPatterns = new HashMap<>();
         Map<Long, Long> newLastReleases = new HashMap<>();
@@ -80,11 +78,19 @@ public final class ShufflepodSmartFolders {
                 newLastReleases.put(feed.getId(), dates[dates.length - 1]);
             }
         }
-        synchronized (ShufflepodSmartFolders.class) {
-            patterns = newPatterns;
-            lastReleases = newLastReleases;
-            computedAt = now;
-            return patterns;
+        snapshot = new Snapshot(newPatterns, newLastReleases, now);
+        return newPatterns;
+    }
+
+    private static final class Snapshot {
+        final Map<Long, Integer> patterns;
+        final Map<Long, Long> lastReleases;
+        final long computedAt;
+
+        Snapshot(Map<Long, Integer> patterns, Map<Long, Long> lastReleases, long computedAt) {
+            this.patterns = patterns;
+            this.lastReleases = lastReleases;
+            this.computedAt = computedAt;
         }
     }
 
