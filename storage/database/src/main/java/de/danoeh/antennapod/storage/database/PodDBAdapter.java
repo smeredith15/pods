@@ -1302,6 +1302,10 @@ public class PodDBAdapter {
         return db.rawQuery(query, args);
     } // SHUFFLEPOD
 
+    public Cursor shufflepodItemsWithDescription(String where, String[] args) { // SHUFFLEPOD: people search
+        return db.rawQuery(SELECT_FEED_ITEMS_AND_MEDIA_WITH_DESCRIPTION + " WHERE " + where, args);
+    } // SHUFFLEPOD
+
     public int getQueueSize() {
         final String query = String.format("SELECT COUNT(%s) FROM %s", KEY_ID, TABLE_NAME_QUEUE);
         try (Cursor c = db.rawQuery(query, null)) {
