@@ -79,23 +79,17 @@ public class NavigationDrawerTest {
         UserPreferences.setDrawerItemOrder(Collections.emptyList(), Collections.emptyList());
         activityRule.launchActivity(new Intent());
 
-        // home
+        // SHUFFLEPOD: News replaces Home here; Home and Inbox moved to the bottom of the list (hidden by default)
         openNavDrawer();
-        onDrawerItem(withText(R.string.home_label)).perform(click());
+        onDrawerItem(withText(R.string.shufflepod_news_label)).perform(click());
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
-                withText(R.string.home_label)), 1000));
+                withText(R.string.shufflepod_news_label)), 1000));
 
         // queue
         openNavDrawer();
         onDrawerItem(withText(R.string.queue_label)).perform(click());
         onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
                 withText(R.string.queue_label)), 1000));
-
-        // Inbox
-        openNavDrawer();
-        onDrawerItem(withText(R.string.inbox_label)).perform(click());
-        onView(isRoot()).perform(waitForView(allOf(isDescendantOfA(withId(R.id.toolbar)),
-                withText(R.string.inbox_label)), 1000));
 
         // episodes
         openNavDrawer();
