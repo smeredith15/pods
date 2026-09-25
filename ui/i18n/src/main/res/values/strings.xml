@@ -1181,4 +1181,7 @@
     <string name="shufflepod_custom_episode_url_hint">Audio file URL (https://…)</string>
     <string name="shufflepod_custom_episode_invalid">Enter a title, a date written as YYYY-MM-DD, and an audio URL starting with https://</string>
     <string name="shufflepod_custom_episode_saved">Episode saved</string>
+    <string name="shufflepod_player_tab_now_playing">Now playing</string>
+    <string name="shufflepod_player_tab_up_next">Up next</string>
+    <string name="shufflepod_player_tab_show_notes">Show notes</string>
 </resources>

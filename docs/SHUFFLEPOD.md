@@ -316,7 +316,9 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 ### Now Playing tab
 
 - **Now Playing** replaces Queue in the bottom bar (Queue moves to "More" and stays in the drawer). It isn't a screen of its own: it opens the full player, or the Queue screen when nothing is loaded.
-- In the full player, the vertical pager is now **cover → queue → show notes**: swipe up from the cover to see the queue (with its Entertainment strip), swipe up again for show notes. The embedded queue has no pull-to-refresh, so pulling down pages back to the cover.
+- The full player has tabs, **Now playing · Up next · Show notes** (`ShufflepodPlayerTabs`).
+  - Swiping up from the cover still opens the queue, which includes its Entertainment strip.
+  - On the queue and show-notes pages, page swiping is off. The list scrolls freely, the queue's swipe actions work, and pulling down at the top closes the player.
 - Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
 - If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
 
@@ -467,6 +469,7 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
   - Edit
   - Unfollow
 - **Muting:** long-press an episode and choose either **Remove from this person's list**, which mutes that episode, or **Mute this show for this person**. In **Shows…**, untick a show to mute it or tick it to bring it back. Muted shows and episodes are never added again.
+- **Matching is strict for both sources:** a name, or one of its other spellings, must appear as a whole phrase in the episode title, the show notes or the show title. Podcast Index results that fail this check are dropped, and each sync removes earlier loose matches from the folder.
 - **Sources:**
   1. Local: whole-word, accent- and case-insensitive name matching in the titles and descriptions of subscribed shows. It runs whenever the People tab opens and on every sync.
   2. Podcast Index `search/byperson`, when an API key is set (People → ⋮ → Podcast Index API key). It is free at api.podcastindex.org. The key is stored only on the phone, in `shufflepod.db`.
