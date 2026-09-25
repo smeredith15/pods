@@ -1179,6 +1179,6 @@
     <string name="shufflepod_custom_episode_title_hint">Episode title</string>
     <string name="shufflepod_custom_episode_date_hint">Date (YYYY-MM-DD)</string>
     <string name="shufflepod_custom_episode_url_hint">Audio file URL (https://…)</string>
-    <string name="shufflepod_custom_episode_invalid">Enter a title, a date like 2024-05-31 and an audio URL starting with https://</string>
+    <string name="shufflepod_custom_episode_invalid">Enter a title, a date written as YYYY-MM-DD, and an audio URL starting with https://</string>
     <string name="shufflepod_custom_episode_saved">Episode saved</string>
 </resources>
