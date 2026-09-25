@@ -35,8 +35,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 public class PeopleFragment extends Fragment {
     public static final String TAG = "PeopleFragment";
-    private static final long SCAN_INTERVAL_MS = 60 * 60 * 1000;
-    private static long lastScan = 0;
 
     private final PeopleAdapter adapter = new PeopleAdapter();
     private TextView summary;
@@ -119,38 +117,26 @@ public class PeopleFragment extends Fragment {
                             ? getString(R.string.shufflepod_people_empty_title) + "\n"
                                     + getString(R.string.shufflepod_people_empty_message)
                             : getString(R.string.shufflepod_people_empty_message));
-                    scanIfStale();
+                    scanNewEpisodes();
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
     /**
-     * Looks for new mentions in the subscribed shows in the background, at most once an hour,
+     * Looks for mentions in the episodes added since the last check, in the background,
      * and reloads the list if any were found.
      */
-    private void scanIfStale() {
-        if (System.currentTimeMillis() - lastScan < SCAN_INTERVAL_MS
-                || (scanDisposable != null && !scanDisposable.isDisposed())) {
+    private void scanNewEpisodes() {
+        if (scanDisposable != null && !scanDisposable.isDisposed()) {
             return;
         }
-        scanDisposable = Observable.fromCallable(() -> {
-            int added = 0;
-            for (Person person : People.getPeople()) {
-                added += ShufflepodPeople.scanSubscriptions(person);
-            }
-            return added;
-        })
+        scanDisposable = Observable.fromCallable(ShufflepodPeople::scanNewEpisodes)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(added -> {
-                    markScanned();
                     if (added > 0) {
                         load();
                     }
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
-    }
-
-    private static void markScanned() {
-        lastScan = System.currentTimeMillis();
     }
 
     private static class Row {

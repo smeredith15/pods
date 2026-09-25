@@ -28,6 +28,7 @@ public final class People {
     public static final String SOURCE_PODCAST_INDEX = "podcastindex";
     private static final String SETTING_PI_KEY = "podcastindex_key";
     private static final String SETTING_PI_SECRET = "podcastindex_secret";
+    private static final String SETTING_LOCAL_SCAN_MARK = "local_scan_max_item_id";
 
     private static final Map<Long, Person> persons = new LinkedHashMap<>();
     // personId -> (feedKey + "\n" + episodeKey) -> item ID
@@ -215,6 +216,27 @@ public final class People {
     public static synchronized List<Long> getItemIds(long personId) {
         Map<String, Long> map = episodes.get(personId);
         return map == null ? new ArrayList<>() : new ArrayList<>(map.values());
+    }
+
+    public static synchronized boolean hasItem(long personId, long itemId) {
+        Map<String, Long> map = episodes.get(personId);
+        return map != null && map.containsValue(itemId);
+    }
+
+    /**
+     * The highest AntennaPod episode ID already searched for mentions of everyone.
+     */
+    public static synchronized long getLocalScanMark() {
+        String value = settings.get(SETTING_LOCAL_SCAN_MARK);
+        try {
+            return value != null ? Long.parseLong(value) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    public static synchronized void setLocalScanMark(long itemId) {
+        putSetting(SETTING_LOCAL_SCAN_MARK, String.valueOf(itemId));
     }
 
     public static synchronized int getEpisodeCount(long personId) {

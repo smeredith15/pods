@@ -37,27 +37,36 @@ public final class PeopleSync {
         }
         ShufflepodPeople.pruneNonMatching(person);
         result.fromSubscriptions = ShufflepodPeople.scanSubscriptions(person);
-        if (People.hasPodcastIndexCredentials()) {
-            try {
-                for (String name : person.getNames()) {
-                    for (ShufflepodPeople.RemoteEpisode remote : PodcastIndexClient.searchByPerson(name,
-                            People.getPodcastIndexKey(), People.getPodcastIndexSecret())) {
-                        if (ShufflepodPeople.addRemoteEpisode(context, person, remote)) {
-                            result.fromPodcastIndex++;
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                Log.w(TAG, "Podcast Index search failed for " + person.getName(), e);
-                result.podcastIndexError = e.getMessage();
-            }
-        }
+        searchPodcastIndex(context, person, result);
         return result;
     }
 
+    /**
+     * The periodic check: only episodes added since the last check are searched locally.
+     */
     public static void syncAll(Context context) {
+        ShufflepodPeople.scanNewEpisodes();
         for (Person person : People.getPeople()) {
-            syncPerson(context, person.getId());
+            searchPodcastIndex(context, person, new Result());
+        }
+    }
+
+    private static void searchPodcastIndex(Context context, Person person, Result result) {
+        if (!People.hasPodcastIndexCredentials()) {
+            return;
+        }
+        try {
+            for (String name : person.getNames()) {
+                for (ShufflepodPeople.RemoteEpisode remote : PodcastIndexClient.searchByPerson(name,
+                        People.getPodcastIndexKey(), People.getPodcastIndexSecret())) {
+                    if (ShufflepodPeople.addRemoteEpisode(context, person, remote)) {
+                        result.fromPodcastIndex++;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Podcast Index search failed for " + person.getName(), e);
+            result.podcastIndexError = e.getMessage();
         }
     }
 }
