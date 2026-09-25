@@ -87,6 +87,9 @@ public final class ShufflepodPeople {
         if (People.isShowMuted(person.getId(), remote.feedUrl)) {
             return false;
         }
+        if (!PersonMatcher.matchesAny(person.getNames(), remote.title, remote.description, remote.feedTitle)) {
+            return false; // Podcast Index also returns loose matches, e.g. on the first name only
+        }
         String guid = remote.guid != null && !remote.guid.isEmpty() ? remote.guid : null;
         FeedItem existing = DBReader.getFeedItemByGuidOrEpisodeUrl(guid, remote.enclosureUrl);
         if (existing == null) {
@@ -113,6 +116,31 @@ public final class ShufflepodPeople {
         }
         FeedItem full = DBReader.getFeedItem(existing.getId());
         return full != null && People.addEpisode(person.getId(), full, People.SOURCE_PODCAST_INDEX);
+    }
+
+    /**
+     * Removes episodes from the person's folder whose title, show notes and show title don't contain any of
+     * their names as a whole phrase (left over from looser matching).
+     *
+     * @return number of episodes removed
+     */
+    public static int pruneNonMatching(Person person) {
+        int removed = 0;
+        for (long itemId : People.getItemIds(person.getId())) {
+            FeedItem item = DBReader.getFeedItem(itemId);
+            if (item == null) {
+                continue;
+            }
+            if (item.getDescription() == null) {
+                DBReader.loadDescriptionOfFeedItem(item);
+            }
+            String feedTitle = item.getFeed() != null ? item.getFeed().getTitle() : null;
+            if (!PersonMatcher.matchesAny(person.getNames(), item.getTitle(), item.getDescription(), feedTitle)) {
+                People.forgetItem(person.getId(), itemId);
+                removed++;
+            }
+        }
+        return removed;
     }
 
     /**

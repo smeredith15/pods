@@ -41,6 +41,7 @@ public final class PocketCastsImport {
     private static final String HISTORY_ID_PREFIX = "pocketcasts:";
 
     public static final class Result {
+        public int playedInPocketCasts;
         public int historyAdded;
         public int showsMatched;
         public int showsUnmatched;
@@ -60,6 +61,12 @@ public final class PocketCastsImport {
         PocketCastsClient client = token.trim().isEmpty()
                 ? PocketCastsClient.login(email, password) : PocketCastsClient.fromToken(token);
         List<PocketCastsClient.Podcast> podcasts = client.getSubscriptions();
+        Map<String, PocketCastsClient.CatalogEpisode> history;
+        try {
+            history = client.getHistory();
+        } catch (IOException e) {
+            history = new HashMap<>();
+        }
 
         Map<String, Feed> byTitle = new HashMap<>();
         Map<String, Feed> byLink = new HashMap<>();
@@ -89,7 +96,7 @@ public final class PocketCastsImport {
             }
             result.showsMatched++;
             try {
-                importShow(context, client, podcast, feed, result);
+                importShow(context, client, podcast, feed, history, result);
             } catch (IOException e) {
                 result.showsFailed++;
             }
@@ -117,9 +124,13 @@ public final class PocketCastsImport {
     }
 
     private static void importShow(Context context, PocketCastsClient client, PocketCastsClient.Podcast podcast,
-                                   Feed feed, Result result) throws Exception {
+                                   Feed feed, Map<String, PocketCastsClient.CatalogEpisode> history,
+                                   Result result) throws Exception {
         List<PocketCastsClient.EpisodeStatus> wanted = new ArrayList<>();
         for (PocketCastsClient.EpisodeStatus status : client.getEpisodeStatuses(podcast.uuid)) {
+            if (status.playingStatus == PocketCastsClient.STATUS_PLAYED) {
+                result.playedInPocketCasts++;
+            }
             if (status.playingStatus == PocketCastsClient.STATUS_PLAYED || status.archived) {
                 wanted.add(status);
             }
@@ -127,10 +138,7 @@ public final class PocketCastsImport {
         if (wanted.isEmpty()) {
             return;
         }
-        Map<String, PocketCastsClient.CatalogEpisode> catalog = new HashMap<>();
-        for (PocketCastsClient.CatalogEpisode episode : client.getCatalog(podcast.uuid)) {
-            catalog.put(episode.uuid, episode);
-        }
+        Map<String, PocketCastsClient.CatalogEpisode> catalog = client.getCatalog(podcast.uuid);
 
         List<FeedItem> items = DBReader.getFeedItemList(feed, FeedItemFilter.unfiltered(),
                 SortOrder.DATE_NEW_OLD, 0, Integer.MAX_VALUE);
@@ -153,7 +161,18 @@ public final class PocketCastsImport {
         for (PocketCastsClient.EpisodeStatus status : wanted) {
             PocketCastsClient.CatalogEpisode info = catalog.get(status.uuid);
             if (info == null) {
-                result.notInFeed++;
+                info = history.get(status.uuid);
+            }
+            if (info == null && status.playingStatus == PocketCastsClient.STATUS_PLAYED
+                    && !identifiers.contains(HISTORY_ID_PREFIX + status.uuid)) {
+                info = client.getEpisode(status.uuid, podcast.uuid);
+            }
+            if (info == null) {
+                if (identifiers.contains(HISTORY_ID_PREFIX + status.uuid)) {
+                    result.alreadyDone++;
+                } else {
+                    result.notInFeed++;
+                }
                 continue;
             }
             long id = matcher.match(new PocketCastsMatcher.Episode(0, info.url, info.title, info.publishedMs));

@@ -33,20 +33,15 @@ public final class ShufflepodEntertainment {
     }
 
     /**
-     * What should play after {@code current} ends: the next queued episode, otherwise any other queued
-     * episode (News always comes first), otherwise the first forced Entertainment episode, otherwise a
-     * newly shuffled Entertainment episode. Entertainment episodes are added to the end of the queue.
+     * What should play after {@code current} ends: the episode at the top of the queue (so sorting or
+     * reordering the queue decides what's next; News always comes first), otherwise the first forced
+     * Entertainment episode, otherwise a newly shuffled Entertainment episode. Entertainment episodes are
+     * added to the end of the queue.
      * Must be called off the main thread.
      */
     @Nullable
     public static FeedItem nextAfter(Context context, @Nullable FeedItem current) {
         long currentId = current != null ? current.getId() : -1;
-        if (current != null) {
-            FeedItem next = DBReader.getNextInQueue(current);
-            if (next != null) {
-                return next;
-            }
-        }
         for (FeedItem queued : DBReader.getQueue()) {
             if (queued.getId() != currentId && queued.hasMedia()) {
                 return queued;

@@ -770,7 +770,7 @@ public abstract class UserPreferences {
     }
 
     public static boolean isStreamOverDownload() {
-        return prefs.getBoolean(PREF_STREAM_OVER_DOWNLOAD, false);
+        return prefs.getBoolean(PREF_STREAM_OVER_DOWNLOAD, true); // SHUFFLEPOD: was false
     }
 
     public static void setStreamOverDownload(boolean stream) {

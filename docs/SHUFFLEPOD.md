@@ -316,9 +316,18 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 ### Now Playing tab
 
 - **Now Playing** replaces Queue in the bottom bar (Queue moves to "More" and stays in the drawer). It isn't a screen of its own: it opens the full player, or the Queue screen when nothing is loaded.
-- In the full player, the vertical pager is now **cover → queue → show notes**: swipe up from the cover to see the queue (with its Entertainment strip), swipe up again for show notes. The embedded queue has no pull-to-refresh, so pulling down pages back to the cover.
+- The full player has tabs, **Now playing · Up next · Show notes** (`ShufflepodPlayerTabs`).
+  - Swiping up from the cover still opens the queue, which includes its Entertainment strip.
+  - On the queue and show-notes pages, page swiping is off. The list scrolls freely, the queue's swipe actions work, and pulling down at the top closes the player.
 - Opening an episode or show from anywhere while the full player is open now collapses the player first, so the new screen isn't hidden behind it.
 - If the bottom bar was customized before this change, Now Playing lands under "More" and can be moved with More → Customize.
+
+### Playback details (as built)
+
+- **Play buttons:** episode lists show a Play button (streams if not downloaded) instead of Download. `isStreamOverDownload` now defaults to true, and existing installs are switched once. User-facing "stream" wording says "play".
+- **What plays next is the top of the queue**, skipping the episode that just finished, instead of the episode after it. Sorting or reordering the queue therefore decides what plays next.
+- **Queue summary:** shows the real time left, with the time at each episode's playback speed in brackets. The "Adjust media info to playback speed" setting still controls per-episode times.
+- **Speed changes apply immediately:** changing a show's playback speed (in its settings or in a batch) applies to that show's playing episode right away. `Media3PlaybackService` now handles `SpeedPresetChangedEvent`, as the old service did.
 
 ### Tabs, tags and no inbox (as built)
 
@@ -467,6 +476,7 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
   - Edit
   - Unfollow
 - **Muting:** long-press an episode and choose either **Remove from this person's list**, which mutes that episode, or **Mute this show for this person**. In **Shows…**, untick a show to mute it or tick it to bring it back. Muted shows and episodes are never added again.
+- **Matching is strict for both sources:** a name, or one of its other spellings, must appear as a whole phrase in the episode title, the show notes or the show title. Podcast Index results that fail this check are dropped, and each sync removes earlier loose matches from the folder.
 - **Sources:**
   1. Local: whole-word, accent- and case-insensitive name matching in the titles and descriptions of subscribed shows. It runs whenever the People tab opens and on every sync.
   2. Podcast Index `search/byperson`, when an API key is set (People → ⋮ → Podcast Index API key). It is free at api.podcastindex.org. The key is stored only on the phone, in `shufflepod.db`.
@@ -500,6 +510,11 @@ Results from shows I'm not subscribed to need a way to be played. AntennaPod can
 - Shows are matched by normalized title, falling back to the website link. Episodes are matched by audio URL, then audio file name, then title plus publish date within 3 days.
 - **Played** (`playingStatus` 3) → marked played. **Archived** only (`isDeleted`) → archived. Both leave the queue.
 - Never un-plays or un-archives anything. Positions and stars are not imported.
+- Titles and dates for episodes come from, in order:
+  1. The full catalog, plus the paged cache catalog (1000 episodes per page) for long-running shows.
+  2. The account's listening history (`user/history`).
+  3. A per-episode lookup (`user/episode`), which is switched off for the rest of the run if Pocket Casts rejects it.
+- The summary starts with how many episodes Pocket Casts reports as played, to show whether it is returning old episodes at all.
 - **Played** episodes that a feed no longer lists get a history-only episode in that show: title and date from Pocket Casts' catalog, marked played, **no audio**. The item identifier is `pocketcasts:<episode uuid>`, so re-running the import doesn't duplicate them. Archived-only episodes the feed no longer lists are just counted.
 - Any episode without an audio file shows a crossed-out headphones badge (`ic_shufflepod_no_audio`) in episode lists.
 - **Custom audio** (`CustomEpisodeDialogs`):

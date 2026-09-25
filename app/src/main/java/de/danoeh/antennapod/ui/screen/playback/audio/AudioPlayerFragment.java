@@ -25,6 +25,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerQueue; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodPlayerTabs; // SHUFFLEPOD
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.playback.service.PlaybackService;
@@ -163,6 +164,7 @@ public class AudioPlayerFragment extends Fragment implements
                 });
             }
         });
+        ShufflepodPlayerTabs.attach(root.findViewById(R.id.shufflepodPlayerTabs), pager); // SHUFFLEPOD
 
         return root;
     }

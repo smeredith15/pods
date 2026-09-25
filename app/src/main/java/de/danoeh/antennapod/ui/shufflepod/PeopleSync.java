@@ -35,6 +35,7 @@ public final class PeopleSync {
         if (person == null) {
             return result;
         }
+        ShufflepodPeople.pruneNonMatching(person);
         result.fromSubscriptions = ShufflepodPeople.scanSubscriptions(person);
         if (People.hasPodcastIndexCredentials()) {
             try {
