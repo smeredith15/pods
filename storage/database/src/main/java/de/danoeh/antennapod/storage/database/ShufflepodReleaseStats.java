@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.danoeh.antennapod.model.feed.Feed;
+import de.danoeh.antennapod.model.feed.FeedItem;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 
@@ -27,6 +28,7 @@ public final class ShufflepodReleaseStats {
         private final float speed;
         private long weeklyMs;
         private long weeklyAdjustedMs;
+        private long weeklyListenedMs;
 
         ShowTotal(Feed feed, float speed) {
             this.feed = feed;
@@ -48,6 +50,13 @@ public final class ShufflepodReleaseStats {
         public long getWeeklyAdjustedMs() {
             return weeklyAdjustedMs;
         }
+
+        /**
+         * Share of the released audio listened to, in percent.
+         */
+        public int getListenedPercent() {
+            return weeklyMs > 0 ? (int) Math.round(100.0 * weeklyListenedMs / weeklyMs) : 0;
+        }
     }
 
     public static class Result {
@@ -57,6 +66,10 @@ public final class ShufflepodReleaseStats {
         private final long[] averageAdjustedMs = new long[8];
         private final List<ShowTotal> shows = new ArrayList<>();
         private int episodesWithoutDuration;
+        private int episodes;
+        private int episodesPlayed;
+        private long weeklyListenedMs;
+        private long weeklyListenedAdjustedMs;
 
         Result(int weeks, int showCount) {
             this.weeks = weeks;
@@ -88,6 +101,30 @@ public final class ShufflepodReleaseStats {
 
         public int getEpisodesWithoutDuration() {
             return episodesWithoutDuration;
+        }
+
+        public int getEpisodes() {
+            return episodes;
+        }
+
+        public int getEpisodesPlayed() {
+            return episodesPlayed;
+        }
+
+        /**
+         * Audio of these episodes actually played, averaged per week. Each episode counts at most its length.
+         */
+        public long getWeeklyListenedMs() {
+            return weeklyListenedMs;
+        }
+
+        public long getWeeklyListenedAdjustedMs() {
+            return weeklyListenedAdjustedMs;
+        }
+
+        public int getListenedPercent() {
+            long released = weeklyMs();
+            return released > 0 ? (int) Math.round(100.0 * weeklyListenedMs / released) : 0;
         }
 
         public long weeklyMs() {
@@ -149,6 +186,7 @@ public final class ShufflepodReleaseStats {
         String media = PodDBAdapter.TABLE_NAME_FEED_MEDIA;
         String query = "SELECT " + items + "." + PodDBAdapter.KEY_FEED + ", " + items + "." + PodDBAdapter.KEY_PUBDATE
                 + ", " + media + "." + PodDBAdapter.KEY_DURATION
+                + ", " + media + "." + PodDBAdapter.KEY_PLAYED_DURATION + ", " + items + "." + PodDBAdapter.KEY_READ
                 + " FROM " + items + " INNER JOIN " + media
                 + " ON " + media + "." + PodDBAdapter.KEY_FEEDITEM + " = " + items + "." + PodDBAdapter.KEY_ID
                 + " WHERE " + items + "." + PodDBAdapter.KEY_FEED + " IN (" + ids + ")"
@@ -157,6 +195,8 @@ public final class ShufflepodReleaseStats {
 
         double[] real = new double[8];
         double[] adjusted = new double[8];
+        double listened = 0;
+        double listenedAdjusted = 0;
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
         try (Cursor cursor = adapter.shufflepodQuery(query,
@@ -167,6 +207,10 @@ public final class ShufflepodReleaseStats {
                     continue;
                 }
                 long duration = cursor.getLong(2);
+                result.episodes++;
+                if (cursor.getInt(4) == FeedItem.PLAYED) {
+                    result.episodesPlayed++;
+                }
                 if (duration <= 0) {
                     result.episodesWithoutDuration++;
                     continue;
@@ -177,6 +221,10 @@ public final class ShufflepodReleaseStats {
                 adjusted[day] += duration / show.speed;
                 show.weeklyMs += duration;
                 show.weeklyAdjustedMs += (long) (duration / show.speed);
+                long played = Math.min(Math.max(cursor.getLong(3), 0), duration);
+                listened += played;
+                listenedAdjusted += played / show.speed;
+                show.weeklyListenedMs += played;
             }
         } finally {
             adapter.close();
@@ -186,9 +234,12 @@ public final class ShufflepodReleaseStats {
             result.averageMs[day] = Math.round(real[day] / weeks);
             result.averageAdjustedMs[day] = Math.round(adjusted[day] / weeks);
         }
+        result.weeklyListenedMs = Math.round(listened / weeks);
+        result.weeklyListenedAdjustedMs = Math.round(listenedAdjusted / weeks);
         for (ShowTotal show : byFeed.values()) {
             show.weeklyMs /= weeks;
             show.weeklyAdjustedMs /= weeks;
+            show.weeklyListenedMs /= weeks;
             result.shows.add(show);
         }
         Collections.sort(result.shows, (a, b) -> Long.compare(b.weeklyMs, a.weeklyMs));

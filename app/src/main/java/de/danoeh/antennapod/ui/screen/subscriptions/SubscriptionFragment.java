@@ -39,6 +39,7 @@ import de.danoeh.antennapod.ui.screen.AddFeedFragment;
 import de.danoeh.antennapod.ui.screen.SearchFragment;
 import de.danoeh.antennapod.ui.shufflepod.PocketCastsImportDialog; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.shufflepod.ReloadThrottle; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFolders; // SHUFFLEPOD
 
 import de.danoeh.antennapod.ui.view.EmptyViewHandler;
 import de.danoeh.antennapod.ui.view.FloatingSelectMenu;
@@ -93,6 +94,7 @@ public class SubscriptionFragment extends Fragment
     private Disposable disposable;
     private final ReloadThrottle reloadThrottle = // SHUFFLEPOD
             new ReloadThrottle(1000, this::loadSubscriptionsAndTags);
+    private final ShufflepodFolders folders = new ShufflepodFolders(this); // SHUFFLEPOD
     private SharedPreferences prefs;
     private static Pair<Integer, Integer> scrollPosition = null;
 
@@ -158,7 +160,7 @@ public class SubscriptionFragment extends Fragment
         };
         setColumnNumber(prefs.getInt(PREF_NUM_COLUMNS, getDefaultNumOfColumns()));
         subscriptionAdapter.setOnSelectModeListener(this);
-        subscriptionRecycler.setAdapter(subscriptionAdapter);
+        subscriptionRecycler.setAdapter(folders.wrap(subscriptionAdapter, stateToShow)); // SHUFFLEPOD: folders on top
         setupEmptyView();
 
         progressBar = root.findViewById(R.id.progressBar);
@@ -225,11 +227,7 @@ public class SubscriptionFragment extends Fragment
                 loadSubscriptionsAndTags();
             }
         };
-        if (stateToShow == Feed.STATE_SUBSCRIBED) {
-            tagAdapter.setSelectedTag(prefs.getString(PREF_LAST_TAG, FeedPreferences.TAG_ROOT));
-        } else {
-            tagAdapter.setSelectedTag(FeedPreferences.TAG_ROOT);
-        }
+        tagAdapter.setSelectedTag(FeedPreferences.TAG_ROOT); // SHUFFLEPOD: folders replace the tag chips
         tagsRecycler.setAdapter(tagAdapter);
         return root;
     }
@@ -323,6 +321,7 @@ public class SubscriptionFragment extends Fragment
         }
         subscriptionAdapter.setColumnCount(columns);
         subscriptionRecycler.setLayoutManager(layoutManager);
+        folders.applySpans(layoutManager, stateToShow); // SHUFFLEPOD
         prefs.edit().putInt(PREF_NUM_COLUMNS, columns).apply();
         refreshToolbarState();
     }
@@ -361,6 +360,7 @@ public class SubscriptionFragment extends Fragment
         super.onStop();
         EventBus.getDefault().unregister(this);
         reloadThrottle.cancel(); // SHUFFLEPOD
+        folders.dispose(); // SHUFFLEPOD
         if (disposable != null) {
             disposable.dispose();
         }
@@ -428,6 +428,8 @@ public class SubscriptionFragment extends Fragment
                                     break;
                                 }
                             }
+                            shouldShowTags = shouldShowTags && !folders.isEnabled(); // SHUFFLEPOD
+                            folders.setTags(result.second); // SHUFFLEPOD
                             tagsRecycler.setVisibility(shouldShowTags ? View.VISIBLE : View.GONE);
                             // Scroll to center the selected tag
                             tagsRecycler.post(() -> {

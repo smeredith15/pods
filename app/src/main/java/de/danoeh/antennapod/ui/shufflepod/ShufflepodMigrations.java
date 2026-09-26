@@ -26,6 +26,7 @@ public final class ShufflepodMigrations {
     private static final String KEY_TABS = "shufflepod_migrated_tabs_v1";
     private static final String KEY_TAGS = "shufflepod_migrated_tags_v1";
     private static final String KEY_PLAY_BUTTONS = "shufflepod_migrated_play_buttons_v1";
+    private static final String KEY_SKIP_MARKS_PLAYED = "shufflepod_migrated_skip_marks_played_v1";
 
     private ShufflepodMigrations() {
     }
@@ -38,6 +39,10 @@ public final class ShufflepodMigrations {
         if (!prefs.getBoolean(KEY_PLAY_BUTTONS, false)) {
             prefs.edit().putBoolean(UserPreferences.PREF_STREAM_OVER_DOWNLOAD, true)
                     .putBoolean(KEY_PLAY_BUTTONS, true).apply();
+        }
+        if (!prefs.getBoolean(KEY_SKIP_MARKS_PLAYED, false)) {
+            prefs.edit().putBoolean(UserPreferences.PREF_SKIP_KEEPS_EPISODE, false)
+                    .putBoolean(KEY_SKIP_MARKS_PLAYED, true).apply();
         }
         if (!prefs.getBoolean(KEY_TAGS, false)) {
             Completable.fromAction(() -> {

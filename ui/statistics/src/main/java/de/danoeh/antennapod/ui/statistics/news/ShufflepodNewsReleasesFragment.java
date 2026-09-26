@@ -107,11 +107,17 @@ public class ShufflepodNewsReleasesFragment extends Fragment {
         addRow(getString(R.string.shufflepod_news_releases_per_week), duration(result.weeklyMs()),
                 duration(result.weeklyAdjustedMs()), true);
 
+        addHeading(getString(R.string.shufflepod_news_releases_listening));
+        addRow(getString(R.string.shufflepod_news_releases_listened_per_week), duration(result.getWeeklyListenedMs()),
+                duration(result.getWeeklyListenedAdjustedMs()), false);
+        addText(getString(R.string.shufflepod_news_releases_listened_summary, result.getListenedPercent(),
+                result.getEpisodesPlayed(), result.getEpisodes()));
+
         addHeading(getString(R.string.shufflepod_news_releases_by_show));
         DecimalFormat speedFormat = new DecimalFormat("0.##");
         for (ShufflepodReleaseStats.ShowTotal show : result.getShows()) {
             String label = getString(R.string.shufflepod_news_releases_show_speed,
-                    show.getFeed().getTitle(), speedFormat.format(show.getSpeed()));
+                    show.getFeed().getTitle(), speedFormat.format(show.getSpeed()), show.getListenedPercent());
             addRow(label, duration(show.getWeeklyMs()), duration(show.getWeeklyAdjustedMs()), false);
         }
 

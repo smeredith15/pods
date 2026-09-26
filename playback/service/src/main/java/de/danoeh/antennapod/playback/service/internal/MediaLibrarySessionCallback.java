@@ -296,6 +296,7 @@ public class MediaLibrarySessionCallback implements MediaLibraryService.MediaLib
                 })
                 .subscribeOn(Schedulers.io())
                 .subscribe(result -> {
+                    ShufflepodEarlySpeed.apply(mediaSession, result.second); // SHUFFLEPOD
                     long startPosition = SkipUtils.skipIntroIfNecessary(context, result.second);
                     startPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
                             (int) startPosition, result.second.getLastPlayedTimeStatistics());
@@ -359,6 +360,7 @@ public class MediaLibrarySessionCallback implements MediaLibraryService.MediaLib
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         media -> {
+                            ShufflepodEarlySpeed.apply(mediaSession, media); // SHUFFLEPOD
                             long startPosition = SkipUtils.skipIntroIfNecessary(context, media);
                             startPosition = RewindAfterPauseUtils.calculatePositionWithRewind(
                                     (int) startPosition, media.getLastPlayedTimeStatistics());

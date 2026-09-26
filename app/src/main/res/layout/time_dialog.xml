@@ -60,6 +60,14 @@
                 android:text="@string/set_sleeptimer_label"
                 style="@style/Widget.Material3.Button" />
 
+            <!-- SHUFFLEPOD: one tap to stop after the current episode -->
+            <Button
+                android:id="@+id/shufflepodEndOfEpisodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/shufflepod_sleep_end_of_episode"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
         </LinearLayout>
 
         <LinearLayout

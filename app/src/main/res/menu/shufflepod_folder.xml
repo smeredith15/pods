@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/shufflepod_add_shows_item"
+        android:icon="@drawable/ic_add"
+        android:title="@string/shufflepod_add_shows_label"
+        custom:showAsAction="always" />
+
+    <item
+        android:id="@+id/rename_folder_item"
+        android:title="@string/rename_tag_label"
+        custom:showAsAction="never" />
+
+    <item
+        android:id="@+id/delete_folder_item"
+        android:title="@string/delete_tag_label"
+        custom:showAsAction="never" />
+
+</menu>
