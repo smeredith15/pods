@@ -350,6 +350,8 @@ This replaces the original "oldest-first shuffle" idea with two pipelines for su
 
 The tag chips are replaced by folder rows at the top of the Podcasts list (`ShufflepodFolders`, a `ConcatAdapter` in front of the subscriptions adapter; in the grid layouts the rows span the full width). The order is News, Entertainment, the other tags alphabetically, the smart folders, then "New folder". A thin divider separates the folders from all the shows, and the whole page scrolls as one list. Tags are not exclusive, so a show can be in several folders and still appears in the full list. News and Entertainment open their tabs; other folders open `FolderFragment`, which can add or remove shows and rename or delete the tag.
 
+Folders replace AntennaPod's tag editor everywhere (`ShufflepodFolderPicker`). There's a **Folders** item in a show's menu and settings, in the long-press menu on the Podcasts page, and in the multi-select actions. It shows a checklist of News, Entertainment and the other folders, plus **New folder**. With several shows selected, only the folders whose tick you change are updated. The former separate News/Entertainment toggles and bulk actions are gone.
+
 Smart folders are computed from release dates (`ReleasePattern` in :shufflepod, unit tested; `ShufflepodSmartFolders` runs one indexed query per show and caches the result for an hour):
 - **Seasonal:** at least 6 episodes, forming at least two runs of 3 or more episodes separated by a break. A break is a gap of at least 60 days and at least 5 times the show's median gap.
 - **Dormant:** no new episode for 90 days, unless the show is seasonal and the current gap is at most 1.5 times its longest earlier break (it's probably just between seasons).

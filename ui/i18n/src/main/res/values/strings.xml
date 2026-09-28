@@ -232,7 +232,7 @@
         <item quantity="one">%d subscription updated.</item>
         <item quantity="other">%d subscriptions updated.</item>
     </plurals>
-    <string name="edit_tags">Edit tags</string>
+    <string name="edit_tags">Folders</string> <!-- SHUFFLEPOD: was Edit tags -->
     <string name="add_tag">Add tag</string>
     <string name="rename_tag_label">Rename tag</string>
     <string name="delete_tag_label">Delete tag</string>
@@ -818,8 +818,8 @@
     <!-- Feed settings/information screen -->
     <string name="authentication_label">Authentication</string>
     <string name="authentication_descr">Change your username and password for this podcast and its episodes</string>
-    <string name="feed_tags_label">Tags</string>
-    <string name="feed_tags_summary">Change the tags of this podcast to help organize your subscriptions</string>
+    <string name="feed_tags_label">Folders</string> <!-- SHUFFLEPOD: was Tags -->
+    <string name="feed_tags_summary">Choose the folders this show appears in</string> <!-- SHUFFLEPOD -->
     <string name="feed_folders_include_root">Show above tags (side navigation only)</string>
     <string name="tag_all">All</string>
     <string name="tag_untagged">Untagged</string>
@@ -1150,16 +1150,6 @@
     <string name="shufflepod_add_to_news_title">Add to News</string>
     <string name="shufflepod_add_to_entertainment_title">Add to Entertainment</string>
     <string name="shufflepod_picker_search_hint">Search</string>
-    <string name="shufflepod_in_news_label">In News</string>
-    <string name="shufflepod_in_entertainment_label">In Entertainment</string>
-    <string name="shufflepod_bulk_news_label">News…</string>
-    <string name="shufflepod_bulk_entertainment_label">Entertainment…</string>
-    <string name="shufflepod_bulk_add">Add</string>
-    <string name="shufflepod_bulk_remove">Remove</string>
-    <plurals name="shufflepod_bulk_tag_message">
-        <item quantity="one">Add %1$d show to %2$s, or remove it?</item>
-        <item quantity="other">Add %1$d shows to %2$s, or remove them?</item>
-    </plurals>
     <string name="shufflepod_pocketcasts_import_label">Import from Pocket Casts…</string>
     <string name="shufflepod_pocketcasts_import_help">Episodes you played or archived in Pocket Casts are marked played or archived here, in the shows you subscribe to. Played episodes that a show no longer offers are added to its history as played, with no audio. Your email and password are sent only to Pocket Casts to sign in, and are not saved. This uses Pocket Casts\' unofficial web player API, so it may stop working at any time.</string>
     <string name="shufflepod_pocketcasts_email_hint">Pocket Casts email</string>
@@ -1235,4 +1225,5 @@
         <item quantity="one">Now: %1$d episode, %2$s left</item>
         <item quantity="other">Now: %1$d episodes, %2$s left</item>
     </plurals>
+    <string name="shufflepod_folders_label">Folders</string>
 </resources>

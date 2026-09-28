@@ -19,7 +19,6 @@ import de.danoeh.antennapod.storage.database.DBWriter;
 import de.danoeh.antennapod.databinding.PlaybackSpeedFeedSettingDialogBinding;
 import de.danoeh.antennapod.ui.common.ConfirmationDialog;
 import de.danoeh.antennapod.ui.screen.feed.RemoveFeedDialog;
-import de.danoeh.antennapod.ui.screen.feed.preferences.TagSettingsDialog;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.model.feed.FeedPreferences;
 import de.danoeh.antennapod.ui.screen.preferences.PreferenceListDialog;
@@ -30,7 +29,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 import de.danoeh.antennapod.ui.share.ShareUtils;
-import de.danoeh.antennapod.ui.shufflepod.ShufflepodFeedMenu; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFolderPicker; // SHUFFLEPOD
 
 public class FeedMultiSelectActionHandler {
     private static final String TAG = "FeedSelectHandler";
@@ -66,8 +65,6 @@ public class FeedMultiSelectActionHandler {
             if (!selectedItems.get(0).isLocalFeed()) {
                 ShareUtils.shareFeedLink(activity, selectedItems.get(0));
             }
-        } else if (ShufflepodFeedMenu.onBulkAction(activity, id, selectedItems)) { // SHUFFLEPOD
-            return; // SHUFFLEPOD
         } else {
             Log.e(TAG, "Unrecognized speed dial action item. Do nothing. id=" + id);
         }
@@ -162,8 +159,7 @@ public class FeedMultiSelectActionHandler {
         for (Feed feed : selectedItems) {
             preferencesList.add(feed.getPreferences());
         }
-        TagSettingsDialog.newInstance(preferencesList).show(activity.getSupportFragmentManager(),
-                TagSettingsDialog.TAG);
+        ShufflepodFolderPicker.show(activity, preferencesList); // SHUFFLEPOD: was TagSettingsDialog
     }
 
     private void removeAllFromInbox() {

@@ -11,8 +11,9 @@
             android:key="rename"
             android:title="@string/rename_feed_label" />
 
+        <!-- SHUFFLEPOD: icon was ic_tag, opens the Folders picker -->
         <Preference
-            android:icon="@drawable/ic_tag"
+            android:icon="@drawable/ic_folder"
             android:key="tags"
             android:summary="@string/feed_tags_summary"
             android:title="@string/feed_tags_label" />
