@@ -1,6 +1,7 @@
 package de.danoeh.antennapod.ui.screen.feed.preferences;
 
 import de.danoeh.antennapod.ui.shufflepod.ShufflepodFeedSettings; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodFolderPicker; // SHUFFLEPOD
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -249,8 +250,7 @@ public class FeedSettingsPreferenceFragment extends PreferenceFragmentCompat {
             return false;
         });
         findPreference(PREF_TAGS).setOnPreferenceClickListener(preference -> {
-            TagSettingsDialog.newInstance(Collections.singletonList(feedPreferences))
-                    .show(getChildFragmentManager(), TagSettingsDialog.TAG);
+            ShufflepodFolderPicker.show(requireContext(), Collections.singletonList(feedPreferences)); // SHUFFLEPOD
             return true;
         });
         SwitchPreferenceCompat notificationPreference = findPreference(PREF_NOTIFICATION);
