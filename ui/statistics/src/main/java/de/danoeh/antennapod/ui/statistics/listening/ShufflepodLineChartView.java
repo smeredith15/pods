@@ -1,7 +1,6 @@
 package de.danoeh.antennapod.ui.statistics.listening;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -12,6 +11,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import de.danoeh.antennapod.ui.common.Converter;
+import de.danoeh.antennapod.ui.common.ThemeUtils;
+import de.danoeh.antennapod.ui.statistics.R;
 
 /**
  * SHUFFLEPOD: a simple line chart of a value over time, used for the News queue length.
@@ -32,11 +33,8 @@ public class ShufflepodLineChartView extends View {
     public ShufflepodLineChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         density = getResources().getDisplayMetrics().density;
-        int[] colorAttrs = {android.R.attr.colorAccent, android.R.attr.textColorSecondary};
-        TypedArray colors = context.obtainStyledAttributes(colorAttrs);
-        linePaint.setColor(colors.getColor(0, 0xff2196f3));
-        final int secondary = colors.getColor(1, 0xff888888);
-        colors.recycle();
+        linePaint.setColor(ThemeUtils.getColorFromAttr(context, R.attr.colorAccent));
+        final int secondary = ThemeUtils.getColorFromAttr(context, android.R.attr.textColorSecondary);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(2 * density);
         linePaint.setStrokeJoin(Paint.Join.ROUND);
