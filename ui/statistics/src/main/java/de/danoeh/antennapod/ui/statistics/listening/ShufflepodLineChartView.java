@@ -32,8 +32,8 @@ public class ShufflepodLineChartView extends View {
     public ShufflepodLineChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         density = getResources().getDisplayMetrics().density;
-        int[] attrs = {android.R.attr.colorAccent, android.R.attr.textColorSecondary};
-        TypedArray colors = context.obtainStyledAttributes(attrs);
+        int[] colorAttrs = {android.R.attr.colorAccent, android.R.attr.textColorSecondary};
+        TypedArray colors = context.obtainStyledAttributes(colorAttrs);
         linePaint.setColor(colors.getColor(0, 0xff2196f3));
         final int secondary = colors.getColor(1, 0xff888888);
         colors.recycle();
