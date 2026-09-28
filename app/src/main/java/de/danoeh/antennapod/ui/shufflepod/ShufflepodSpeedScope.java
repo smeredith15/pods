@@ -21,13 +21,11 @@ import de.danoeh.antennapod.storage.preferences.UserPreferences;
  */
 public class ShufflepodSpeedScope {
     private MaterialButtonToggleGroup group;
-    private Consumer<Float> display;
     private Feed feed;
     private boolean showScope = false;
 
     public void bind(View root, Consumer<Float> display) {
         this.group = root.findViewById(R.id.shufflepodSpeedScope);
-        this.display = display;
         group.addOnButtonCheckedListener((toggleGroup, checkedId, isChecked) -> {
             if (!isChecked) {
                 return;
