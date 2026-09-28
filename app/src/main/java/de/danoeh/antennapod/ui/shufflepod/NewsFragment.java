@@ -151,11 +151,11 @@ public class NewsFragment extends Fragment {
         public void onBindViewHolder(@NonNull Holder holder, int position) {
             Feed feed = feeds.get(position);
             holder.title.setText(feed.getTitle());
-            String position = getString(ShowSettings.getQueuePosition(feed) == ShowSettings.QueuePosition.TOP
+            String queuePlace = getString(ShowSettings.getQueuePosition(feed) == ShowSettings.QueuePosition.TOP
                     ? R.string.shufflepod_queue_position_top : R.string.shufflepod_queue_position_bottom);
             Long weekly = weeklyMs.get(feed.getId());
-            holder.subtitle.setText(weekly == null ? position : getString(R.string.shufflepod_news_weekly,
-                    position, Converter.getDurationStringLocalized(getResources(), weekly, false)));
+            holder.subtitle.setText(weekly == null ? queuePlace : getString(R.string.shufflepod_news_weekly,
+                    queuePlace, Converter.getDurationStringLocalized(getResources(), weekly, false)));
             holder.checkBox.setOnCheckedChangeListener(null);
             holder.checkBox.setChecked(ShowTags.isNews(feed.getPreferences()));
             holder.checkBox.setOnCheckedChangeListener((button, checked) ->
