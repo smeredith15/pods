@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormatSymbols;
@@ -27,8 +28,16 @@ public class ShufflepodWeekdayListening {
     private final WeekdayAdapter adapter = new WeekdayAdapter();
     private volatile long[] averages = new long[8];
 
-    public RecyclerView.Adapter<?> adapter() {
-        return adapter;
+    /**
+     * Puts the weekday block above the shows. Call only after the shows adapter has data: it can't report
+     * its item count before its first update, and ConcatAdapter asks for it right away.
+     */
+    public void attach(RecyclerView recyclerView, RecyclerView.Adapter<?> shows) {
+        if (recyclerView.getAdapter() instanceof ConcatAdapter) {
+            adapter.notifyDataSetChanged();
+            return;
+        }
+        recyclerView.setAdapter(new ConcatAdapter(adapter, shows));
     }
 
     /**
@@ -36,10 +45,6 @@ public class ShufflepodWeekdayListening {
      */
     public void load(long from, long to) {
         averages = ShufflepodListeningStats.averagePerWeekday(from, to);
-    }
-
-    public void refresh() {
-        adapter.notifyDataSetChanged();
     }
 
     /**
