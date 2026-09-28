@@ -2,6 +2,7 @@ package de.danoeh.antennapod.ui.statistics.news;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +19,15 @@ import androidx.fragment.app.Fragment;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import de.danoeh.antennapod.storage.database.ShufflepodQueueHistory;
 import de.danoeh.antennapod.storage.database.ShufflepodReleaseStats;
 import de.danoeh.antennapod.ui.common.Converter;
 import de.danoeh.antennapod.ui.statistics.R;
+import de.danoeh.antennapod.ui.statistics.listening.ShufflepodLineChartView;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -35,11 +40,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class ShufflepodNewsReleasesFragment extends Fragment {
     private static final String TAG = "NewsReleasesFragment";
     private static final int WEEKS = 8;
+    private static final int QUEUE_CHART_DAYS = 14;
+    private static final long DAY_MS = 24L * 60 * 60 * 1000;
 
     private Disposable disposable;
     private ProgressBar progressBar;
     private ScrollView scrollView;
     private LinearLayout content;
+    private volatile List<long[]> queueHistory = new ArrayList<>();
 
     @Nullable
     @Override
@@ -77,7 +85,10 @@ public class ShufflepodNewsReleasesFragment extends Fragment {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> ShufflepodReleaseStats.compute(WEEKS))
+        disposable = Observable.fromCallable(() -> {
+            queueHistory = ShufflepodQueueHistory.load(System.currentTimeMillis() - QUEUE_CHART_DAYS * DAY_MS);
+            return ShufflepodReleaseStats.compute(WEEKS);
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::show, error -> Log.e(TAG, Log.getStackTraceString(error)));
@@ -110,8 +121,11 @@ public class ShufflepodNewsReleasesFragment extends Fragment {
         addHeading(getString(R.string.shufflepod_news_releases_listening));
         addRow(getString(R.string.shufflepod_news_releases_listened_per_week), duration(result.getWeeklyListenedMs()),
                 duration(result.getWeeklyListenedAdjustedMs()), false);
-        addText(getString(R.string.shufflepod_news_releases_listened_summary, result.getListenedPercent(),
-                result.getEpisodesPlayed(), result.getEpisodes()));
+        addText(getString(R.string.shufflepod_news_releases_listened_summary,
+                DateUtils.formatDateTime(getContext(), result.getListenFrom(), DateUtils.FORMAT_SHOW_DATE),
+                result.getListenedPercent(), result.getEpisodesPlayed(), result.getEpisodes()));
+
+        addQueueChart();
 
         addHeading(getString(R.string.shufflepod_news_releases_by_show));
         DecimalFormat speedFormat = new DecimalFormat("0.##");
@@ -126,6 +140,27 @@ public class ShufflepodNewsReleasesFragment extends Fragment {
             addText(getResources().getQuantityString(R.plurals.shufflepod_news_releases_no_duration,
                     result.getEpisodesWithoutDuration(), result.getEpisodesWithoutDuration()));
         }
+    }
+
+    private void addQueueChart() {
+        addHeading(getString(R.string.shufflepod_queue_chart_title));
+        List<long[]> points = queueHistory;
+        if (points.size() < 2) {
+            addText(getString(R.string.shufflepod_queue_chart_empty));
+            return;
+        }
+        long[] times = new long[points.size()];
+        long[] values = new long[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            times[i] = points.get(i)[0];
+            values[i] = points.get(i)[2];
+        }
+        ShufflepodLineChartView chart = new ShufflepodLineChartView(requireContext());
+        chart.setData(times, values);
+        content.addView(chart);
+        long[] latest = points.get(points.size() - 1);
+        addText(getResources().getQuantityString(R.plurals.shufflepod_queue_chart_now,
+                (int) latest[1], (int) latest[1], duration(latest[2])));
     }
 
     private String duration(long ms) {

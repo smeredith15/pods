@@ -27,6 +27,7 @@ public final class ShufflepodMigrations {
     private static final String KEY_TAGS = "shufflepod_migrated_tags_v1";
     private static final String KEY_PLAY_BUTTONS = "shufflepod_migrated_play_buttons_v1";
     private static final String KEY_SKIP_MARKS_PLAYED = "shufflepod_migrated_skip_marks_played_v1";
+    private static final String KEY_PREFETCH = "shufflepod_migrated_prefetch_v1";
 
     private ShufflepodMigrations() {
     }
@@ -43,6 +44,12 @@ public final class ShufflepodMigrations {
         if (!prefs.getBoolean(KEY_SKIP_MARKS_PLAYED, false)) {
             prefs.edit().putBoolean(UserPreferences.PREF_SKIP_KEEPS_EPISODE, false)
                     .putBoolean(KEY_SKIP_MARKS_PLAYED, true).apply();
+        }
+        if (!prefs.getBoolean(KEY_PREFETCH, false)) {
+            // Episodes downloaded ahead of time must not be added to the queue, and are deleted once played.
+            prefs.edit().putBoolean(UserPreferences.PREF_ENQUEUE_DOWNLOADED, false)
+                    .putBoolean(UserPreferences.PREF_AUTO_DELETE, true)
+                    .putBoolean(KEY_PREFETCH, true).apply();
         }
         if (!prefs.getBoolean(KEY_TAGS, false)) {
             Completable.fromAction(() -> {

@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class ShufflepodDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "shufflepod.db";
-    private static final int VERSION = 4;
+    private static final int VERSION = 5;
 
     static final String TABLE_SHOW_SETTINGS = "show_settings";
     static final String KEY_FEED_URL = "feed_url";
@@ -39,6 +39,11 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
     static final String KEY_TITLE = "title";
     static final String TABLE_PERSON_MUTED_EPISODE = "person_muted_episode";
 
+    static final String TABLE_QUEUE_HISTORY = "queue_history";
+    static final String KEY_TIME = "time";
+    static final String KEY_COUNT = "count";
+    static final String KEY_DURATION = "duration";
+
     static final String TABLE_APP_SETTING = "app_setting";
     static final String KEY_NAME = "name";
     static final String KEY_VALUE = "value";
@@ -64,6 +69,7 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
         createEntertainmentPool(db);
         createForcedEpisodes(db);
         createPeople(db);
+        createQueueHistory(db);
     }
 
     @Override
@@ -76,6 +82,9 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
         }
         if (oldVersion < 4) {
             createPeople(db);
+        }
+        if (oldVersion < 5) {
+            createQueueHistory(db);
         }
     }
 
@@ -121,5 +130,12 @@ class ShufflepodDatabase extends SQLiteOpenHelper {
                 + KEY_FEED_URL + " TEXT PRIMARY KEY NOT NULL, "
                 + KEY_FEED_ID + " INTEGER NOT NULL, "
                 + KEY_ADDED_AT + " INTEGER NOT NULL)");
+    }
+
+    private static void createQueueHistory(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + TABLE_QUEUE_HISTORY + " ("
+                + KEY_TIME + " INTEGER PRIMARY KEY NOT NULL, "
+                + KEY_COUNT + " INTEGER NOT NULL, "
+                + KEY_DURATION + " INTEGER NOT NULL)");
     }
 }

@@ -39,6 +39,21 @@ public final class Shufflepod {
         void run(SQLiteDatabase db);
     }
 
+    interface DbRead<T> {
+        T run(SQLiteDatabase db);
+    }
+
+    /**
+     * Reads synchronously on the calling thread (not the main thread), or returns the fallback before init.
+     */
+    static <T> T read(DbRead<T> read, T fallback) {
+        final ShufflepodDatabase db = database;
+        if (db == null) {
+            return fallback;
+        }
+        return read.run(db.getReadableDatabase());
+    }
+
     /**
      * Persists a change on the background writer thread. Deliberately not synchronized, so callers
      * holding their own store lock never wait on this class's lock (init takes them in the other order).

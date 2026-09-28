@@ -57,6 +57,7 @@ import de.danoeh.antennapod.playback.service.internal.SleepTimer;
 import de.danoeh.antennapod.playback.service.internal.ClockSleepTimer;
 import de.danoeh.antennapod.playback.service.internal.EpisodeSleepTimer;
 import de.danoeh.antennapod.storage.database.ShufflepodEntertainment; // SHUFFLEPOD
+import de.danoeh.antennapod.storage.database.ShufflepodPrefetch; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.DBWriter;
 import de.danoeh.antennapod.storage.preferences.PlaybackPreferences;
@@ -607,6 +608,7 @@ public class Media3PlaybackService extends MediaLibraryService {
     private void switchToPlayable(FeedMedia media) {
         currentPlayable = media;
         currentPlayable.onPlaybackStart();
+        ShufflepodPrefetch.onEpisodeStarted(this, media.getItem()); // SHUFFLEPOD: download what plays next
 
         float speed = PlaybackSpeedUtils.getCurrentPlaybackSpeed(currentPlayable);
         player.setPlaybackSpeed(speed);

@@ -5,11 +5,13 @@ import android.content.SharedPreferences;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
+import androidx.appcompat.app.AlertDialog; // SHUFFLEPOD
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.core.util.Pair;
 import de.danoeh.antennapod.event.StatisticsEvent;
 import de.danoeh.antennapod.ui.statistics.R;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
+import de.danoeh.antennapod.ui.statistics.listening.ShufflepodStatsDateRange; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.statistics.databinding.StatisticsFilterDialogBinding;
 import org.greenrobot.eventbus.EventBus;
 
@@ -102,7 +104,8 @@ public class StatisticsFilterDialog {
                     .apply();
             EventBus.getDefault().post(new StatisticsEvent());
         });
-        builder.show();
+        AlertDialog dialog = builder.show(); // SHUFFLEPOD: was builder.show()
+        ShufflepodStatsDateRange.attach(context, dialogBinding.shufflepodChooseDatesButton, dialog); // SHUFFLEPOD
     }
 
     private Pair<String[], Long[]> makeMonthlyList(long oldestDate, boolean inclusive) {

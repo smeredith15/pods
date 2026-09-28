@@ -28,6 +28,7 @@ import de.danoeh.antennapod.shufflepod.ShowTags;
 public final class ShufflepodEntertainment {
     private static final String TAG = "ShufflepodEntertainment";
     private static final Random random = new Random();
+    private static volatile long prefetchedPickId = -1;
 
     private ShufflepodEntertainment() {
     }
@@ -48,6 +49,9 @@ public final class ShufflepodEntertainment {
             }
         }
         FeedItem picked = takeNextForced(currentId);
+        if (picked == null) {
+            picked = takePrefetchedPick(currentId);
+        }
         if (picked == null) {
             picked = pick(currentId);
         }
@@ -155,6 +159,42 @@ public final class ShufflepodEntertainment {
         }
         ForcedEpisodes.add(added);
         return added;
+    }
+
+    /**
+     * The Entertainment episode that will play once the queue runs out, without queueing it: the first forced
+     * episode, otherwise a shuffled pick that is remembered so the same episode plays later (it may be
+     * downloaded ahead of time).
+     */
+    @Nullable
+    public static FeedItem peekNext(long currentId) {
+        for (long itemId : ForcedEpisodes.getItemIds()) {
+            FeedItem item = DBReader.getFeedItem(itemId);
+            if (itemId != currentId && isForcedStillValid(item)) {
+                return item;
+            }
+        }
+        long remembered = prefetchedPickId;
+        if (remembered != -1 && remembered != currentId) {
+            FeedItem item = DBReader.getFeedItem(remembered);
+            if (isForcedStillValid(item)) {
+                return item;
+            }
+        }
+        FeedItem picked = pick(currentId);
+        prefetchedPickId = picked != null ? picked.getId() : -1;
+        return picked;
+    }
+
+    @Nullable
+    private static FeedItem takePrefetchedPick(long currentId) {
+        long remembered = prefetchedPickId;
+        prefetchedPickId = -1;
+        if (remembered == -1 || remembered == currentId) {
+            return null;
+        }
+        FeedItem item = DBReader.getFeedItem(remembered);
+        return isForcedStillValid(item) ? item : null;
     }
 
     @Nullable

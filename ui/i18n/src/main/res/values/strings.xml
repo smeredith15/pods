@@ -1199,7 +1199,7 @@
     <string name="shufflepod_news_releases_show_speed">%1$s (%2$s×) · %3$d%% listened</string>
     <string name="shufflepod_news_releases_listening">Your listening</string>
     <string name="shufflepod_news_releases_listened_per_week">Listened per week</string>
-    <string name="shufflepod_news_releases_listened_summary">You listened to %1$d%% of the News audio released in this period. %2$d of its %3$d episodes are marked played.</string>
+    <string name="shufflepod_news_releases_listened_summary">Since %1$s, when you started listening in this app, you listened to %2$d%% of the News audio released. %3$d of those %4$d episodes are marked played.</string>
     <plurals name="shufflepod_news_releases_no_duration">
         <item quantity="one">%d episode has no length listed and is not counted.</item>
         <item quantity="other">%d episodes have no length listed and are not counted.</item>
@@ -1223,4 +1223,16 @@
     <string name="shufflepod_smart_folder_empty">No shows match right now.</string>
     <string name="shufflepod_folder_last_release">Last episode %1$s</string>
     <string name="shufflepod_sleep_end_of_episode">End of episode</string>
+    <string name="shufflepod_news_weekly">%1$s · about %2$s a week</string>
+    <string name="shufflepod_speed_all_shows">All shows</string>
+    <string name="shufflepod_speed_this_show">This show</string>
+    <string name="shufflepod_listening_by_weekday">Average listening per day of the week</string>
+    <string name="shufflepod_listening_by_weekday_note">Each episode counts on the day it was last played.</string>
+    <string name="shufflepod_stats_choose_dates">Choose dates</string>
+    <string name="shufflepod_queue_chart_title">News queue, last 14 days</string>
+    <string name="shufflepod_queue_chart_empty">The chart fills in as the app records the queue length, every 30 minutes or so.</string>
+    <plurals name="shufflepod_queue_chart_now">
+        <item quantity="one">Now: %1$d episode, %2$s left</item>
+        <item quantity="other">Now: %1$d episodes, %2$s left</item>
+    </plurals>
 </resources>
