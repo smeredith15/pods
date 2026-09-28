@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ConcatAdapter; // SHUFFLEPOD
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.danoeh.antennapod.event.StatisticsEvent;
@@ -59,7 +58,7 @@ public class SubscriptionStatisticsFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar);
         listAdapter = new PlaybackStatisticsListAdapter(this);
         feedStatisticsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedStatisticsList.setAdapter(new ConcatAdapter(weekdays.adapter(), listAdapter)); // SHUFFLEPOD
+        feedStatisticsList.setAdapter(listAdapter);
         EventBus.getDefault().register(this);
         return root;
     }
@@ -135,7 +134,7 @@ public class SubscriptionStatisticsFragment extends Fragment {
                                 Math.min(timeFilterFrom, System.currentTimeMillis()), result.oldestDate),
                             Math.min(timeFilterTo, System.currentTimeMillis()));
                     listAdapter.update(result.feedTime);
-                    weekdays.refresh(); // SHUFFLEPOD
+                    weekdays.attach(feedStatisticsList, listAdapter); // SHUFFLEPOD: after the list has data
                     progressBar.setVisibility(View.GONE);
                     feedStatisticsList.setVisibility(View.VISIBLE);
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
