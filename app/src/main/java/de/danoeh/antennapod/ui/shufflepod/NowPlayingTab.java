@@ -42,6 +42,24 @@ public final class NowPlayingTab {
         return TAG.equals(defaultPage) ? SubscriptionFragment.TAG : defaultPage;
     }
 
+    /**
+     * Back on a top-level screen opens the player (when something is loaded) before leaving the app.
+     */
+    public static boolean canExpandOnBack(MainActivity activity) {
+        View player = activity.findViewById(R.id.audioplayerFragment);
+        return player != null && activity.getBottomSheet() != null && player.getVisibility() == View.VISIBLE
+                && activity.getSupportFragmentManager().getBackStackEntryCount() == 0
+                && activity.getBottomSheet().getState() == BottomSheetBehavior.STATE_COLLAPSED;
+    }
+
+    public static boolean expandOnBack(MainActivity activity) {
+        if (!canExpandOnBack(activity)) {
+            return false;
+        }
+        activity.getBottomSheet().setState(BottomSheetBehavior.STATE_EXPANDED);
+        return true;
+    }
+
     public static void onPlayerVisible(MainActivity activity, boolean visible) {
         if (!visible || openOnStartRequestedAt == 0) {
             return;

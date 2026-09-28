@@ -20,14 +20,18 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.model.feed.Feed;
 import de.danoeh.antennapod.shufflepod.ShowSettings;
 import de.danoeh.antennapod.shufflepod.ShowTags;
+import de.danoeh.antennapod.storage.database.ShufflepodReleaseStats;
 import de.danoeh.antennapod.storage.database.ShufflepodShowTags;
+import de.danoeh.antennapod.ui.common.Converter;
 import de.danoeh.antennapod.ui.screen.feed.FeedItemlistFragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -39,6 +43,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 public class NewsFragment extends Fragment {
     public static final String TAG = "NewsFragment";
+    private static final int WEEKS = 8;
 
     private final NewsAdapter adapter = new NewsAdapter();
     private TextView summary;
@@ -90,7 +95,14 @@ public class NewsFragment extends Fragment {
         if (disposable != null) {
             disposable.dispose();
         }
-        disposable = Observable.fromCallable(() -> ShufflepodShowTags.getFeeds(ShowTags.NEWS))
+        disposable = Observable.fromCallable(() -> {
+            Map<Long, Long> weekly = new HashMap<>();
+            for (ShufflepodReleaseStats.ShowTotal show : ShufflepodReleaseStats.compute(WEEKS).getShows()) {
+                weekly.put(show.getFeed().getId(), show.getWeeklyMs());
+            }
+            adapter.weeklyMs = weekly;
+            return ShufflepodShowTags.getFeeds(ShowTags.NEWS);
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feeds -> {
@@ -120,6 +132,7 @@ public class NewsFragment extends Fragment {
 
     private class NewsAdapter extends RecyclerView.Adapter<Holder> {
         private final List<Feed> feeds = new ArrayList<>();
+        private volatile Map<Long, Long> weeklyMs = new HashMap<>();
 
         void setFeeds(List<Feed> newFeeds) {
             feeds.clear();
@@ -138,8 +151,11 @@ public class NewsFragment extends Fragment {
         public void onBindViewHolder(@NonNull Holder holder, int position) {
             Feed feed = feeds.get(position);
             holder.title.setText(feed.getTitle());
-            holder.subtitle.setText(ShowSettings.getQueuePosition(feed) == ShowSettings.QueuePosition.TOP
+            String queuePlace = getString(ShowSettings.getQueuePosition(feed) == ShowSettings.QueuePosition.TOP
                     ? R.string.shufflepod_queue_position_top : R.string.shufflepod_queue_position_bottom);
+            Long weekly = weeklyMs.get(feed.getId());
+            holder.subtitle.setText(weekly == null ? queuePlace : getString(R.string.shufflepod_news_weekly,
+                    queuePlace, Converter.getDurationStringLocalized(getResources(), weekly, false)));
             holder.checkBox.setOnCheckedChangeListener(null);
             holder.checkBox.setChecked(ShowTags.isNews(feed.getPreferences()));
             holder.checkBox.setOnCheckedChangeListener((button, checked) ->

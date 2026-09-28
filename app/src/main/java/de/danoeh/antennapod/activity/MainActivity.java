@@ -39,6 +39,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 import de.danoeh.antennapod.ui.shufflepod.NowPlayingTab; // SHUFFLEPOD
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodSheetBackCallback; // SHUFFLEPOD
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.event.EpisodeDownloadEvent;
 import de.danoeh.antennapod.event.FeedUpdateRunningEvent;
@@ -221,7 +222,8 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
         sheetBehavior = (LockableBottomSheetBehavior<FragmentContainerView>) BottomSheetBehavior.from(bottomSheet);
         sheetBehavior.setHideable(false);
         sheetBehavior.addBottomSheetCallback(bottomSheetCallback);
-        bottomSheetBackPressedCallback = new BottomSheetBackPressedCallback(false, sheetBehavior, bottomSheet);
+        bottomSheetBackPressedCallback = // SHUFFLEPOD: back returns to the cover, then leaves
+                new ShufflepodSheetBackCallback(this, sheetBehavior, bottomSheet); // SHUFFLEPOD
 
         FeedUpdateManager.getInstance().restartUpdateAlarm(this, false);
         ShufflepodNewsRefresh.schedule(this); // SHUFFLEPOD
@@ -313,6 +315,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
             if (state == BottomSheetBehavior.STATE_COLLAPSED) {
                 onSlide(view, 0.0f);
                 bottomSheetBackPressedCallback.setEnabled(false);
+                updateMainBackCallbackEnabledState(); // SHUFFLEPOD
                 setMainContentFocusable(true); // SHUFFLEPOD
             } else if (state == BottomSheetBehavior.STATE_EXPANDED) {
                 onSlide(view, 1.0f);
@@ -447,6 +450,7 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
         RelativeLayout playerContent = findViewById(R.id.playerContent);
         playerContent.setPadding(systemBarInsets.left, systemBarInsets.top, systemBarInsets.right, 0);
         NowPlayingTab.onPlayerVisible(this, visible); // SHUFFLEPOD
+        updateMainBackCallbackEnabledState(); // SHUFFLEPOD
     }
 
     public RecyclerView.RecycledViewPool getRecycledViewPool() {
@@ -713,7 +717,8 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
                 || (!NavDrawerFragment.getLastNavFragment(this).equals(defaultPage)
                         && !UserPreferences.DEFAULT_PAGE_REMEMBER.equals(defaultPage))
                 || (UserPreferences.backButtonOpensDrawer() && drawerLayout != null
-                        && bottomNavigation == null && !drawerLayout.isDrawerOpen(navDrawer));
+                        && bottomNavigation == null && !drawerLayout.isDrawerOpen(navDrawer))
+                || NowPlayingTab.canExpandOnBack(this); // SHUFFLEPOD
         openDefaultPageBackPressedCallback.setEnabled(shouldEnable);
     }
 
@@ -724,6 +729,9 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
 
         @Override
         public void handleOnBackPressed() {
+            if (NowPlayingTab.expandOnBack(MainActivity.this)) { // SHUFFLEPOD: Now Playing before leaving
+                return; // SHUFFLEPOD
+            } // SHUFFLEPOD
             String defaultPage = NowPlayingTab.screenFor(UserPreferences.getDefaultPage()); // SHUFFLEPOD
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();

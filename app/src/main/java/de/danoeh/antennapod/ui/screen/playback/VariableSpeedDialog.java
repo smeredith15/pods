@@ -22,6 +22,7 @@ import de.danoeh.antennapod.playback.base.BuildConfig;
 import de.danoeh.antennapod.playback.service.PlaybackController;
 import de.danoeh.antennapod.playback.service.internal.MediaLibrarySessionCallback;
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
+import de.danoeh.antennapod.ui.shufflepod.ShufflepodSpeedScope; // SHUFFLEPOD
 import de.danoeh.antennapod.ui.view.ItemOffsetDecoration;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -46,6 +47,7 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
     private Chip addCurrentSpeedChip;
     private CheckBox skipSilenceCheckbox;
     private Disposable disposable;
+    private final ShufflepodSpeedScope speedScope = new ShufflepodSpeedScope(); // SHUFFLEPOD
 
     public VariableSpeedDialog() {
         DecimalFormatSymbols format = new DecimalFormatSymbols(Locale.US);
@@ -95,6 +97,7 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
                     if (controller == null) {
                         return;
                     }
+                    speedScope.setMedia(pair); // SHUFFLEPOD
                     updateSpeed(new SpeedChangedEvent(controller.getCurrentPlaybackSpeedMultiplier()));
                     updateSkipSilence(controller.getCurrentPlaybackSkipSilence());
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));
@@ -117,8 +120,9 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
                              @Nullable Bundle savedInstanceState) {
         View root = View.inflate(getContext(), R.layout.speed_select_dialog, null);
         speedSeekBar = root.findViewById(R.id.speed_seek_bar);
+        speedScope.bind(root, speed -> speedSeekBar.updateSpeed(speed)); // SHUFFLEPOD
         speedSeekBar.setProgressChangedListener(multiplier -> {
-            UserPreferences.setPlaybackSpeed(multiplier);
+            speedScope.save(multiplier); // SHUFFLEPOD: was UserPreferences.setPlaybackSpeed(multiplier)
             if (BuildConfig.USE_MEDIA3_PLAYBACK_SERVICE) {
                 PlaybackController.bindToMedia3Service(getContext(),
                         controller -> controller.setPlaybackSpeed(multiplier));
@@ -190,7 +194,7 @@ public class VariableSpeedDialog extends BottomSheetDialogFragment {
                 return true;
             });
             holder.chip.setOnClickListener(v -> {
-                UserPreferences.setPlaybackSpeed(speed);
+                speedScope.save(speed); // SHUFFLEPOD: was UserPreferences.setPlaybackSpeed(speed)
                 if (BuildConfig.USE_MEDIA3_PLAYBACK_SERVICE) {
                     PlaybackController.bindToMedia3Service(getContext(),
                             controller -> controller.setPlaybackSpeed(speed));

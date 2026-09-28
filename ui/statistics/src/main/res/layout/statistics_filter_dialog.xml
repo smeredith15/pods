@@ -84,6 +84,14 @@
 
         </LinearLayout>
 
+        <!-- SHUFFLEPOD: filter by day -->
+        <Button
+            android:id="@+id/shufflepodChooseDatesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shufflepod_stats_choose_dates"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
     </LinearLayout>
 
     <TextView

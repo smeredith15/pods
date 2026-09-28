@@ -13,12 +13,14 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ConcatAdapter; // SHUFFLEPOD
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.danoeh.antennapod.event.StatisticsEvent;
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.ui.statistics.R;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
+import de.danoeh.antennapod.ui.statistics.listening.ShufflepodWeekdayListening; // SHUFFLEPOD
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -40,6 +42,7 @@ public class SubscriptionStatisticsFragment extends Fragment {
     private ProgressBar progressBar;
     private PlaybackStatisticsListAdapter listAdapter;
     private DBReader.StatisticsResult statisticsResult;
+    private final ShufflepodWeekdayListening weekdays = new ShufflepodWeekdayListening(); // SHUFFLEPOD
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class SubscriptionStatisticsFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar);
         listAdapter = new PlaybackStatisticsListAdapter(this);
         feedStatisticsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedStatisticsList.setAdapter(listAdapter);
+        feedStatisticsList.setAdapter(new ConcatAdapter(weekdays.adapter(), listAdapter)); // SHUFFLEPOD
         EventBus.getDefault().register(this);
         return root;
     }
@@ -119,6 +122,8 @@ public class SubscriptionStatisticsFragment extends Fragment {
                             includeMarkedAsPlayed, timeFilterFrom, timeFilterTo);
                     Collections.sort(statisticsData.feedTime, (item1, item2) ->
                             Long.compare(item2.timePlayed, item1.timePlayed));
+                    ShufflepodWeekdayListening.removeUnplayed(statisticsData.feedTime); // SHUFFLEPOD
+                    weekdays.load(timeFilterFrom, timeFilterTo); // SHUFFLEPOD
                     return statisticsData;
                 })
                 .subscribeOn(Schedulers.computation())
@@ -130,6 +135,7 @@ public class SubscriptionStatisticsFragment extends Fragment {
                                 Math.min(timeFilterFrom, System.currentTimeMillis()), result.oldestDate),
                             Math.min(timeFilterTo, System.currentTimeMillis()));
                     listAdapter.update(result.feedTime);
+                    weekdays.refresh(); // SHUFFLEPOD
                     progressBar.setVisibility(View.GONE);
                     feedStatisticsList.setVisibility(View.VISIBLE);
                 }, error -> Log.e(TAG, Log.getStackTraceString(error)));

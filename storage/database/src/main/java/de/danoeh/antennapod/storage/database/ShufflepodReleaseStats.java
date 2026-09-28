@@ -20,6 +20,8 @@ import de.danoeh.antennapod.storage.preferences.UserPreferences;
  */
 public final class ShufflepodReleaseStats {
 
+    private static final long DAY_MS = 24L * 60 * 60 * 1000;
+
     private ShufflepodReleaseStats() {
     }
 
@@ -28,7 +30,8 @@ public final class ShufflepodReleaseStats {
         private final float speed;
         private long weeklyMs;
         private long weeklyAdjustedMs;
-        private long weeklyListenedMs;
+        private long releasedSinceMs;
+        private long listenedSinceMs;
 
         ShowTotal(Feed feed, float speed) {
             this.feed = feed;
@@ -55,7 +58,7 @@ public final class ShufflepodReleaseStats {
          * Share of the released audio listened to, in percent.
          */
         public int getListenedPercent() {
-            return weeklyMs > 0 ? (int) Math.round(100.0 * weeklyListenedMs / weeklyMs) : 0;
+            return releasedSinceMs > 0 ? (int) Math.round(100.0 * listenedSinceMs / releasedSinceMs) : 0;
         }
     }
 
@@ -68,6 +71,9 @@ public final class ShufflepodReleaseStats {
         private int episodesWithoutDuration;
         private int episodes;
         private int episodesPlayed;
+        private long listenFrom;
+        private long releasedSinceMs;
+        private long listenedSinceMs;
         private long weeklyListenedMs;
         private long weeklyListenedAdjustedMs;
 
@@ -123,8 +129,14 @@ public final class ShufflepodReleaseStats {
         }
 
         public int getListenedPercent() {
-            long released = weeklyMs();
-            return released > 0 ? (int) Math.round(100.0 * weeklyListenedMs / released) : 0;
+            return releasedSinceMs > 0 ? (int) Math.round(100.0 * listenedSinceMs / releasedSinceMs) : 0;
+        }
+
+        /**
+         * Start of the listening comparison: the later of the period start and the first playback in the app.
+         */
+        public long getListenFrom() {
+            return listenFrom;
         }
 
         public long weeklyMs() {
@@ -181,6 +193,18 @@ public final class ShufflepodReleaseStats {
         long to = calendar.getTimeInMillis();
         calendar.add(Calendar.DAY_OF_YEAR, -7 * weeks);
         long from = calendar.getTimeInMillis();
+        long firstPlayback = firstPlayback();
+        if (firstPlayback > from) {
+            calendar.setTimeInMillis(firstPlayback);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            result.listenFrom = Math.min(calendar.getTimeInMillis(), to);
+        } else {
+            result.listenFrom = from;
+        }
+        final double listenWeeks = Math.max(to - result.listenFrom, DAY_MS) / (double) (7 * DAY_MS);
 
         String items = PodDBAdapter.TABLE_NAME_FEED_ITEMS;
         String media = PodDBAdapter.TABLE_NAME_FEED_MEDIA;
@@ -195,7 +219,6 @@ public final class ShufflepodReleaseStats {
 
         double[] real = new double[8];
         double[] adjusted = new double[8];
-        double listened = 0;
         double listenedAdjusted = 0;
         PodDBAdapter adapter = PodDBAdapter.getInstance();
         adapter.open();
@@ -207,9 +230,12 @@ public final class ShufflepodReleaseStats {
                     continue;
                 }
                 long duration = cursor.getLong(2);
-                result.episodes++;
-                if (cursor.getInt(4) == FeedItem.PLAYED) {
-                    result.episodesPlayed++;
+                boolean inListenPeriod = cursor.getLong(1) >= result.listenFrom;
+                if (inListenPeriod) {
+                    result.episodes++;
+                    if (cursor.getInt(4) == FeedItem.PLAYED) {
+                        result.episodesPlayed++;
+                    }
                 }
                 if (duration <= 0) {
                     result.episodesWithoutDuration++;
@@ -221,10 +247,14 @@ public final class ShufflepodReleaseStats {
                 adjusted[day] += duration / show.speed;
                 show.weeklyMs += duration;
                 show.weeklyAdjustedMs += (long) (duration / show.speed);
-                long played = Math.min(Math.max(cursor.getLong(3), 0), duration);
-                listened += played;
-                listenedAdjusted += played / show.speed;
-                show.weeklyListenedMs += played;
+                if (inListenPeriod) {
+                    long played = Math.min(Math.max(cursor.getLong(3), 0), duration);
+                    result.releasedSinceMs += duration;
+                    result.listenedSinceMs += played;
+                    listenedAdjusted += played / show.speed;
+                    show.releasedSinceMs += duration;
+                    show.listenedSinceMs += played;
+                }
             }
         } finally {
             adapter.close();
@@ -234,15 +264,29 @@ public final class ShufflepodReleaseStats {
             result.averageMs[day] = Math.round(real[day] / weeks);
             result.averageAdjustedMs[day] = Math.round(adjusted[day] / weeks);
         }
-        result.weeklyListenedMs = Math.round(listened / weeks);
-        result.weeklyListenedAdjustedMs = Math.round(listenedAdjusted / weeks);
+        result.weeklyListenedMs = Math.round(result.listenedSinceMs / listenWeeks);
+        result.weeklyListenedAdjustedMs = Math.round(listenedAdjusted / listenWeeks);
         for (ShowTotal show : byFeed.values()) {
             show.weeklyMs /= weeks;
             show.weeklyAdjustedMs /= weeks;
-            show.weeklyListenedMs /= weeks;
             result.shows.add(show);
         }
         Collections.sort(result.shows, (a, b) -> Long.compare(b.weeklyMs, a.weeklyMs));
         return result;
+    }
+
+    /**
+     * When something was first played in the app (import and "mark played" don't set this), or 0.
+     */
+    private static long firstPlayback() {
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        try (Cursor cursor = adapter.shufflepodQuery("SELECT MIN(" + PodDBAdapter.KEY_LAST_PLAYED_TIME_STATISTICS
+                + ") FROM " + PodDBAdapter.TABLE_NAME_FEED_MEDIA + " WHERE "
+                + PodDBAdapter.KEY_LAST_PLAYED_TIME_STATISTICS + " > 0", null)) {
+            return cursor.moveToFirst() ? cursor.getLong(0) : 0;
+        } finally {
+            adapter.close();
+        }
     }
 }

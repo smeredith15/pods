@@ -37,6 +37,7 @@ import de.danoeh.antennapod.model.download.DownloadRequest;
 import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequestBuilder;
 import de.danoeh.antennapod.parser.feed.FeedHandlerResult;
 import de.danoeh.antennapod.storage.database.NonSubscribedFeedsCleaner;
+import de.danoeh.antennapod.storage.database.ShufflepodQueueHistory; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.database.ShufflepodShowTags; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.preferences.UserPreferences;
 import de.danoeh.antennapod.ui.notifications.NotificationUtils;
@@ -116,6 +117,7 @@ public class FeedUpdateWorker extends Worker {
             }
         }
         refreshFeeds(toUpdate,  force);
+        ShufflepodQueueHistory.record(); // SHUFFLEPOD: News queue chart
 
         NonSubscribedFeedsCleaner.deleteOldNonSubscribedFeeds(getApplicationContext());
         AutoDownloadManager.getInstance().autodownloadUndownloadedItems(getApplicationContext());

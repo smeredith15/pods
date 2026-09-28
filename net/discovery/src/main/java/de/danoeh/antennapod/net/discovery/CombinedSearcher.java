@@ -14,17 +14,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit; // SHUFFLEPOD
 
 public class CombinedSearcher implements PodcastSearcher {
     private static final String TAG = "CombinedSearcher";
+    private static final long FIRST_RESULT_TIMEOUT_MS = 10000; // SHUFFLEPOD
+    private static final long OTHERS_GRACE_MS = 1500; // SHUFFLEPOD
 
     public CombinedSearcher() {
     }
 
     public Single<List<PodcastSearchResult>> search(String query) {
         ArrayList<Disposable> disposables = new ArrayList<>();
-        List<List<PodcastSearchResult>> singleResults = new ArrayList<>(
-                Collections.nCopies(PodcastSearcherRegistry.getSearchProviders().size(), null));
+        // SHUFFLEPOD: synchronized, results may be read before every provider has answered
+        List<List<PodcastSearchResult>> singleResults = Collections.synchronizedList(new ArrayList<>(
+                Collections.nCopies(PodcastSearcherRegistry.getSearchProviders().size(), null)));
+        CountDownLatch firstResult = new CountDownLatch(1); // SHUFFLEPOD
         CountDownLatch latch = new CountDownLatch(PodcastSearcherRegistry.getSearchProviders().size());
         for (int i = 0; i < PodcastSearcherRegistry.getSearchProviders().size(); i++) {
             PodcastSearcherRegistry.SearcherInfo searchProviderInfo
@@ -37,6 +42,7 @@ public class CombinedSearcher implements PodcastSearcher {
             final int index = i;
             disposables.add(searcher.search(query).subscribe(e -> {
                         singleResults.set(index, e);
+                        firstResult.countDown(); // SHUFFLEPOD
                         latch.countDown();
                     }, throwable -> {
                         Log.d(TAG, Log.getStackTraceString(throwable));
@@ -46,8 +52,16 @@ public class CombinedSearcher implements PodcastSearcher {
         }
 
         return Single.create((SingleOnSubscribe<List<PodcastSearchResult>>) subscriber -> {
-            latch.await();
-            List<PodcastSearchResult> results = weightSearchResults(singleResults);
+            // SHUFFLEPOD: don't wait for the slowest provider. Once one has answered, give the others a
+            // moment, then show what's there. Was latch.await().
+            if (firstResult.await(FIRST_RESULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                latch.await(OTHERS_GRACE_MS, TimeUnit.MILLISECONDS);
+            }
+            List<List<PodcastSearchResult>> available;
+            synchronized (singleResults) {
+                available = new ArrayList<>(singleResults);
+            }
+            List<PodcastSearchResult> results = weightSearchResults(available); // SHUFFLEPOD
             subscriber.onSuccess(results);
         })
                 .doOnDispose(() -> {
