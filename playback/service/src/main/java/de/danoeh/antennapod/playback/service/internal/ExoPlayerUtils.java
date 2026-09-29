@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 @OptIn(markerClass = UnstableApi.class)
 public class ExoPlayerUtils {
     private static volatile SimpleCache simpleCache;
+    private static final int STREAM_BUFFER_BYTES = 32 * 1024 * 1024; // SHUFFLEPOD
 
     @OptIn(markerClass = UnstableApi.class)
     public static ExoPlayer buildPlayer(Context context) {
@@ -58,6 +59,7 @@ public class ExoPlayerUtils {
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
                         .setBackBuffer((int) TimeUnit.MINUTES.toMillis(5), true)
+                        .setTargetBufferBytes(STREAM_BUFFER_BYTES) // SHUFFLEPOD: default ~13 MB, rides out dead spots
                         .build())
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setUsage(C.USAGE_MEDIA)

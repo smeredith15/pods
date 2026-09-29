@@ -22,6 +22,7 @@ import de.danoeh.antennapod.net.download.service.R;
 import de.danoeh.antennapod.net.download.service.feed.remote.DefaultDownloaderFactory;
 import de.danoeh.antennapod.net.download.service.feed.remote.Downloader;
 import de.danoeh.antennapod.net.download.serviceinterface.DownloadRequestCreator;
+import de.danoeh.antennapod.storage.database.ShufflepodPrefetch; // SHUFFLEPOD
 import de.danoeh.antennapod.storage.database.DBReader;
 import de.danoeh.antennapod.storage.database.DBWriter;
 import de.danoeh.antennapod.event.MessageEvent;
@@ -192,6 +193,7 @@ public class EpisodeDownloadWorker extends Worker {
             handler.run();
             DBWriter.addDownloadStatus(handler.getUpdatedStatus());
             DownloadAnnouncer.announceCompleted(getApplicationContext(), request.getTitle());
+            ShufflepodPrefetch.onDownloadFinished(getApplicationContext()); // SHUFFLEPOD: next download
             return Result.success();
         }
 
