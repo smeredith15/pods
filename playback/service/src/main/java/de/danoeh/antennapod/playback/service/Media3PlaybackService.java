@@ -376,6 +376,9 @@ public class Media3PlaybackService extends MediaLibraryService {
         @Override
         public void onPlaybackStateChanged(int playbackState) {
             if (playbackState == Player.STATE_BUFFERING) {
+                if (currentPlayable != null && !isCasting()) { // SHUFFLEPOD: continue from the download if any
+                    ShufflepodLocalSwitch.trySwitch(Media3PlaybackService.this, player, currentPlayable.getId(), null);
+                } // SHUFFLEPOD
                 EventBus.getDefault().post(BufferUpdateEvent.started());
                 PlaybackService.isRunning = player.getPlayWhenReady(); // Immediately show as playing
                 updatePlaybackPreferences();
@@ -456,6 +459,11 @@ public class Media3PlaybackService extends MediaLibraryService {
         public void onPlayerError(@NonNull PlaybackException error) {
             if (ShufflepodEndGuard.isNearEnd(currentPlayable, player.getCurrentPosition())) { // SHUFFLEPOD
                 handlePlaybackEnded(); // SHUFFLEPOD: stream failed in the last seconds, move on
+                return; // SHUFFLEPOD
+            } // SHUFFLEPOD
+            if (currentPlayable != null && !isCasting() && ShufflepodLocalSwitch.isStreaming(player)) { // SHUFFLEPOD
+                ShufflepodLocalSwitch.trySwitch(Media3PlaybackService.this, player, currentPlayable.getId(),
+                        () -> ShufflepodLocalSwitch.reportError(Media3PlaybackService.this, error)); // SHUFFLEPOD
                 return; // SHUFFLEPOD
             } // SHUFFLEPOD
             PlaybackService.isRunning = false;
