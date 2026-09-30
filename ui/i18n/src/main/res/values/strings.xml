@@ -1226,4 +1226,20 @@
         <item quantity="other">Now: %1$d episodes, %2$s left</item>
     </plurals>
     <string name="shufflepod_folders_label">Folders</string>
+    <string name="shufflepod_seasons_label">Seasons</string>
+    <string name="shufflepod_seasons_intro">Audio released each week over the last year, at playback speed. Tap a show to add it to the total or take it out.</string>
+    <string name="shufflepod_seasons_reference">Dashed line: News you listened to per week recently (%1$s).</string>
+    <string name="shufflepod_seasons_summary">Average %1$s a week. Busiest week: %2$s (week of %3$s).</string>
+    <plurals name="shufflepod_seasons_above">
+        <item quantity="one">%1$d week is above your recent listening.</item>
+        <item quantity="other">%1$d weeks are above your recent listening.</item>
+    </plurals>
+    <string name="shufflepod_seasons_none_selected">No shows selected.</string>
+    <string name="shufflepod_seasons_news">News shows</string>
+    <string name="shufflepod_seasons_other">Other shows</string>
+    <string name="shufflepod_seasons_preview_tip">To try a show before subscribing, find it with Add podcast and open it. It then appears here, marked not subscribed.</string>
+    <string name="shufflepod_seasons_not_subscribed">%1$s (not subscribed)</string>
+    <string name="shufflepod_seasons_show">%1$s a week on average · released in %2$d of %3$d weeks</string>
+    <string name="shufflepod_seasons_history">The feed only goes back to %1$s</string>
+    <string name="shufflepod_seasons_empty">No shows released episodes with a known length in the last year.</string>
 </resources>
