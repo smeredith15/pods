@@ -22,6 +22,9 @@ public class NonSubscribedFeedsCleaner {
             if (feed.getState() != Feed.STATE_NOT_SUBSCRIBED) {
                 continue;
             }
+            if (People.isFeedReferenced(EpisodeKeys.feedKey(feed))) { // SHUFFLEPOD: kept anyway, skip loading
+                continue; // SHUFFLEPOD
+            }
             DBReader.getFeedItemList(feed, new FeedItemFilter(FeedItemFilter.INCLUDE_NOT_SUBSCRIBED),
                     SortOrder.DATE_NEW_OLD, 0, Integer.MAX_VALUE);
             DBReader.loadFeedDataOfFeedItemList(feed.getItems());
