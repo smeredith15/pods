@@ -197,6 +197,7 @@ public final class ShufflepodPeople {
             return false; // Podcast Index also returns loose matches, e.g. on the first name only
         }
         String guid = remote.guid != null && !remote.guid.isEmpty() ? remote.guid : null;
+        ShufflepodDbIndexes.ensureLookupIndexes();
         FeedItem existing = DBReader.getFeedItemByGuidOrEpisodeUrl(guid, remote.enclosureUrl);
         if (existing == null) {
             Feed feed = new Feed(remote.feedUrl, null, remote.feedTitle);

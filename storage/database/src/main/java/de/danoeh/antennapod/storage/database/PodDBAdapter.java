@@ -1298,6 +1298,10 @@ public class PodDBAdapter {
         return db.rawQuery(query, null);
     }
 
+    public void shufflepodExec(String sql) { // SHUFFLEPOD: extra indexes
+        db.execSQL(sql);
+    } // SHUFFLEPOD
+
     public Cursor shufflepodQuery(String query, String[] args) { // SHUFFLEPOD: fork statistics
         return db.rawQuery(query, args);
     } // SHUFFLEPOD
