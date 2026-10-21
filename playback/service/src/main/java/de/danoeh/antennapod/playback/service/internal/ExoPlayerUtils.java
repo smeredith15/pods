@@ -51,7 +51,7 @@ public class ExoPlayerUtils {
                     new LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024),
                     new StandaloneDatabaseProvider(context));
         }
-        return new ExoPlayer.Builder(context)
+        return new ExoPlayer.Builder(context, new ShufflepodRenderersFactory(context)) // SHUFFLEPOD: audio buffer
                 .setLoadControl(new DefaultLoadControl.Builder()
                         .setBufferDurationsMs(
                                 (int) TimeUnit.HOURS.toMillis(1),
@@ -68,6 +68,7 @@ public class ExoPlayerUtils {
                 .setMediaSourceFactory(new ApMediaSourceFactory(context, simpleCache))
                 .setSeekParameters(SeekParameters.EXACT)
                 .setHandleAudioBecomingNoisy(UserPreferences.isPauseOnHeadsetDisconnect())
+                .setWakeMode(C.WAKE_MODE_NETWORK) // SHUFFLEPOD: keep CPU and Wi-Fi awake while playing
                 .build();
     }
 

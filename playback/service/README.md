@@ -11,3 +11,4 @@ The `MediaController` exposes the standard Media3 `Player` interface: `seekTo(po
 `play()`, `pause()`, `getCurrentPosition()`, `getPlaybackParameters()`, etc.
 Each call to `bindToMedia3Service()` creates a short-lived connection that is released after the
 callback returns.
+- `ExoPlayerUtils.buildPlayer` sets a wake mode so the CPU and Wi-Fi stay awake during background playback; keep it if the builder is changed.

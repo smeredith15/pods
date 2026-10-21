@@ -366,6 +366,8 @@ Smart folders are computed from release dates (`ReleasePattern` in :shufflepod, 
 - The sleep timer has a one-tap **End of episode** button (an episode timer set to 1).
 - Skip marks the episode played and removes it from the queue. "Keep skipped episodes" now defaults to off (migrated once), and Media3's `updateDatabaseAfterPlayback` also marks skipped episodes played.
 
+- **Background playback (Android Auto, screen off):** the Media3 player holds a wake lock and Wi-Fi lock while playing (`setWakeMode(C.WAKE_MODE_NETWORK)`). Upstream's Media3 service didn't set this, though the old MediaPlayer service did. The audio output buffer is 1 to 1.5 s instead of 0.25 to 0.75 s (`ShufflepodRenderersFactory`), so speed and skip-silence processing has headroom when the CPU slows down with the screen off. A side effect is that a speed change can take about a second to be heard.
+
 ### Back button, speed scope, downloads ahead, search (as built)
 
 - **Back:** on a top-level screen with an episode loaded, Back opens Now Playing (`NowPlayingTab.expandOnBack`, hooked into `OpenDefaultPageBackPressedCallback`). Inside the player (`ShufflepodSheetBackCallback`), Back goes from the queue or show notes to the cover. From the cover it closes the player if there's a screen to return to, otherwise it leaves the app.
